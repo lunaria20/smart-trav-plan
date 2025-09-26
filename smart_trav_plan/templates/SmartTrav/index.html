@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartTrav 🌴✨</title>
+    <link rel="stylesheet" href="{% static 'SmartTrav/style.css' %}">
+</head>
+<body>
+    <h1>Welcome to SmartTrav 🌴✨</h1>
+    <p>Explore the best of Mactan, Lapu-Lapu City 🏝️</p>
+
+    <div class="destinations">
+        {% for destination in destinations %}
+            <div class="card">
+                <h2>{{ destination.name }}</h2>
+                <p>{{ destination.description }}</p>
+                <p><b>📍 {{ destination.location }}</b></p>
+                {% if destination.image %}
+                    <img src="{{ destination.image.url }}" alt="{{ destination.name }}" width="300">
+                {% endif %}
+            </div>
+        {% empty %}
+            <p>No destinations available yet 🌸</p>
+        {% endfor %}
+    </div>
+
+    <script src="{% static 'SmartTrav/app.js' %}"></script>
+</body>
+</html>
