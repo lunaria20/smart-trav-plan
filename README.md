@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-﻿# 🌴✨ SmartTrav ✨🌴  
-=======
 # 🌴✨ SmartTrav ✨🌴
 Welcome to SmartTrav — your ✨smart travel buddy✨ for exploring Mactan, Lapu-Lapu City 🏝️💼.
->>>>>>> 9049189984f2324009cbe2f6a02ad3242f85e390
 
 Welcome to **SmartTrav** — your ✨smart travel buddy✨ for exploring **Mactan, Lapu-Lapu City** 🏝️💼.  
 
