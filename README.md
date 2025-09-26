@@ -1,8 +1,6 @@
 # 🌴✨ SmartTrav ✨🌴
 Welcome to SmartTrav — your ✨smart travel buddy✨ for exploring Mactan, Lapu-Lapu City 🏝️💼.
 
-Welcome to **SmartTrav** — your ✨smart travel buddy✨ for exploring **Mactan, Lapu-Lapu City** 🏝️💼.  
-
 Tourists often face:  
 - ❌ Disorganized itineraries  
 - ❌ Unreliable budget estimates  
