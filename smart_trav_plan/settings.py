@@ -51,10 +51,19 @@ WSGI_APPLICATION = 'smart_trav_plan.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'SmartTravelDB',  # Supabase DB password
+        'HOST': 'db.nbrzrcawzyylyptjvrwa.supabase.co',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',  # Supabase requires SSL
+        },
     }
 }
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
