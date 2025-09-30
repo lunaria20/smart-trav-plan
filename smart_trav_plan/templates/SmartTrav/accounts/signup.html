@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <div class="card-header text-center border-0 bg-transparent">
+        <h3 class="fw-bold text-light">Create Account</h3>
+        <p class="text-light">Sign up to get started</p>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_username" class="form-label text-light">Username</label>
+            <input type="text" class="form-control shadow-sm" name="username" id="id_username" required>
+            {% if form.username.errors %}
+              <div class="text-danger mt-1 small">{{ form.username.errors }}</div>
+            {% endif %}
+            <small class="text-light">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+          </div>
+          <div class="mb-3">
+            <label for="id_password1" class="form-label text-light">Password</label>
+            <input type="password" class="form-control shadow-sm" name="password1" id="id_password1" required>
+            {% if form.password1.errors %}
+              <div class="text-danger mt-1 small">{{ form.password1.errors }}</div>
+            {% endif %}
+            <small class="text-light">Your password must contain at least 8 characters.</small>
+          </div>
+          <div class="mb-3">
+            <label for="id_password2" class="form-label text-light">Confirm Password</label>
+            <input type="password" class="form-control shadow-sm" name="password2" id="id_password2" required>
+            {% if form.password2.errors %}
+              <div class="text-danger mt-1 small">{{ form.password2.errors }}</div>
+            {% endif %}
+          </div>
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary btn-lg shadow">Sign Up</button>
+          </div>
+        </form>
+        <div class="text-center mt-3">
+          <p class="text-light">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none text-warning fw-bold">Login here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
