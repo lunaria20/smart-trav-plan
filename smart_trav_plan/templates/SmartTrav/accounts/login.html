@@ -1,34 +1,363 @@
-{% extends 'base.html' %}
-{% block title %}Login{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SmartTrav</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card p-4">
-      <div class="card-header text-center border-0 bg-transparent">
-        <h3 class="fw-bold text-light">Welcome Back</h3>
-        <p class="text-light">Log in to continue</p>
-      </div>
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          <div class="mb-3">
-            <label for="username" class="form-label text-light">Username</label>
-            <input type="text" class="form-control shadow-sm" name="username" id="username" placeholder="Enter your username" required>
-          </div>
-          <div class="mb-3">
-            <label for="password" class="form-label text-light">Password</label>
-            <input type="password" class="form-control shadow-sm" name="password" id="password" placeholder="Enter your password" required>
-          </div>
-          <div class="d-grid mt-4">
-            <button type="submit" class="btn btn-primary btn-lg shadow">Login</button>
-          </div>
-        </form>
-        <div class="text-center mt-3">
-          <p class="text-light">Don't have an account? <a href="{% url 'signup' %}" class="text-decoration-none text-warning fw-bold">Sign up here</a></p>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .nav-links a {
+            margin: 0 1rem;
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .btn-login-nav {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-right: 1rem;
+        }
+
+        .btn-login-nav:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-signup-nav {
+            padding: 0.5rem 1.5rem;
+            background: #FF9B50;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-signup-nav:hover {
+            background: #ff8533;
+        }
+
+        /* Hero Background Section */
+        .hero-background {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        /* Decorative shapes */
+        .shape-orange {
+            position: absolute;
+            bottom: 10%;
+            right: 15%;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #FF9B50 0%, #FFB570 100%);
+            border-radius: 50% 40% 60% 40%;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .shape-green {
+            position: absolute;
+            bottom: 15%;
+            right: 25%;
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #90EE90 0%, #98FB98 100%);
+            border-radius: 40% 60% 40% 60%;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .shape-blue {
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            width: 60px;
+            height: 60px;
+            background: #667eea;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Airplane path */
+        .airplane-path {
+            position: absolute;
+            top: 15%;
+            right: 30%;
+            width: 200px;
+            height: 150px;
+            border: 3px dashed #667eea;
+            border-top: none;
+            border-left: none;
+            border-radius: 0 0 100px 0;
+            opacity: 0.5;
+        }
+
+        .airplane {
+            position: absolute;
+            top: 10%;
+            right: 35%;
+            font-size: 2rem;
+            transform: rotate(-45deg);
+        }
+
+        /* Tourist Image */
+        .hero-image {
+            position: absolute;
+            right: -50px;
+            bottom: 0;
+            width: 45%;
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Login Form Container */
+        .login-container {
+            position: relative;
+            z-index: 5;
+            max-width: 450px;
+            margin-left: 5rem;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .login-header {
+            margin-bottom: 2rem;
+        }
+
+        .login-header h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #777;
+            font-size: 1rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .login-container {
+                margin-left: 2rem;
+            }
+            .hero-image {
+                right: -100px;
+                width: 50%;
+                opacity: 0.5;
+            }
+            .shape-orange, .shape-green {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 0 auto;
+                padding: 2rem;
+            }
+            .hero-image {
+                display: none;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-brand">✈️ SmartTrav</div>
+            <div class="nav-links d-none d-md-flex">
+                <a href="#about">About</a>
+                <a href="#service">Service</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div>
+                <a href="{% url 'login' %}" class="btn-login-nav">Log in</a>
+                <a href="{% url 'signup' %}" class="btn-signup-nav">Sign up</a>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+    </nav>
+
+    <!-- Hero Background with Login Form -->
+    <section class="hero-background">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="login-container">
+                        <div class="login-card">
+                            <div class="login-header">
+                                <h2>Welcome Back!</h2>
+                                <p>Log in to continue your journey</p>
+                            </div>
+
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
+                            {% if error %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    ❌ {{ error }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endif %}
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" name="username" id="username"
+                                           placeholder="Enter your username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="password" id="password"
+                                           placeholder="Enter your password" required>
+                                </div>
+                                <button type="submit" class="btn-login">Login</button>
+                            </form>
+
+                            <div class="signup-link">
+                                Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div class="airplane-path"></div>
+        <div class="airplane">✈️</div>
+        <div class="shape-blue"></div>
+        <div class="shape-green"></div>
+        <div class="shape-orange"></div>
+
+        <!-- Hero Image (Tourist with luggage) -->
+        <div class="hero-image">
+            <div style="font-size: 18rem; text-align: center;">🏖️</div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

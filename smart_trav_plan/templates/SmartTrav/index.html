@@ -7,143 +7,385 @@
     <title>SmartTrav 🌴✨</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 2rem 0;
+            overflow-x: hidden;
         }
 
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 3rem;
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
         }
 
-        .header h1 {
-            font-size: 3rem;
+        .navbar-brand {
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            font-size: 1.3rem;
-            opacity: 0.9;
-        }
-
-        .destinations {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.2);
-        }
-
-        .card img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .card h2 {
+            font-size: 1.5rem;
             color: #2c3e50;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
         }
 
-        .card p {
+        .nav-links a {
+            margin: 0 1rem;
             color: #555;
-            line-height: 1.6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
         }
 
-        .location {
+        .nav-links a:hover {
             color: #667eea;
-            font-weight: 600;
-            margin-top: 1rem;
         }
 
-        .empty-state {
-            text-align: center;
+        .btn-login {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-right: 1rem;
+        }
+
+        .btn-login:hover {
+            background: #667eea;
             color: white;
-            font-size: 1.5rem;
-            margin-top: 3rem;
         }
 
-        .auth-links {
-            text-align: center;
+        .btn-signup {
+            padding: 0.5rem 1.5rem;
+            background: #FF9B50;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-signup:hover {
+            background: #ff8533;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+            padding: 2rem;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #2c3e50;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content h1 span {
+            display: block;
+        }
+
+        .hero-image {
+            position: absolute;
+            right: -100px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50%;
+            max-width: 700px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Decorative shapes */
+        .shape-orange {
+            position: absolute;
+            bottom: 10%;
+            right: 15%;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #FF9B50 0%, #FFB570 100%);
+            border-radius: 50% 40% 60% 40%;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .shape-green {
+            position: absolute;
+            bottom: 15%;
+            right: 25%;
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #90EE90 0%, #98FB98 100%);
+            border-radius: 40% 60% 40% 60%;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .shape-blue {
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            width: 60px;
+            height: 60px;
+            background: #667eea;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Airplane path */
+        .airplane-path {
+            position: absolute;
+            top: 15%;
+            right: 30%;
+            width: 200px;
+            height: 150px;
+            border: 3px dashed #667eea;
+            border-top: none;
+            border-left: none;
+            border-radius: 0 0 100px 0;
+            opacity: 0.5;
+        }
+
+        .airplane {
+            position: absolute;
+            top: 10%;
+            right: 35%;
+            font-size: 2rem;
+            transform: rotate(-45deg);
+        }
+
+        /* Feature boxes */
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
             margin-top: 2rem;
         }
 
-        .auth-links a {
-            color: white;
-            text-decoration: none;
-            margin: 0 1rem;
-            padding: 0.5rem 1.5rem;
-            border: 2px solid white;
-            border-radius: 25px;
-            transition: all 0.3s ease;
+        .feature-box {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
         }
 
-        .auth-links a:hover {
+        .feature-box:hover {
+            transform: translateX(10px);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .icon-orange { background: linear-gradient(135deg, #FF9B50, #FFB570); }
+        .icon-blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .icon-green { background: linear-gradient(135deg, #90EE90, #98FB98); }
+
+        .feature-text h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+        }
+
+        .feature-text p {
+            font-size: 0.9rem;
+            color: #777;
+            margin: 0;
+        }
+
+        /* Destinations Section */
+        .destinations-section {
+            padding: 4rem 2rem;
             background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 3rem;
+        }
+
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .destination-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .destination-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .destination-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .destination-info {
+            padding: 1.5rem;
+        }
+
+        .destination-info h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .destination-info p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .destination-location {
             color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 3rem;
+            }
+            .hero-image {
+                right: -150px;
+                width: 60%;
+            }
+            .shape-orange, .shape-green {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            .hero-image {
+                opacity: 0.3;
+                right: -200px;
+            }
+            .nav-links {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Welcome to SmartTrav 🌴✨</h1>
-            <p>Explore the best of Mactan, Lapu-Lapu City 🏝️</p>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-brand">✈️ SmartTrav</div>
+            <div class="nav-links d-none d-md-flex">
+                <a href="#about">About</a>
+                <a href="#service">Service</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div>
+                <a href="{% url 'login' %}" class="btn-login">Log in</a>
+                <a href="{% url 'signup' %}" class="btn-signup">Sign up</a>
+            </div>
+        </div>
+    </nav>
 
-            <div class="auth-links">
-                {% if user.is_authenticated %}
-                    <span style="color: white; margin-right: 1rem;">Hello, {{ user.username }}!</span>
-                    <a href="{% url 'dashboard' %}">Dashboard</a>
-                    <a href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}">Login</a>
-                    <a href="{% url 'signup' %}">Sign Up</a>
-                {% endif %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1>
+                            <span>Start your new</span>
+                            <span>Holiday</span>
+                        </h1>
+
+                        <!-- Features -->
+                        <div class="features">
+                            <div class="feature-box">
+                                <div class="feature-icon icon-orange">🏨</div>
+                                <div class="feature-text">
+                                    <h3>Resort Booking</h3>
+                                    <p>Easily book your dream resort</p>
+                                </div>
+                            </div>
+
+                            <div class="feature-box">
+                                <div class="feature-icon icon-blue">🎫</div>
+                                <div class="feature-text">
+                                    <h3>Activity Tickets</h3>
+                                    <p>Book tickets to attractions</p>
+                                </div>
+                            </div>
+
+                            <div class="feature-box">
+                                <div class="feature-icon icon-green">📋</div>
+                                <div class="feature-text">
+                                    <h3>Tour Plan Service</h3>
+                                    <p>Easier for you to plan a trip</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="destinations">
-            {% for destination in destinations %}
-                <div class="card">
-                    {% if destination.image %}
-                        <img src="{{ destination.image.url }}" alt="{{ destination.name }}">
-                    {% endif %}
-                    <div class="card-body">
-                        <h2>{{ destination.name }}</h2>
-                        <p>{{ destination.description }}</p>
-                        <p class="location">📍 {{ destination.location }}</p>
-                    </div>
-                </div>
-            {% empty %}
-                <div class="empty-state">
-                    <p>No destinations available yet 🌸</p>
-                    <p style="font-size: 1rem; opacity: 0.8;">Check back soon for amazing places to visit!</p>
-                </div>
-            {% endfor %}
+        <!-- Decorative Elements -->
+        <div class="airplane-path"></div>
+        <div class="airplane">✈️</div>
+        <div class="shape-blue"></div>
+        <div class="shape-green"></div>
+        <div class="shape-orange"></div>
+
+        <!-- Hero Image (Tourist with luggage) -->
+        <div class="desca-image">
+            <div style="font-size: 20rem; text-align: center;">🏖️</div>
         </div>
-    </div>
+    </section>
+
+    <!-- Destinations Section -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

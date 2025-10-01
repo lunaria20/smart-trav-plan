@@ -1,10 +1,15 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+import dj_database_url
 
+# Load environment variables from .env
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = 'replace-this-with-a-secure-key'
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = os.environ.get("SECRET_KEY", "replace-this-with-a-secure-key")
+DEBUG = os.environ.get("DEBUG", "True") == "True"
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,18 +54,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'smart_trav_plan.wsgi.application'
 
+# ✅ Database configuration from .env (Supabase Session Pooler)
+import os
+import dj_database_url
+from dotenv import load_dotenv
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / ".env")
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'SmartTravelDB',  # Supabase DB password
-        'HOST': 'db.nbrzrcawzyylyptjvrwa.supabase.co',
-        'PORT': '5432',
-        'OPTIONS': {
-            'sslmode': 'require',  # Supabase requires SSL
-        },
-    }
+    'default': dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True
+    )
 }
 
 
@@ -83,6 +92,17 @@ STATICFILES_DIRS = [BASE_DIR / "smart_trav_plan" / "static"]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication redirects
+#LOGIN_URL = '/accounts/login/'
+#LOGIN_REDIRECT_URL = '/accounts/dashboard/'
+#LOGOUT_REDIRECT_URL = '/accounts/login/'
+
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/accounts/dashboard/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}

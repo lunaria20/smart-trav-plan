@@ -1,54 +1,391 @@
-{% extends 'base.html' %}
-{% block title %}Sign Up{% endblock %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - SmartTrav</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card p-4">
-      <div class="card-header text-center border-0 bg-transparent">
-        <h3 class="fw-bold text-light">Create Account</h3>
-        <p class="text-light">Sign up to get started</p>
-      </div>
-      <div class="card-body">
-        <form method="post">
-          {% csrf_token %}
-          <div class="mb-3">
-            <label for="id_username" class="form-label text-light">Username</label>
-            <input type="text" class="form-control shadow-sm" name="username" id="id_username" required>
-            {% if form.username.errors %}
-              <div class="text-danger mt-1 small">{{ form.username.errors }}</div>
-            {% endif %}
-            <small class="text-light">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
-          </div>
-          <div class="mb-3">
-            <label for="id_password1" class="form-label text-light">Password</label>
-            <input type="password" class="form-control shadow-sm" name="password1" id="id_password1" required>
-            {% if form.password1.errors %}
-              <div class="text-danger mt-1 small">{{ form.password1.errors }}</div>
-            {% endif %}
-            <small class="text-light">Your password must contain at least 8 characters.</small>
-          </div>
-          <div class="mb-3">
-            <label for="id_password2" class="form-label text-light">Confirm Password</label>
-            <input type="password" class="form-control shadow-sm" name="password2" id="id_password2" required>
-            {% if form.password2.errors %}
-              <div class="text-danger mt-1 small">{{ form.password2.errors }}</div>
-            {% endif %}
-          </div>
-          {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-              {{ form.non_field_errors }}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .nav-links a {
+            margin: 0 1rem;
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .btn-login-nav {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-right: 1rem;
+        }
+
+        .btn-login-nav:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-signup-nav {
+            padding: 0.5rem 1.5rem;
+            background: #FF9B50;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-signup-nav:hover {
+            background: #ff8533;
+        }
+
+        /* Hero Background Section */
+        .hero-background {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        /* Decorative shapes */
+        .shape-orange {
+            position: absolute;
+            bottom: 10%;
+            right: 15%;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #FF9B50 0%, #FFB570 100%);
+            border-radius: 50% 40% 60% 40%;
+            z-index: 1;
+            opacity: 0.8;
+        }
+
+        .shape-green {
+            position: absolute;
+            bottom: 15%;
+            right: 25%;
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, #90EE90 0%, #98FB98 100%);
+            border-radius: 40% 60% 40% 60%;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .shape-blue {
+            position: absolute;
+            top: 20%;
+            right: 10%;
+            width: 60px;
+            height: 60px;
+            background: #667eea;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Airplane path */
+        .airplane-path {
+            position: absolute;
+            top: 15%;
+            right: 30%;
+            width: 200px;
+            height: 150px;
+            border: 3px dashed #667eea;
+            border-top: none;
+            border-left: none;
+            border-radius: 0 0 100px 0;
+            opacity: 0.5;
+        }
+
+        .airplane {
+            position: absolute;
+            top: 10%;
+            right: 35%;
+            font-size: 2rem;
+            transform: rotate(-45deg);
+        }
+
+        /* Tourist Image */
+        .hero-image {
+            position: absolute;
+            right: -50px;
+            bottom: 0;
+            width: 45%;
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Signup Form Container */
+        .signup-container {
+            position: relative;
+            z-index: 5;
+            max-width: 450px;
+            margin-left: 5rem;
+        }
+
+        .signup-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        .signup-header {
+            margin-bottom: 2rem;
+        }
+
+        .signup-header h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-header p {
+            color: #777;
+            font-size: 1rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #FF9B50;
+            box-shadow: 0 0 0 0.2rem rgba(255, 155, 80, 0.15);
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #FF9B50 0%, #FFB570 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 155, 80, 0.3);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .text-danger {
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .signup-container {
+                margin-left: 2rem;
+            }
+            .hero-image {
+                right: -100px;
+                width: 50%;
+                opacity: 0.5;
+            }
+            .shape-orange, .shape-green {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .signup-container {
+                margin: 0 auto;
+                padding: 2rem;
+            }
+            .hero-image {
+                display: none;
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-brand">✈️ SmartTrav</div>
+            <div class="nav-links d-none d-md-flex">
+                <a href="#about">About</a>
+                <a href="#service">Service</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#contact">Contact</a>
             </div>
-          {% endif %}
-          <div class="d-grid mt-4">
-            <button type="submit" class="btn btn-primary btn-lg shadow">Sign Up</button>
-          </div>
-        </form>
-        <div class="text-center mt-3">
-          <p class="text-light">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none text-warning fw-bold">Login here</a></p>
+            <div>
+                <a href="{% url 'login' %}" class="btn-login-nav">Log in</a>
+                <a href="{% url 'signup' %}" class="btn-signup-nav">Sign up</a>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
+    </nav>
+
+    <!-- Hero Background with Signup Form -->
+    <section class="hero-background">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="signup-container">
+                        <div class="signup-card">
+                            <div class="signup-header">
+                                <h2>Create Account</h2>
+                                <p>Sign up to start your journey</p>
+                            </div>
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="id_username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" name="username" id="id_username"
+                                           placeholder="Choose a username" required>
+                                    {% if form.username.errors %}
+                                        <div class="text-danger">{{ form.username.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" id="id_email"
+                                           placeholder="Enter your email address" required>
+                                    {% if form.email.errors %}
+                                        <div class="text-danger">{{ form.email.errors }}</div>
+                                    <small class="form-text">150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_password1" class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="password1" id="id_password1"
+                                           placeholder="Create a password" required>
+                                    {% if form.password1.errors %}
+                                        <div class="text-danger">{{ form.password1.errors }}</div>
+                                    {% endif %}
+                                    <small class="form-text">Must contain at least 8 characters.</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_password2" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" name="password2" id="id_password2"
+                                           placeholder="Confirm your password" required>
+                                    {% if form.password2.errors %}
+                                        <div class="text-danger">{{ form.password2.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {{ form.non_field_errors }}
+                                    </div>
+                                {% endif %}
+
+                                <button type="submit" class="btn-signup">Sign Up</button>
+                            </form>
+
+                            <div class="login-link">
+                                Already have an account? <a href="{% url 'login' %}">Login here</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div class="airplane-path"></div>
+        <div class="airplane">✈️</div>
+        <div class="shape-blue"></div>
+        <div class="shape-green"></div>
+        <div class="shape-orange"></div>
+
+        <!-- Hero Image (Tourist with luggage) -->
+        <div class="hero-image">
+            <div style="font-size: 18rem; text-align: center;">🏖️</div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
