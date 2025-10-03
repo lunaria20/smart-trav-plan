@@ -144,8 +144,16 @@ def logout_view(request):
     messages.success(request, "You have been logged out successfully.")
     return redirect('login')
 
+def about_view(request):
+    return render(request, 'SmartTrav/accounts/about.html')
+
+def service_view(request):
+    return render(request, 'SmartTrav/accounts/service.html')
 
 class CustomLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
         messages.success(request, "You have been logged out successfully.")
         return super().dispatch(request, *args, **kwargs)
+
+
+
