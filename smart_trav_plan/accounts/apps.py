@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
-class SmartTravConfig(AppConfig):
+class AccountsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'smart_trav_plan.SmartTrav'
+    name = 'smart_trav_plan.accounts'

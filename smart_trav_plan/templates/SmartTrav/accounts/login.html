@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartTrav 🌴✨</title>
+    <title>Login - SmartTrav</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         * {
@@ -16,6 +16,7 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
+            min-height: 100vh;
         }
 
         /* Navigation */
@@ -23,6 +24,8 @@
             background: white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 1rem 2rem;
+            position: relative;
+            z-index: 10;
         }
 
         .navbar-brand {
@@ -43,7 +46,7 @@
             color: #667eea;
         }
 
-        .btn-login {
+        .btn-login-nav {
             padding: 0.5rem 1.5rem;
             border: 2px solid #667eea;
             color: #667eea;
@@ -53,12 +56,12 @@
             margin-right: 1rem;
         }
 
-        .btn-login:hover {
+        .btn-login-nav:hover {
             background: #667eea;
             color: white;
         }
 
-        .btn-signup {
+        .btn-signup-nav {
             padding: 0.5rem 1.5rem;
             background: #FF9B50;
             color: white;
@@ -67,50 +70,18 @@
             transition: all 0.3s;
         }
 
-        .btn-signup:hover {
+        .btn-signup-nav:hover {
             background: #ff8533;
         }
 
-        /* Hero Section */
-        .hero-section {
-            min-height: 90vh;
+        /* Hero Background Section */
+        .hero-background {
+            min-height: calc(100vh - 80px);
             display: flex;
             align-items: center;
             position: relative;
             overflow: hidden;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-
-        .hero-content {
-            max-width: 600px;
-            z-index: 2;
-            padding: 2rem;
-        }
-
-        .hero-content h1 {
-            font-size: 4rem;
-            font-weight: bold;
-            color: #2c3e50;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-content h1 span {
-            display: block;
-        }
-
-        .hero-image {
-            position: absolute;
-            right: -100px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 50%;
-            max-width: 700px;
-        }
-
-        .hero-image img {
-            width: 100%;
-            height: auto;
         }
 
         /* Decorative shapes */
@@ -171,126 +142,118 @@
             transform: rotate(-45deg);
         }
 
-        /* Feature boxes */
-        .features {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            margin-top: 2rem;
+        /* Tourist Image */
+        .hero-image {
+            position: absolute;
+            right: -50px;
+            bottom: 0;
+            width: 45%;
+            max-width: 600px;
+            z-index: 2;
         }
 
-        .feature-box {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.3s;
+        .hero-image img {
+            width: 100%;
+            height: auto;
         }
 
-        .feature-box:hover {
-            transform: translateX(10px);
+        /* Login Form Container */
+        .login-container {
+            position: relative;
+            z-index: 5;
+            max-width: 450px;
+            margin-left: 5rem;
         }
 
-        .feature-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .icon-orange { background: linear-gradient(135deg, #FF9B50, #FFB570); }
-        .icon-blue { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .icon-green { background: linear-gradient(135deg, #90EE90, #98FB98); }
-
-        .feature-text h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.3rem;
-        }
-
-        .feature-text p {
-            font-size: 0.9rem;
-            color: #777;
-            margin: 0;
-        }
-
-        /* Destinations Section */
-        .destinations-section {
-            padding: 4rem 2rem;
-            background: white;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 3rem;
-        }
-
-        .destinations-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .destination-card {
+        .login-card {
             background: white;
             border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
         }
 
-        .destination-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        .login-header {
+            margin-bottom: 2rem;
         }
 
-        .destination-card img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-        }
-
-        .destination-info {
-            padding: 1.5rem;
-        }
-
-        .destination-info h3 {
-            font-size: 1.3rem;
+        .login-header h2 {
+            font-size: 2rem;
+            font-weight: bold;
             color: #2c3e50;
             margin-bottom: 0.5rem;
         }
 
-        .destination-info p {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
+        .login-header p {
+            color: #777;
+            font-size: 1rem;
         }
 
-        .destination-location {
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+
+        .signup-link a {
             color: #667eea;
             font-weight: 600;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
 
         /* Responsive */
         @media (max-width: 992px) {
-            .hero-content h1 {
-                font-size: 3rem;
+            .login-container {
+                margin-left: 2rem;
             }
             .hero-image {
-                right: -150px;
-                width: 60%;
+                right: -100px;
+                width: 50%;
+                opacity: 0.5;
             }
             .shape-orange, .shape-green {
                 width: 300px;
@@ -299,12 +262,12 @@
         }
 
         @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
+            .login-container {
+                margin: 0 auto;
+                padding: 2rem;
             }
             .hero-image {
-                opacity: 0.3;
-                right: -200px;
+                display: none;
             }
             .nav-links {
                 display: none;
@@ -324,47 +287,57 @@
                 <a href="#contact">Contact</a>
             </div>
             <div>
-                <a href="{% url 'login' %}" class="btn-login">Log in</a>
-                <a href="{% url 'signup' %}" class="btn-signup">Sign up</a>
+                <a href="{% url 'login' %}" class="btn-login-nav">Log in</a>
+                <a href="{% url 'signup' %}" class="btn-signup-nav">Sign up</a>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
+    <!-- Hero Background with Login Form -->
+    <section class="hero-background">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6">
-                    <div class="hero-content">
-                        <h1>
-                            <span>Start your new</span>
-                            <span>Holiday</span>
-                        </h1>
-
-                        <!-- Features -->
-                        <div class="features">
-                            <div class="feature-box">
-                                <div class="feature-icon icon-orange">🏨</div>
-                                <div class="feature-text">
-                                    <h3>Resort Booking</h3>
-                                    <p>Easily book your dream resort</p>
-                                </div>
+                    <div class="login-container">
+                        <div class="login-card">
+                            <div class="login-header">
+                                <h2>Welcome Back!</h2>
+                                <p>Log in to continue your journey</p>
                             </div>
 
-                            <div class="feature-box">
-                                <div class="feature-icon icon-blue">🎫</div>
-                                <div class="feature-text">
-                                    <h3>Activity Tickets</h3>
-                                    <p>Book tickets to attractions</p>
-                                </div>
-                            </div>
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                        {{ message }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
 
-                            <div class="feature-box">
-                                <div class="feature-icon icon-green">📋</div>
-                                <div class="feature-text">
-                                    <h3>Tour Plan Service</h3>
-                                    <p>Easier for you to plan a trip</p>
+                            {% if error %}
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    ❌ {{ error }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>
+                            {% endif %}
+
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" name="username" id="username"
+                                           placeholder="Enter your username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" name="password" id="password"
+                                           placeholder="Enter your password" required>
+                                </div>
+                                <button type="submit" class="btn-login">Login</button>
+                            </form>
+
+                            <div class="signup-link">
+                                Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>
                             </div>
                         </div>
                     </div>
@@ -380,12 +353,10 @@
         <div class="shape-orange"></div>
 
         <!-- Hero Image (Tourist with luggage) -->
-        <div class="desca-image">
-            <div style="font-size: 20rem; text-align: center;">🏖️</div>
+        <div class="hero-image">
+            <div style="font-size: 18rem; text-align: center;">🏖️</div>
         </div>
     </section>
-
-    <!-- Destinations Section -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
