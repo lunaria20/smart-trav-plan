@@ -30,35 +30,22 @@
             color: #2c3e50;
         }
 
-        .navbar-brand img {
-            height: 40px;
-            border-radius: 8px;
-        }
-
         .user-section {
             display: flex;
             align-items: center;
             gap: 1rem;
         }
 
-        .user-email {
-            color: #555;
-            font-weight: 500;
-        }
-
-        .btn-dashboard {
-            padding: 0.5rem 1.5rem;
-            background: #667eea;
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            border: none;
-            border-radius: 25px;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .btn-dashboard:hover {
-            background: #5568d3;
-            color: white;
+            font-weight: bold;
         }
 
         .btn-logout {
@@ -75,119 +62,331 @@
             background: #c82333;
         }
 
-        /* Welcome Section */
-        .welcome-section {
-            text-align: center;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
+        /* Sidebar */
+        .dashboard-container {
+            display: flex;
+            gap: 2rem;
+            padding: 0 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        .welcome-section h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2c3e50;
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
             margin-bottom: 0.5rem;
         }
 
-        .welcome-section h4 {
-            font-size: 1.3rem;
-            color: #666;
-            font-weight: 400;
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #555;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
         }
 
-        /* Destination Cards */
-        .section-header {
-            padding: 0 2rem;
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
-        .section-header h4 {
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.5rem;
-            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-icon.green { background: linear-gradient(135deg, #90EE90, #98FB98); }
+        .stat-icon.orange { background: linear-gradient(135deg, #FF9B50, #FFB570); }
+        .stat-icon.purple { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
             color: #2c3e50;
         }
 
-        .destinations-grid {
+        .stat-label {
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .btn-primary {
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Itinerary Items */
+        .itinerary-list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            padding: 0 2rem;
-            margin-bottom: 3rem;
+            gap: 1rem;
+        }
+
+        .itinerary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .itinerary-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .itinerary-info h4 {
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+        }
+
+        .itinerary-info p {
+            margin: 0;
+            color: #777;
+            font-size: 0.9rem;
+        }
+
+        .itinerary-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-sm {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .btn-edit {
+            background: #ffc107;
+            color: #2c3e50;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Destination Grid */
+        .destination-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
         }
 
         .destination-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
 
         .destination-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
         }
 
-        .destination-card img {
+        .destination-image {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .destination-info {
-            padding: 1.5rem;
+            padding: 1rem;
         }
 
-        .destination-info h5 {
-            font-size: 1.2rem;
-            color: #2c3e50;
+        .destination-name {
+            font-size: 1.1rem;
             font-weight: 600;
+            color: #2c3e50;
             margin-bottom: 0.5rem;
         }
 
-        .destination-info p {
-            color: #666;
-            font-size: 0.95rem;
+        .destination-location {
+            color: #777;
+            font-size: 0.9rem;
             margin-bottom: 1rem;
         }
 
-        .btn-view-details {
-            padding: 0.5rem 1.5rem;
-            background: linear-gradient(135deg, #90EE90 0%, #98FB98 100%);
+        .btn-save {
+            width: 100%;
+            padding: 0.5rem;
+            background: linear-gradient(135deg, #90EE90, #98FB98);
             color: #2c3e50;
             border: none;
-            border-radius: 20px;
+            border-radius: 8px;
             font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             transition: all 0.3s;
         }
 
-        .btn-view-details:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(144, 238, 144, 0.4);
+        .form-control:focus {
+            border-color: #667eea;
+            outline: none;
         }
 
-        /* Footer Message */
-        .footer-msg {
+        /* Budget Tracker */
+        .expense-list {
+            margin-top: 1rem;
+        }
+
+        .expense-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .expense-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #667eea;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state {
             text-align: center;
-            padding: 2rem;
-            color: #666;
+            padding: 3rem;
+            color: #999;
         }
 
-        .footer-msg h5 {
-            font-size: 1.2rem;
-            font-weight: 500;
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .welcome-section h1 {
-                font-size: 2rem;
+        @media (max-width: 992px) {
+            .dashboard-container {
+                flex-direction: column;
             }
-            .welcome-section h4 {
-                font-size: 1.1rem;
-            }
-            .user-email {
-                display: none;
+            .sidebar {
+                width: 100%;
+                position: static;
             }
         }
     </style>
@@ -197,14 +396,11 @@
     <nav class="navbar">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="navbar-brand">
-                {% if logo_image %}
-                    <img src="{% static 'images/logo.jpg' %}" alt="SmartTrav">
-                {% endif %}
                 <span>✈️ SmartTrav</span>
             </div>
             <div class="user-section">
-                <span class="user-email">Hello, {{ user.username }}!</span>
-                <a href="{% url 'dashboard' %}" class="btn-dashboard">Dashboard</a>
+                <div class="user-avatar">{{ user.username|first|upper }}</div>
+                <span>{{ user.username }}</span>
                 <form method="post" action="{% url 'logout' %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn-logout">Logout</button>
@@ -213,66 +409,346 @@
         </div>
     </nav>
 
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-        <h1>Welcome to SmartTrav 🌴✨</h1>
-        <h4>Explore the best of Mactan, Lapu-Lapu City 🏝️</h4>
-    </div>
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="menu-link active" data-section="overview">📊 Overview</a></li>
+                <li><a href="#" class="menu-link" data-section="itineraries">📝 My Itineraries</a></li>
+                <li><a href="#" class="menu-link" data-section="destinations">🏝️ Destinations</a></li>
+                <li><a href="#" class="menu-link" data-section="saved">❤️ Saved Places</a></li>
+                <li><a href="#" class="menu-link" data-section="budget">💰 Budget Tracker</a></li>
+                <li><a href="#" class="menu-link" data-section="profile">👤 Profile</a></li>
+            </ul>
+        </aside>
 
-    <!-- Recommended Destinations -->
-    <div class="container-fluid">
-        <div class="section-header">
-            <h4>Recommended Destinations</h4>
-        </div>
-
-        <div class="destinations-grid">
-            <!-- Destination 1 -->
-            <div class="destination-card">
-                <img src="{% static 'images/mactan.jpg' %}" alt="Mactan Island Hopping">
-                <div class="destination-info">
-                    <h5>Mactan Island Hopping</h5>
-                    <p>Unwind, relax, and explore pristine islands!</p>
-                    <button class="btn-view-details">View Details</button>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Overview Section -->
+            <section id="overview" class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📝</div>
+                        <div class="stat-value">{{ itinerary_count|default:0 }}</div>
+                        <div class="stat-label">Total Itineraries</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">🏝️</div>
+                        <div class="stat-value">{{ saved_count|default:0 }}</div>
+                        <div class="stat-label">Saved Destinations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">💰</div>
+                        <div class="stat-value">₱{{ total_budget|default:0 }}</div>
+                        <div class="stat-label">Total Budget</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">📅</div>
+                        <div class="stat-value">{{ upcoming_trips|default:0 }}</div>
+                        <div class="stat-label">Upcoming Trips</div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Destination 2 -->
-            <div class="destination-card">
-                <img src="{% static 'images/lapulapu.jpg' %}" alt="Lapu-Lapu City Tour">
-                <div class="destination-info">
-                    <h5>Lapu-Lapu City Cultural Tour</h5>
-                    <p>Discover the city's rich history and heritage.</p>
-                    <button class="btn-view-details">View Details</button>
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Quick Actions</h3>
+                    </div>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="btn-primary" onclick="showSection('itineraries')">Create New Itinerary</button>
+                        <button class="btn-primary" onclick="showSection('destinations')">Browse Destinations</button>
+                        <button class="btn-primary" onclick="showSection('budget')">Track Expenses</button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Destination 3 -->
-            <div class="destination-card">
-                <img src="{% static 'images/resorts.jpg' %}" alt="Resort Getaway">
-                <div class="destination-info">
-                    <h5>Resort Getaway</h5>
-                    <p>Relax at world-class beachfront resorts.</p>
-                    <button class="btn-view-details">View Details</button>
+                <!-- Recent Itineraries -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Itineraries</h3>
+                        <button class="btn-primary" onclick="showSection('itineraries')">View All</button>
+                    </div>
+                    <div class="itinerary-list">
+                        {% for itinerary in recent_itineraries %}
+                        <div class="itinerary-item">
+                            <div class="itinerary-info">
+                                <h4>{{ itinerary.title }}</h4>
+                                <p>📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</p>
+                                <p>💰 Budget: ₱{{ itinerary.budget }}</p>
+                            </div>
+                            <div class="itinerary-actions">
+                                <button class="btn-sm btn-edit">Edit</button>
+                                <button class="btn-sm btn-delete">Delete</button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📝</div>
+                            <p>No itineraries yet. Create your first trip!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Destination 4 -->
-            <div class="destination-card">
-                <img src="{% static 'images/magellan.jpg' %}" alt="Magellan Shrine">
-                <div class="destination-info">
-                    <h5>Magellan Shrine</h5>
-                    <p>Historic landmark by the sea.</p>
-                    <button class="btn-view-details">View Details</button>
+            <!-- Itineraries Section -->
+            <section id="itineraries" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Itineraries</h3>
+                        <button class="btn-primary" onclick="toggleForm('itinerary-form')">+ New Itinerary</button>
+                    </div>
+
+                    <!-- Create Itinerary Form -->
+                    <div id="itinerary-form" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
+                        <form method="post" action="{% url 'create_itinerary' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="form-label">Trip Title</label>
+                                <input type="text" name="title" class="form-control" placeholder="e.g., Mactan Beach Getaway" required>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label class="form-label">Start Date</label>
+                                    <input type="date" name="start_date" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">End Date</label>
+                                    <input type="date" name="end_date" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Budget (₱)</label>
+                                <input type="number" name="budget" class="form-control" placeholder="10000" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Notes</label>
+                                <textarea name="notes" class="form-control" rows="3" placeholder="Any special notes..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Create Itinerary</button>
+                        </form>
+                    </div>
+
+                    <!-- Itinerary List -->
+                    <div class="itinerary-list">
+                        {% for itinerary in all_itineraries %}
+                        <div class="itinerary-item">
+                            <div class="itinerary-info">
+                                <h4>{{ itinerary.title }}</h4>
+                                <p>📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</p>
+                                <p>💰 Budget: ₱{{ itinerary.budget }}</p>
+                                {% if itinerary.notes %}
+                                <p>📌 {{ itinerary.notes }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="itinerary-actions">
+                                <button class="btn-sm btn-edit">View</button>
+                                <button class="btn-sm btn-delete">Delete</button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📝</div>
+                            <p>No itineraries yet. Start planning your adventure!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- Footer Message -->
-        <div class="footer-msg">
-            <h5>🌍 Check back soon for more amazing destinations!</h5>
-        </div>
+            <!-- Destinations Section -->
+            <section id="destinations" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Explore Destinations</h3>
+                        <input type="text" class="form-control" style="max-width: 300px;" placeholder="Search destinations...">
+                    </div>
+
+                    <div class="destination-grid">
+                        {% for destination in destinations %}
+                        <div class="destination-card">
+                            {% if destination.image %}
+                            <img src="{{ destination.image.url }}" alt="{{ destination.name }}" class="destination-image">
+                            {% else %}
+                            <div class="destination-image"></div>
+                            {% endif %}
+                            <div class="destination-info">
+                                <div class="destination-name">{{ destination.name }}</div>
+                                <div class="destination-location">📍 {{ destination.location }}</div>
+                                <p style="color: #666; font-size: 0.9rem;">{{ destination.description|truncatewords:15 }}</p>
+                                <button class="btn-save">❤️ Save Place</button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <div class="empty-state-icon">🏝️</div>
+                            <p>No destinations available yet.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Saved Destinations Section -->
+            <section id="saved" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Saved Places</h3>
+                    </div>
+
+                    <div class="destination-grid">
+                        {% for saved in saved_destinations %}
+                        <div class="destination-card">
+                            {% if saved.destination.image %}
+                            <img src="{{ saved.destination.image.url }}" alt="{{ saved.destination.name }}" class="destination-image">
+                            {% else %}
+                            <div class="destination-image"></div>
+                            {% endif %}
+                            <div class="destination-info">
+                                <div class="destination-name">{{ saved.destination.name }}</div>
+                                <div class="destination-location">📍 {{ saved.destination.location }}</div>
+                                <p style="color: #666; font-size: 0.9rem;">{{ saved.destination.description|truncatewords:15 }}</p>
+                                <button class="btn-save" style="background: #dc3545; color: white;">Remove</button>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state" style="grid-column: 1/-1;">
+                            <div class="empty-state-icon">❤️</div>
+                            <p>No saved destinations yet. Start exploring!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Budget Tracker Section -->
+            <section id="budget" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Budget Tracker</h3>
+                        <button class="btn-primary" onclick="toggleForm('expense-form')">+ Add Expense</button>
+                    </div>
+
+                    <!-- Add Expense Form -->
+                    <div id="expense-form" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
+                        <form method="post" action="{% url 'add_expense' %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label class="form-label">Select Itinerary</label>
+                                <select name="itinerary" class="form-control" required>
+                                    <option value="">Choose a trip...</option>
+                                    {% for itinerary in all_itineraries %}
+                                    <option value="{{ itinerary.id }}">{{ itinerary.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div class="form-group">
+                                    <label class="form-label">Category</label>
+                                    <select name="category" class="form-control" required>
+                                        <option value="transport">Transportation</option>
+                                        <option value="lodging">Lodging</option>
+                                        <option value="food">Food & Drinks</option>
+                                        <option value="activity">Activities</option>
+                                        <option value="shopping">Shopping</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount (₱)</label>
+                                    <input type="number" name="amount" class="form-control" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <input type="text" name="description" class="form-control" placeholder="e.g., Taxi to resort" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Date</label>
+                                <input type="date" name="date" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn-primary">Add Expense</button>
+                        </form>
+                    </div>
+
+                    <!-- Expenses List -->
+                    <div class="expense-list">
+                        {% for expense in expenses %}
+                        <div class="expense-item">
+                            <div>
+                                <span class="expense-category">{{ expense.get_category_display }}</span>
+                                <div style="font-weight: 600; color: #2c3e50;">{{ expense.description }}</div>
+                                <small style="color: #777;">{{ expense.date }} - {{ expense.itinerary.title }}</small>
+                            </div>
+                            <div style="font-size: 1.2rem; font-weight: bold; color: #dc3545;">₱{{ expense.amount }}</div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💰</div>
+                            <p>No expenses tracked yet.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Section -->
+            <section id="profile" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Profile</h3>
+                    </div>
+                    <form method="post" action="{% url 'update_profile' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" value="{{ user.username }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ user.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                        </div>
+                        <button type="submit" class="btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navigation between sections
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const section = this.getAttribute('data-section');
+                showSection(section);
+
+                // Update active state
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function toggleForm(formId) {
+            const form = document.getElementById(formId);
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 </body>
 </html>
