@@ -1,0 +1,300 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - SmartTrav</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .nav-links a {
+            margin: 0 1rem;
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #667eea;
+        }
+
+        .btn-login {
+            padding: 0.5rem 1.5rem;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-right: 1rem;
+        }
+
+        .btn-signup {
+            padding: 0.5rem 1.5rem;
+            background: #FF9B50;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .hero-section {
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .service-card h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+        }
+
+        .service-features li {
+            padding: 0.5rem 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .service-features li:before {
+            content: "✓";
+            color: #90EE90;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .cta-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            margin: 3rem 0;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .cta-section h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-cta {
+            padding: 1rem 3rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container-fluid">
+            <div class="navbar-brand">✈️ SmartTrav</div>
+            <div class="nav-links d-none d-md-flex">
+                <a href="/accounts/about/" class="btn-about">About</a>
+                <a href="/accounts/service" class="btn-service">Service</a>
+                <a href="#">Pricing</a>
+                <a href="#">Contact</a>
+            </div>
+            <div>
+                <a href="{% url 'login' %}" class="btn-login">Log in</a>
+                <a href="{% url 'signup' %}" class="btn-signup">Sign up</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <h1>Our Services</h1>
+        <p>Comprehensive travel planning tools designed to make your Mactan trip unforgettable</p>
+    </section>
+
+    <div class="content-section">
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">📝</div>
+                <h3>Itinerary Builder</h3>
+                <p>Create personalized day-by-day travel itineraries with our intuitive planning tool.</p>
+                <ul class="service-features">
+                    <li>Drag-and-drop interface</li>
+                    <li>Add multiple destinations per day</li>
+                    <li>Set specific times and durations</li>
+                    <li>Add personal notes and reminders</li>
+                    <li>Share itineraries with travel companions</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">💰</div>
+                <h3>Budget Calculator</h3>
+                <p>Keep track of your travel expenses and stay within budget effortlessly.</p>
+                <ul class="service-features">
+                    <li>Track expenses by category</li>
+                    <li>Real-time budget monitoring</li>
+                    <li>Currency conversion</li>
+                    <li>Expense reports and analytics</li>
+                    <li>Budget alerts and notifications</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🏝️</div>
+                <h3>Destination Discovery</h3>
+                <p>Explore curated recommendations for resorts, restaurants, and attractions in Mactan.</p>
+                <ul class="service-features">
+                    <li>50+ verified destinations</li>
+                    <li>Detailed descriptions and photos</li>
+                    <li>Filter by category and price range</li>
+                    <li>User reviews and ratings</li>
+                    <li>Save favorites for later</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📊</div>
+                <h3>Trip Dashboard</h3>
+                <p>Manage all your trips from a centralized, easy-to-use dashboard.</p>
+                <ul class="service-features">
+                    <li>View upcoming and past trips</li>
+                    <li>Quick access to itineraries</li>
+                    <li>Budget summaries at a glance</li>
+                    <li>Trip statistics and insights</li>
+                    <li>Easy trip editing and updates</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">❤️</div>
+                <h3>Saved Favorites</h3>
+                <p>Bookmark your favorite destinations and access them anytime.</p>
+                <ul class="service-features">
+                    <li>Create custom collections</li>
+                    <li>Quick access to saved places</li>
+                    <li>Add personal notes to favorites</li>
+                    <li>Share collections with friends</li>
+                    <li>Organize by trip or category</li>
+                </ul>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🗺️</div>
+                <h3>Local Insights</h3>
+                <p>Get insider tips and local knowledge to enhance your travel experience.</p>
+                <ul class="service-features">
+                    <li>Best times to visit attractions</li>
+                    <li>Hidden gems and local favorites</li>
+                    <li>Cultural tips and etiquette</li>
+                    <li>Transportation recommendations</li>
+                    <li>Safety and travel advisories</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Ready to Start Planning?</h2>
+            <p>Join thousands of travelers who trust SmartTrav for their Mactan adventures</p>
+            <a href="{% url 'signup' %}" class="btn-cta">Get Started Free</a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
