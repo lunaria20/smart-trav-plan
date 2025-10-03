@@ -40,16 +40,53 @@ class CustomUserCreationForm(UserCreationForm):
 
 def login_view(request):
     if request.method == "POST":
-        username = request.POST.get("username")
+        input_value = request.POST.get("email", "").strip().lower()  # Normalize: strip spaces, lowercase
         password = request.POST.get("password")
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+
+        # Debug prints (remove after fixing)
+        print(f"DEBUG: Input value: '{input_value}'")
+        print(f"DEBUG: Password length: {len(password) if password else 0}")
+
+        user = None
+
+        # Check if input looks like an email (contains '@')
+        if '@' in input_value:
+            # Try email query first (case-insensitive)
+            email_users = User.objects.filter(email__iexact=input_value)
+            print(f"DEBUG: Email query found {email_users.count()} users")
+            if email_users.exists():
+                user = email_users.first()
+                print(f"DEBUG: Found user by email: {user.username} (email: {user.email})")
+
+        # If no user by email, fallback to username query (for your "accepts username" case)
+        if not user:
+            username_users = User.objects.filter(username__iexact=input_value)
+            print(f"DEBUG: Username fallback query found {username_users.count()} users")
+            if username_users.exists():
+                user = username_users.first()
+                print(f"DEBUG: Found user by username: {user.username} (email: {user.email})")
+            else:
+                # Also try standard authenticate (in case it's treated as username)
+                user = authenticate(request, username=input_value, password=password)
+                if user:
+                    print(f"DEBUG: Authenticated by standard method: {user.username}")
+
+        # Check password if user found
+        if user and user.check_password(password):
             login(request, user)
+            messages.success(request, "Login successful! Welcome back.")
+            print(f"DEBUG: Login successful for user: {user.username}")
             return redirect("dashboard")
         else:
+            print(f"DEBUG: Password check failed for user: {user.username if user else 'None'}")
             messages.error(request, "Invalid credentials. Please try again.")
             return redirect('login')
-    return render(request, 'SmartTrav/accounts/login.html')
+
+        # If no user at all
+        messages.error(request, "Invalid credentials. Please try again.")
+        return redirect('login')
+
+    return render(request, 'SmartTrav/accounts/login.html')  # Adjust path if your template is elsewhere
 
 
 def signup_view(request):
