@@ -77,8 +77,9 @@ dmypy.json
 local_settings.py
 
 # Ignore everything in media/
-media/*
+smart-trav-plan/media/*
 
 # But keep the .gitkeep file
-!media/.gitkeep
-
+!smart-trav-plan/media/.gitkeep
+!smart-trav-plan/media/*/
+!smart-trav-plan/media/*/.gitkeep
