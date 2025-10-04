@@ -37,6 +37,18 @@ class Itinerary(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class ItineraryDestination(models.Model):
+    itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE)
+    destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('itinerary', 'destination')
+        ordering = ['added_at']
+
+    def __str__(self):
+        return f"{self.destination.name} in {self.itinerary.title}"
 
 class SavedDestination(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_destinations')
