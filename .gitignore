@@ -81,4 +81,5 @@ media/*
 
 # But keep the .gitkeep file
 !media/.gitkeep
-
+!media/*/
+!media/*/.gitkeep
