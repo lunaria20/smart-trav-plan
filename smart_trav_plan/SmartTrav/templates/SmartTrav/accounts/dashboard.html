@@ -13,7 +13,6 @@
             min-height: 100vh;
         }
 
-        /* Navbar */
         .navbar {
             background: white;
             padding: 1rem 2rem;
@@ -62,7 +61,6 @@
             background: #c82333;
         }
 
-        /* Sidebar */
         .dashboard-container {
             display: flex;
             gap: 2rem;
@@ -108,7 +106,6 @@
             color: white;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
         }
@@ -121,7 +118,6 @@
             display: block;
         }
 
-        /* Stats Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -168,7 +164,6 @@
             font-size: 0.9rem;
         }
 
-        /* Cards */
         .card {
             background: white;
             border-radius: 15px;
@@ -208,7 +203,35 @@
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        /* Itinerary Items */
+        /* Filter Chips */
+        .filter-controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1.25rem;
+            background: #f0f0f0;
+            border: 2px solid transparent;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .filter-chip:hover {
+            background: #e0e0e0;
+        }
+
+        .filter-chip.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
         .itinerary-list {
             display: grid;
             gap: 1rem;
@@ -265,7 +288,6 @@
             color: white;
         }
 
-        /* Destination Grid */
         .destination-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -319,7 +341,131 @@
             cursor: pointer;
         }
 
-        /* Forms */
+        .btn-add-to-trip {
+            width: 100%;
+            padding: 0.5rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .btn-add-to-trip:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .trip-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .trip-option {
+            padding: 1rem;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .trip-option:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+
+        .trip-option-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .trip-option-date {
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
         .form-group {
             margin-bottom: 1rem;
         }
@@ -344,7 +490,6 @@
             outline: none;
         }
 
-        /* Budget Tracker */
         .expense-list {
             margin-top: 1rem;
         }
@@ -368,17 +513,6 @@
             margin-bottom: 0.5rem;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #999;
-        }
-
-        .empty-state-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
         /* Responsive */
         @media (max-width: 992px) {
             .dashboard-container {
@@ -392,7 +526,6 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <nav class="navbar">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="navbar-brand">
@@ -409,9 +542,7 @@
         </div>
     </nav>
 
-    <!-- Dashboard Container -->
     <div class="dashboard-container">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <ul class="sidebar-menu">
                 <li><a href="#" class="menu-link active" data-section="overview">📊 Overview</a></li>
@@ -423,9 +554,7 @@
             </ul>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Overview Section -->
             <section id="overview" class="content-section active">
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -450,7 +579,6 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Quick Actions</h3>
@@ -462,7 +590,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Itineraries -->
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Recent Itineraries</h3>
@@ -491,7 +618,6 @@
                 </div>
             </section>
 
-            <!-- Itineraries Section -->
             <section id="itineraries" class="content-section">
                 <div class="card">
                     <div class="card-header">
@@ -499,7 +625,6 @@
                         <button class="btn-primary" onclick="toggleForm('itinerary-form')">+ New Itinerary</button>
                     </div>
 
-                    <!-- Create Itinerary Form -->
                     <div id="itinerary-form" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
                         <form method="post" action="{% url 'create_itinerary' %}">
                             {% csrf_token %}
@@ -514,7 +639,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">End Date</label>
-                                    <input type="date" name="end_date" class="form-control" required>
+                                    <input type="date" name="form-control" required>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -529,7 +654,6 @@
                         </form>
                     </div>
 
-                    <!-- Itinerary List -->
                     <div class="itinerary-list">
                         {% for itinerary in all_itineraries %}
                         <div class="itinerary-item">
@@ -556,12 +680,21 @@
                 </div>
             </section>
 
-            <!-- Destinations Section -->
             <section id="destinations" class="content-section">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Explore Destinations</h3>
                         <input type="text" class="form-control" style="max-width: 300px;" placeholder="Search destinations...">
+                    </div>
+
+                    <!-- Filter Controls -->
+                    <div class="filter-controls">
+                        <a href="?category=" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
+                        <a href="?category=resort" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
+                        <a href="?category=restaurant" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
+                        <a href="?category=attraction" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
+                        <a href="?category=beach" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
+                        <a href="?category=historical" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical Sites</a>
                     </div>
 
                     <div class="destination-grid">
@@ -577,6 +710,7 @@
                                 <div class="destination-location">📍 {{ destination.location }}</div>
                                 <p style="color: #666; font-size: 0.9rem;">{{ destination.description|truncatewords:15 }}</p>
                                 <button class="btn-save">❤️ Save Place</button>
+                                <button class="btn-add-to-trip" onclick="openTripModal({{ destination.id }}, '{{ destination.name }}')">➕ Add to Trip</button>
                             </div>
                         </div>
                         {% empty %}
@@ -589,7 +723,6 @@
                 </div>
             </section>
 
-            <!-- Saved Destinations Section -->
             <section id="saved" class="content-section">
                 <div class="card">
                     <div class="card-header">
@@ -621,7 +754,6 @@
                 </div>
             </section>
 
-            <!-- Budget Tracker Section -->
             <section id="budget" class="content-section">
                 <div class="card">
                     <div class="card-header">
@@ -629,7 +761,6 @@
                         <button class="btn-primary" onclick="toggleForm('expense-form')">+ Add Expense</button>
                     </div>
 
-                    <!-- Add Expense Form -->
                     <div id="expense-form" style="display: none; margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 10px;">
                         <form method="post" action="{% url 'add_expense' %}">
                             {% csrf_token %}
@@ -671,7 +802,6 @@
                         </form>
                     </div>
 
-                    <!-- Expenses List -->
                     <div class="expense-list">
                         {% for expense in expenses %}
                         <div class="expense-item">
@@ -692,7 +822,6 @@
                 </div>
             </section>
 
-            <!-- Profile Section -->
             <section id="profile" class="content-section">
                 <div class="card">
                     <div class="card-header">
@@ -723,16 +852,51 @@
         </main>
     </div>
 
+    <!-- Add to Trip Modal -->
+    <div id="tripModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add to Trip</h3>
+                <button class="close-modal" onclick="closeTripModal()">&times;</button>
+            </div>
+            <p style="color: #666; margin-bottom: 1.5rem;">Select a trip to add <strong id="destinationName"></strong></p>
+
+            <form method="post" action="{% url 'add_destination_to_trip' %}" id="addToTripForm">
+                {% csrf_token %}
+                <input type="hidden" name="destination_id" id="destinationId">
+
+                <div class="trip-list">
+                    {% for itinerary in all_itineraries %}
+                    <label class="trip-option">
+                        <input type="radio" name="itinerary_id" value="{{ itinerary.id }}" required style="margin-right: 0.5rem;">
+                        <div style="display: inline-block;">
+                            <div class="trip-option-title">{{ itinerary.title }}</div>
+                            <div class="trip-option-date">📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</div>
+                        </div>
+                    </label>
+                    {% empty %}
+                    <div class="empty-state">
+                        <p>You don't have any trips yet. Create a trip first!</p>
+                        <button type="button" class="btn-primary" onclick="closeTripModal(); showSection('itineraries'); toggleForm('itinerary-form');">Create Trip</button>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if all_itineraries %}
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">Add to Selected Trip</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Navigation between sections
         document.querySelectorAll('.menu-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 const section = this.getAttribute('data-section');
                 showSection(section);
 
-                // Update active state
                 document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
                 this.classList.add('active');
             });
@@ -749,6 +913,23 @@
             const form = document.getElementById(formId);
             form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
+
+        function openTripModal(destinationId, destinationName) {
+            document.getElementById('destinationId').value = destinationId;
+            document.getElementById('destinationName').textContent = destinationName;
+            document.getElementById('tripModal').classList.add('show');
+        }
+
+        function closeTripModal() {
+            document.getElementById('tripModal').classList.remove('show');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('tripModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTripModal();
+            }
+        });
     </script>
 </body>
 </html>

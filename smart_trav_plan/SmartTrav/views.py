@@ -164,6 +164,26 @@ def add_expense(request):
     return redirect('dashboard')
 
 
+def add_destination_to_trip(request):
+    if request.method == 'POST':
+        destination_id = request.POST.get('destination_id')
+        itinerary_id = request.POST.get('itinerary_id')
+
+        destination = get_object_or_404(Destination, id=destination_id)
+        itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
+
+        # Check if already added
+        if ItineraryDestination.objects.filter(itinerary=itinerary, destination=destination).exists():
+            messages.warning(request, f'{destination.name} is already in {itinerary.title}')
+        else:
+            ItineraryDestination.objects.create(
+                itinerary=itinerary,
+                destination=destination
+            )
+            messages.success(request, f'{destination.name} added to {itinerary.title}!')
+
+    return redirect('dashboard')
+
 @login_required
 def update_profile(request):
     if request.method == 'POST':
