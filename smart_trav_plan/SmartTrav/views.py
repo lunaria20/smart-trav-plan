@@ -185,6 +185,25 @@ def add_destination_to_trip(request):
 
     return redirect('dashboard')
 
+
+@login_required
+@never_cache
+def save_destination(request, destination_id):
+    if request.method == 'POST':
+        destination = get_object_or_404(Destination, id=destination_id)
+
+        saved, created = SavedDestination.objects.get_or_create(
+            user=request.user,
+            destination=destination
+        )
+
+        if created:
+            messages.success(request, f'{destination.name} saved to your favorites!')
+        else:
+            messages.info(request, f'{destination.name} is already in your favorites.')
+
+    return redirect('dashboard')
+
 @never_cache
 @login_required
 def update_profile(request):

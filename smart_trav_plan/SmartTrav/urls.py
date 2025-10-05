@@ -38,6 +38,8 @@ urlpatterns = [
     path('about/', views.about_view, name='about'),
     path('service/', views.service_view, name='service'),
 
+    path('destination/save/<int:destination_id>/', views.save_destination, name='save_destination'),
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
