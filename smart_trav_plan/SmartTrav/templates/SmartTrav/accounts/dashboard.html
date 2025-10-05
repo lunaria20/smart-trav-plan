@@ -639,7 +639,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">End Date</label>
-                                    <input type="date" name="form-control" required>
+                                    <input type="date" name="end_date" class="form-control" required>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -709,7 +709,10 @@
                                 <div class="destination-name">{{ destination.name }}</div>
                                 <div class="destination-location">📍 {{ destination.location }}</div>
                                 <p style="color: #666; font-size: 0.9rem;">{{ destination.description|truncatewords:15 }}</p>
-                                <button class="btn-save">❤️ Save Place</button>
+                                <form method="post" action="{% url 'save_destination' destination.id %}" style="margin: 0;">
+                            {% csrf_token %}
+                                <button type="submit" class="btn-save">❤️ Save Place</button>
+                                </form>
                                 <button class="btn-add-to-trip" onclick="openTripModal({{ destination.id }}, '{{ destination.name }}')">➕ Add to Trip</button>
                             </div>
                         </div>
@@ -776,7 +779,7 @@
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                                 <div class="form-group">
                                     <label class="form-label">Category</label>
-                                    <select name="category" class="form-control" required>
+                                    <select name="category" class="form-select" required>
                                         <option value="transport">Transportation</option>
                                         <option value="lodging">Lodging</option>
                                         <option value="food">Food & Drinks</option>
@@ -787,7 +790,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Amount (₱)</label>
-                                    <input type="number" name="amount" class="form-control" step="0.01" required>
+                                    <input type="number" name="amount" class="form-control" step="100" required>
                                 </div>
                             </div>
                             <div class="form-group">
