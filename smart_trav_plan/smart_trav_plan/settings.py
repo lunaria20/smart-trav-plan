@@ -95,9 +95,9 @@ STATICFILES_DIRS = [BASE_DIR / "SmartTrav" / "static"]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Authentication redirects
-LOGIN_URL = '/smart_trav_plan/login/'
-LOGIN_REDIRECT_URL = '/smart_trav_plan/dashboard/'
-LOGOUT_REDIRECT_URL = '/smart_trav_plan/login/'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 # Message tags
 MESSAGE_TAGS = {

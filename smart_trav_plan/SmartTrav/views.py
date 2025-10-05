@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
 from datetime import date
+from django.views.decorators.cache import never_cache
 
 # Import your models (make sure these exist in your models.py)
 from .models import Itinerary, Destination, SavedDestination, Expense
@@ -101,7 +102,7 @@ def signup_view(request):
         form = CustomUserCreationForm()
     return render(request, 'SmartTrav/accounts/signup.html', {'form': form})
 
-
+@never_cache
 @login_required
 def dashboard_view(request):
     # Get user's data
@@ -133,7 +134,7 @@ def dashboard_view(request):
 
     return render(request, 'SmartTrav/accounts/dashboard.html', context)
 
-
+@never_cache
 @login_required
 def create_itinerary(request):
     if request.method == 'POST':
@@ -148,7 +149,7 @@ def create_itinerary(request):
         messages.success(request, 'Itinerary created successfully!')
     return redirect('dashboard')
 
-
+@never_cache
 @login_required
 def add_expense(request):
     if request.method == 'POST':
@@ -184,6 +185,7 @@ def add_destination_to_trip(request):
 
     return redirect('dashboard')
 
+@never_cache
 @login_required
 def update_profile(request):
     if request.method == 'POST':
