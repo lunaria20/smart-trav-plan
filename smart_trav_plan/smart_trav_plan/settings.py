@@ -19,7 +19,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "replace-this-with-a-secure-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -35,6 +35,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this line
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -103,3 +106,6 @@ LOGOUT_REDIRECT_URL = '/login/'
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
