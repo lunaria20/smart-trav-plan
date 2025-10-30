@@ -228,6 +228,9 @@ def about_view(request):
 def service_view(request):
     return render(request, 'SmartTrav/accounts/service.html')
 
+def contact_view(request):
+    return render(request, 'SmartTrav/accounts/contact.html')
+
 class CustomLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
         messages.success(request, "You have been logged out successfully.")
