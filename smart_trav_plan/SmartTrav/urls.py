@@ -37,6 +37,7 @@ urlpatterns = [
 
     path('about/', views.about_view, name='about'),
     path('service/', views.service_view, name='service'),
+    path('contact/', views.contact_view, name='contact'),
 
     path('destination/save/<int:destination_id>/', views.save_destination, name='save_destination'),
 
