@@ -6,9 +6,10 @@ from django.contrib.auth.views import LogoutView
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from datetime import date
 from django.views.decorators.cache import never_cache
+from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination
 
 # Import your models (make sure these exist in your models.py)
 from .models import Itinerary, Destination, SavedDestination, Expense
@@ -104,11 +105,25 @@ def signup_view(request):
 
 @never_cache
 @login_required
+@never_cache
+@login_required
+@never_cache
+@login_required
 def dashboard_view(request):
-    # Get user's data
-    user_itineraries = Itinerary.objects.filter(user=request.user)
+    # Get user's data with destination count annotation
+    user_itineraries = Itinerary.objects.filter(user=request.user).annotate(
+        destination_count=Count('itinerary_destinations')
+    )
+
     saved_destinations = SavedDestination.objects.filter(user=request.user)
-    all_destinations = Destination.objects.all()
+
+    # Filter destinations by category if provided
+    active_category = request.GET.get('category', '')
+    if active_category:
+        all_destinations = Destination.objects.filter(category=active_category)
+    else:
+        all_destinations = Destination.objects.all()
+
     expenses = Expense.objects.filter(itinerary__user=request.user)
 
     # Calculate stats
@@ -128,6 +143,7 @@ def dashboard_view(request):
         'recent_itineraries': recent_itineraries,
         'all_itineraries': user_itineraries,
         'destinations': all_destinations,
+        'active_category': active_category,  # For filter chips
         'saved_destinations': saved_destinations,
         'expenses': expenses,
     }
@@ -165,6 +181,8 @@ def add_expense(request):
     return redirect('dashboard')
 
 
+@login_required
+@never_cache
 def add_destination_to_trip(request):
     if request.method == 'POST':
         destination_id = request.POST.get('destination_id')
