@@ -38,7 +38,7 @@ class Itinerary(models.Model):
         ordering = ['-created_at']
 
 class ItineraryDestination(models.Model):
-    itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE)
+    itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name='itinerary_destinations')
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
     added_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
