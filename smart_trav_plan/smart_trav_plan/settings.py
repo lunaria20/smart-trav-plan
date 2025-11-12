@@ -105,6 +105,9 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
+# ADD THIS LINE - Use Cloudinary for media storage
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 # Use Cloudinary for media storage in production
 if DEBUG:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
