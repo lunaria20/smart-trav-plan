@@ -112,7 +112,6 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 if DEBUG:
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
-    # Set to a dummy value or None/Empty string to prevent any production filesystem interference
     MEDIA_ROOT = None
 
 # Default primary key field type
@@ -122,6 +121,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+CLOUDINARY_DOMAIN = 'res.cloudinary.com'
+
+# This whitelists the Cloudinary domain for images, styles, and scripts
+# (necessary due to the CSP error you saw in the console)
+
+CSP_DEFAULT_SRC = ("'self'", CLOUDINARY_DOMAIN)
+CSP_IMG_SRC = ("'self'", "data:", CLOUDINARY_DOMAIN, "*.cloudinary.com")
+CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
+
 
 # Message tags
 MESSAGE_TAGS = {
