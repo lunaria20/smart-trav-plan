@@ -110,9 +110,10 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Use Cloudinary for media storage in production
 if DEBUG:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    MEDIA_ROOT = BASE_DIR / 'media'
 else:
-    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
+    # Set to a dummy value or None/Empty string to prevent any production filesystem interference
+    MEDIA_ROOT = None
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
