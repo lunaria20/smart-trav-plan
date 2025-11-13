@@ -26,9 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',  # Add this BEFORE staticfiles
-    'cloudinary',  # Add this
     'django.contrib.staticfiles',
+    'storages',
 
     # custom apps
     'SmartTrav',
@@ -63,6 +62,11 @@ TEMPLATES = [
     },
 ]
 
+# Supabase Storage Configuration
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+SUPABASE_BUCKET = 'media'  # Create this bucket in Supabase
+
 WSGI_APPLICATION = 'smart_trav_plan.wsgi.application'
 
 # Database - Supabase Session Pooler
@@ -95,24 +99,18 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files configuration
-MEDIA_URL = 'https://res.cloudinary.com/' + os.environ.get('CLOUDINARY_CLOUD_NAME') + '/image/upload/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudinary configuration
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
-}
 
 # ADD THIS LINE - Use Cloudinary for media storage
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+DEFAULT_FILE_STORAGE = 'smart_trav_plan.storage_backends.SupabaseStorage'
 
 # Use Cloudinary for media storage in production
 if DEBUG:
-    MEDIA_ROOT = BASE_DIR / 'media'
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 else:
-    MEDIA_ROOT = None
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -121,17 +119,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
-
-CLOUDINARY_DOMAIN = 'res.cloudinary.com'
-
-# This whitelists the Cloudinary domain for images, styles, and scripts
-# (necessary due to the CSP error you saw in the console)
-
-CSP_DEFAULT_SRC = ("'self'", CLOUDINARY_DOMAIN)
-CSP_IMG_SRC = ("'self'", "data:", CLOUDINARY_DOMAIN, "*.cloudinary.com")
-CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
-
 
 # Message tags
 MESSAGE_TAGS = {
