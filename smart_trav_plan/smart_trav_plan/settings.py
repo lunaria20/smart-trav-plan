@@ -63,8 +63,8 @@ TEMPLATES = [
 ]
 
 # Supabase Storage Configuration
-SUPABASE_URL = os.environ.get('https://nvjhnntmhpwwkahpaunx.supabase.co')
-SUPABASE_KEY = os.environ.get('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52amhubnRtaHB3d2thaHBhdW54Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1OTIyOTYyNCwiZXhwIjoyMDc0ODA1NjI0fQ.R3PYt2t4ga_7CSJWHg1kwO4n-EozryKLO3WY8uUCSSE')
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
 SUPABASE_BUCKET = 'media'  # Create this bucket in Supabase
 
 WSGI_APPLICATION = 'smart_trav_plan.wsgi.application'
