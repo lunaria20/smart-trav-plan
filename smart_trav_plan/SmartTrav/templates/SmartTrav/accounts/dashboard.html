@@ -363,6 +363,15 @@
             transition: all 0.2s;
             font-size: 0.8125rem;
             font-weight: 600;
+            text-decoration: none; /* Added for View/Edit links */
+        }
+
+        .btn-view { /* Added a separate style for the view link */
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .btn-view:hover {
+            background: #bfdbfe;
         }
 
         .btn-edit {
@@ -851,17 +860,17 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Quick Actions</h3>
-                    </div>
-                    <div class="quick-actions">
-                        <button class="btn-primary" onclick="showSection('itineraries')">
-                            <span>➕</span> Create Trip
-                        </button>
-                        <button class="btn-secondary" onclick="showSection('destinations')">
-                            Explore Destinations
-                        </button>
-                        <button class="btn-secondary" onclick="showSection('budget')">
-                            Track Expenses
-                        </button>
+                        <div class="quick-actions">
+                            <button class="btn-primary" onclick="showSection('itineraries')">
+                                <span>➕</span> Create Trip
+                            </button>
+                            <button class="btn-secondary" onclick="showSection('destinations')">
+                                Explore Destinations
+                            </button>
+                            <button class="btn-secondary" onclick="showSection('budget')">
+                                Track Expenses
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -879,8 +888,12 @@
                                 <p>💰 Budget: ₱{{ itinerary.budget }}</p>
                             </div>
                             <div class="itinerary-actions">
-                                <button class="btn-sm btn-edit">Edit</button>
-                                <button class="btn-sm btn-delete">Delete</button>
+                                <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-sm btn-view">View</a>
+                                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-sm btn-edit">Edit</a>
+                                <form method="post" action="{% url 'delete_itinerary' itinerary.id %}" onsubmit="return confirm('Are you sure you want to delete this trip?');" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-sm btn-delete">Delete</button>
+                                </form>
                             </div>
                         </div>
                         {% empty %}
@@ -943,8 +956,12 @@
                                 {% endif %}
                             </div>
                             <div class="itinerary-actions">
-                                <button class="btn-sm btn-edit">View</button>
-                                <button class="btn-sm btn-delete">Delete</button>
+                                <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-sm btn-view">View</a>
+                                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-sm btn-edit">Edit</a>
+                                <form method="post" action="{% url 'delete_itinerary' itinerary.id %}" onsubmit="return confirm('Are you sure you want to delete this trip?');" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-sm btn-delete">Delete</button>
+                                </form>
                             </div>
                         </div>
                         {% empty %}
@@ -1020,7 +1037,11 @@
                                 <div class="destination-name">{{ saved.destination.name }}</div>
                                 <div class="destination-location">📍 {{ saved.destination.location }}</div>
                                 <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 1rem;">{{ saved.destination.description|truncatewords:15 }}</p>
-                                <button class="btn-save" style="background: #fee2e2; color: #991b1b; border-color: #fee2e2;">Remove</button>
+                                <form method="post" action="{% url 'remove_saved_destination' saved.destination.id %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-save" style="background: #fee2e2; color: #991b1b; border-color: #fee2e2;">Remove</button>
+                                </form>
+                                <button class="btn-add-to-trip" onclick="openTripModal({{ saved.destination.id }}, '{{ saved.destination.name }}')">➕ Add to Trip</button>
                             </div>
                         </div>
                         {% empty %}
@@ -1135,7 +1156,6 @@
         </main>
     </div>
 
-    <!-- Add to Trip Modal -->
     <div id="tripModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1190,6 +1210,9 @@
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
+            // Update sidebar active state when switching sections via quick actions
+            document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`.menu-link[data-section="${sectionId}"]`).classList.add('active');
         }
 
         function toggleForm(formId) {
@@ -1212,6 +1235,8 @@
                 closeTripModal();
             }
         });
+
+        // REMOVED: openEditModal and closeEditModal functions are removed
     </script>
 </body>
 </html>

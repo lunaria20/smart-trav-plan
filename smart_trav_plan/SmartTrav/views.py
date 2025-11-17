@@ -45,50 +45,34 @@ def login_view(request):
         input_value = request.POST.get("email", "").strip().lower()  # Normalize: strip spaces, lowercase
         password = request.POST.get("password")
 
-        # Debug prints (remove after fixing)
-        print(f"DEBUG: Input value: '{input_value}'")
-        print(f"DEBUG: Password length: {len(password) if password else 0}")
-
         user = None
 
         # Check if input looks like an email (contains '@')
         if '@' in input_value:
             # Try email query first (case-insensitive)
             email_users = User.objects.filter(email__iexact=input_value)
-            print(f"DEBUG: Email query found {email_users.count()} users")
             if email_users.exists():
                 user = email_users.first()
-                print(f"DEBUG: Found user by email: {user.username} (email: {user.email})")
 
-        # If no user by email, fallback to username query (for your "accepts username" case)
+        # Fallback to username query
         if not user:
             username_users = User.objects.filter(username__iexact=input_value)
-            print(f"DEBUG: Username fallback query found {username_users.count()} users")
             if username_users.exists():
                 user = username_users.first()
-                print(f"DEBUG: Found user by username: {user.username} (email: {user.email})")
             else:
                 # Also try standard authenticate (in case it's treated as username)
                 user = authenticate(request, username=input_value, password=password)
-                if user:
-                    print(f"DEBUG: Authenticated by standard method: {user.username}")
 
         # Check password if user found
         if user and user.check_password(password):
             login(request, user)
             messages.success(request, "Login successful! Welcome back.")
-            print(f"DEBUG: Login successful for user: {user.username}")
             return redirect("dashboard")
         else:
-            print(f"DEBUG: Password check failed for user: {user.username if user else 'None'}")
             messages.error(request, "Invalid credentials. Please try again.")
             return redirect('login')
 
-        # If no user at all
-        messages.error(request, "Invalid credentials. Please try again.")
-        return redirect('login')
-
-    return render(request, 'SmartTrav/accounts/login.html')  # Adjust path if your template is elsewhere
+    return render(request, 'SmartTrav/accounts/login.html')
 
 
 def signup_view(request):
@@ -103,10 +87,7 @@ def signup_view(request):
         form = CustomUserCreationForm()
     return render(request, 'SmartTrav/accounts/signup.html', {'form': form})
 
-@never_cache
-@login_required
-@never_cache
-@login_required
+
 @never_cache
 @login_required
 def dashboard_view(request):
@@ -150,6 +131,7 @@ def dashboard_view(request):
 
     return render(request, 'SmartTrav/accounts/dashboard.html', context)
 
+
 @never_cache
 @login_required
 def create_itinerary(request):
@@ -164,6 +146,41 @@ def create_itinerary(request):
         )
         messages.success(request, 'Itinerary created successfully!')
     return redirect('dashboard')
+
+
+# UPDATED: Itinerary Edit View (Uses dedicated edit_itinerary.html)
+@login_required
+def edit_itinerary(request, itinerary_id):
+    itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
+
+    if request.method == 'POST':
+        itinerary.title = request.POST.get('title')
+        itinerary.start_date = request.POST.get('start_date')
+        itinerary.end_date = request.POST.get('end_date')
+        itinerary.budget = request.POST.get('budget')
+        itinerary.notes = request.POST.get('notes', '')
+        itinerary.save()
+        messages.success(request, f'Itinerary "{itinerary.title}" updated successfully!')
+        return redirect('dashboard')
+
+    # Handle GET request: Render the edit page with existing data
+    context = {
+        'itinerary': itinerary
+    }
+    return render(request, 'SmartTrav/accounts/edit_itinerary.html', context)
+
+
+# Delete Itinerary View
+@login_required
+def delete_itinerary(request, itinerary_id):
+    itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
+
+    if request.method == 'POST':
+        title = itinerary.title
+        itinerary.delete()
+        messages.success(request, f'Itinerary "{title}" deleted successfully.')
+    return redirect('dashboard')
+
 
 @never_cache
 @login_required
@@ -222,6 +239,26 @@ def save_destination(request, destination_id):
 
     return redirect('dashboard')
 
+
+@login_required
+@never_cache
+def remove_saved_destination(request, destination_id):
+    if request.method == 'POST':
+        # Find the specific SavedDestination instance for the current user and destination
+        saved_destination = get_object_or_404(
+            SavedDestination,
+            user=request.user,
+            destination__id=destination_id
+        )
+        destination_name = saved_destination.destination.name
+
+        # Delete the saved instance
+        saved_destination.delete()
+        messages.success(request, f'"{destination_name}" removed from your saved places.')
+
+    return redirect('dashboard')
+
+
 @never_cache
 @login_required
 def update_profile(request):
@@ -235,24 +272,38 @@ def update_profile(request):
     return redirect('dashboard')
 
 
+@login_required
+def itinerary_detail(request, itinerary_id):
+    itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
+    # Fetch all destinations linked to the trip via the intermediary model
+    itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary).select_related('destination')
+
+    context = {
+        'itinerary': itinerary,
+        'itinerary_destinations': itinerary_destinations,
+    }
+    return render(request, 'SmartTrav/accounts/itinerary_detail.html', context)
+
+
 def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out successfully.")
     return redirect('login')
 
+
 def about_view(request):
     return render(request, 'SmartTrav/accounts/about.html')
+
 
 def service_view(request):
     return render(request, 'SmartTrav/accounts/service.html')
 
+
 def contact_view(request):
     return render(request, 'SmartTrav/accounts/contact.html')
+
 
 class CustomLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
         messages.success(request, "You have been logged out successfully.")
         return super().dispatch(request, *args, **kwargs)
-
-
-
