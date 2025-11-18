@@ -8,40 +8,170 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
-        .navbar { background: white; padding: 1rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-        .dashboard-container { max-width: 900px; margin: 0 auto; padding: 2rem; }
-        .card { background: white; border-radius: 12px; padding: 1.75rem; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; }
-        .card-title { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; }
-        .form-group { margin-bottom: 1.25rem; }
-        .form-label { font-weight: 600; color: #334155; margin-bottom: 0.5rem; display: block; font-size: 0.875rem; }
-        .form-control { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9375rem; }
-        .btn-primary { padding: 0.625rem 1.25rem; background: #6366f1; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: inline-block;}
-        .btn-primary:hover { background: #4f46e5; }
-        .btn-secondary { padding: 0.625rem 1.25rem; background: #f1f5f9; color: #475569; border: none; border-radius: 8px; font-weight: 600; font-size: 0.875rem; display: inline-block; transition: all 0.2s; }
-        .btn-secondary:hover { background: #e2e8f0; color: #1e293b; }
-        .alert { border: none; border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-left: 4px solid; }
-        .alert-success { background-color: #dcfce7; color: #166534; border-color: #16a34a; }
-        .brand-icon { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 18px;}
-        .user-avatar { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;}
+        /* Base Professional Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fa; /* Light, clean background */
+            color: #333333; /* Darker, more serious text */
+        }
+
+        /* Navigation Bar - Focus on structure and authority */
+        .navbar {
+            background: #ffffff;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e0e0e0; /* Subtle divider */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .navbar-brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e3a8a; /* Deep Navy Brand Color */
+            display: flex;
+            align-items: center;
+        }
+        .brand-icon {
+            background: #1e3a8a; /* Deep Navy */
+            color: white;
+            border-radius: 4px; /* Slightly sharper edges */
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            margin-right: 8px;
+        }
+        .user-section {
+            display: flex;
+            align-items: center;
+        }
+        .user-name {
+            font-size: 0.9375rem;
+            margin-right: 12px;
+            color: #555555;
+            font-weight: 500;
+        }
+        .user-avatar {
+            background: #10b981; /* Professional accent green */
+            color: white;
+            border-radius: 50%;
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Content Area */
+        .dashboard-container { max-width: 800px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+        /* Card - Clean, structured containers */
+        .card {
+            background: white;
+            border-radius: 8px; /* Subtle rounding */
+            padding: 2rem;
+            border: 1px solid #dcdcdc;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03); /* Minimal lift */
+        }
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1e3a8a; /* Use deep navy for main headings */
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0; /* Underline for emphasis */
+            padding-bottom: 1rem;
+        }
+        .card > p { /* Itinerary subtitle */
+            margin-bottom: 1.5rem;
+            color: #666666;
+            font-style: italic;
+        }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label {
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.9375rem; /* Slightly larger, more legible */
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cccccc; /* Clearer border */
+            border-radius: 6px;
+            font-size: 0.9375rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus {
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 1px #1e3a8a;
+        }
+
+        /* Buttons - Focus on clear action */
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background: #1e3a8a; /* Deep Navy Primary Button */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-block;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: #172b68; }
+
+        .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: #666666;
+            border: 1px solid #cccccc; /* Defined border */
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9375rem;
+            display: inline-block;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-secondary:hover { background: #f0f0f0; color: #333333; border-color: #bbbbbb; }
+
+        /* Alerts - Clear, but not overly dramatic */
+        .alert {
+            border: none;
+            border-radius: 6px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid; /* Stronger indicator */
+            font-size: 0.9375rem;
+        }
+        .alert-success {
+            background-color: #e6f7ed; /* Light green background */
+            color: #047857; /* Dark green text */
+            border-color: #10b981; /* Accent green border */
+        }
+
+        /* Layout Grid */
+        .date-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem; /* Increased gap for breathing room */
+        }
+
     </style>
 </head>
 <body>
     <nav class="navbar">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="navbar-brand">
-                <div class="brand-icon">✈️</div>
-                <span>SmartTrav</span>
-            </div>
+                <div class="brand-icon">💼</div> <span>SmartTrav Solutions</span> </div>
             <div class="user-section">
-                <span class="user-name">{{ user.username }}</span>
+                <span class="user-name">Welcome, {{ user.username }}</span>
                 <div class="user-avatar">{{ user.username|first|upper }}</div>
             </div>
         </div>
     </nav>
 
     {% if messages %}
-    <div class="dashboard-container" style="padding-top: 1rem; padding-bottom: 0;">
+    <div class="dashboard-container" style="padding-top: 1.5rem; padding-bottom: 0;">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}" role="alert">
             {{ message }}
@@ -52,16 +182,16 @@
 
     <div class="dashboard-container">
         <div class="card">
-            <h3 class="card-title">Edit Itinerary: {{ itinerary.title }}</h3>
-            <p style="margin-bottom: 1.5rem; color: #64748b;">Update the details for your trip from **{{ itinerary.start_date }}** to **{{ itinerary.end_date }}**.</p>
+            <h3 class="card-title">Project Itinerary: {{ itinerary.title }}</h3>
+            <p>Update the core parameters for the project trip spanning **{{ itinerary.start_date }}** to **{{ itinerary.end_date }}**.</p>
 
             <form method="post" action="{% url 'edit_itinerary' itinerary.id %}">
                 {% csrf_token %}
                 <div class="form-group">
-                    <label class="form-label">Trip Title</label>
+                    <label class="form-label">Trip/Project Title</label>
                     <input type="text" name="title" class="form-control" value="{{ itinerary.title }}" required>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="date-grid">
                     <div class="form-group">
                         <label class="form-label">Start Date</label>
                         <input type="date" name="start_date" class="form-control" value="{{ itinerary.start_date|date:'Y-m-d' }}" required>
@@ -72,16 +202,19 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Budget (₱)</label>
+                    <label class="form-label">Allocated Budget (₱)</label>
                     <input type="number" name="budget" class="form-control" value="{{ itinerary.budget }}" step="100" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Notes</label>
-                    <textarea name="notes" class="form-control" rows="3">{{ itinerary.notes|default:"" }}</textarea>
+                    <label class="form-label">Project Scope/Mandate Notes</label>
+                    <textarea name="notes" class="form-control" rows="4">{{ itinerary.notes|default:"" }}</textarea>
                 </div>
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Update Itinerary</button>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                    <a href="{% url 'dashboard' %}" class="btn-secondary">Cancel and Return to Dashboard</a>
+                    <button type="submit" class="btn-primary">Execute Update</button>
+                </div>
             </form>
-            <a href="{% url 'dashboard' %}" class="btn-secondary" style="margin-top: 1rem; text-align: center; display: block; text-decoration: none;">Cancel and Go Back</a>
         </div>
     </div>
 

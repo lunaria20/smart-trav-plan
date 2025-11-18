@@ -4,69 +4,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ itinerary.title }} Detail - SmartTrav</title>
+    <title>{{ itinerary.title }} Project Overview - SmartTrav</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; padding-top: 2rem; }
-        .container { max-width: 960px; }
-        .card { background: white; border-radius: 12px; padding: 2rem; border: 1px solid #e2e8f0; margin-bottom: 2rem; }
-        .header-section { margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; }
-        h1 { font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
-        .btn-back { background: #f1f5f9; color: #475569; border: none; border-radius: 8px; font-weight: 600; padding: 0.5rem 1rem; text-decoration: none; transition: all 0.2s; }
-        .btn-back:hover { background: #e2e8f0; }
-        .detail-item { margin-bottom: 1rem; }
-        .detail-item strong { color: #0f172a; display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem; }
-        .destination-list { display: grid; gap: 1rem; }
-        .destination-item { display: flex; align-items: center; background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; }
-        .destination-icon { font-size: 1.5rem; margin-right: 1rem; }
-        .destination-name { font-weight: 600; }
-        .destination-location { font-size: 0.875rem; color: #64748b; }
-        .empty-state { text-align: center; padding: 2rem; color: #64748b; }
+        /* Base Professional Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fa; /* Light, clean background */
+            color: #333333; /* Darker, more serious text */
+            padding-top: 2.5rem;
+        }
+        .container { max-width: 1000px; }
+
+        /* Card - Structured containers with minimal shadow */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            border: 1px solid #dcdcdc;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+        }
+
+        /* Header Section */
+        .header-section {
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0; /* Stronger divider */
+            padding-bottom: 1.5rem;
+        }
+
+        /* Heading */
+        h1 {
+            font-weight: 700;
+            color: #1e3a8a; /* Deep Navy Primary Color */
+            font-size: 2.25rem;
+            margin-bottom: 0.25rem;
+        }
+        h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333333;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* Back Button - Professional & Clear */
+        .btn-back {
+            background: transparent;
+            color: #666666;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 0.9375rem;
+        }
+        .btn-back:hover {
+            background: #e9ecef;
+            color: #333333;
+            border-color: #bbbbbb;
+        }
+
+        /* Detail Items */
+        .detail-item {
+            margin-bottom: 1.25rem;
+            border-left: 3px solid #1e3a8a; /* Accent bar for key data */
+            padding-left: 1rem;
+        }
+        .detail-item strong {
+            color: #1e3a8a; /* Deep Navy for labels */
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            margin-bottom: 0.15rem;
+            text-transform: uppercase;
+        }
+        .detail-item p {
+            margin-bottom: 0;
+            color: #555555;
+            font-size: 1rem;
+        }
+
+        /* Destination List */
+        .destination-list {
+            display: grid;
+            gap: 0.75rem;
+        }
+        .destination-item {
+            display: flex;
+            align-items: center;
+            background: #ffffff; /* White background for list items */
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e9ecef; /* Very light border */
+            transition: background 0.2s;
+        }
+        .destination-item:hover {
+            background: #f4f7fa; /* Slight hover effect */
+        }
+        .destination-icon {
+            font-size: 1.25rem;
+            margin-right: 1.25rem;
+            color: #10b981; /* Professional Accent Green */
+        }
+        .destination-name {
+            font-weight: 600;
+            color: #333333;
+        }
+        .destination-location {
+            font-size: 0.8125rem;
+            color: #777777;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #777777;
+            background: #fcfcfc;
+            border-radius: 6px;
+            border: 1px dashed #cccccc;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header-section">
-            <a href="{% url 'dashboard' %}" class="btn-back">← Back to Dashboard</a>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <h1>{{ itinerary.title }}</h1>
+            <a href="{% url 'dashboard' %}" class="btn-back">← Return to Project Dashboard</a>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <h1>Project Overview: {{ itinerary.title }}</h1>
             </div>
+            <span style="color: #777; font-size: 1rem;">Detailed Report for ID: **{{ itinerary.id }}**</span>
         </div>
 
         <div class="row">
             <div class="col-md-5">
                 <div class="card">
-                    <h2>Trip Details</h2>
-                    <div class="detail-item mt-3">
-                        <strong>Dates</strong>
+                    <h2>Project Financials & Mandate</h2>
+                    <div class="detail-item mt-4">
+                        <strong>Project Timeline</strong>
                         <p>{{ itinerary.start_date }} to {{ itinerary.end_date }}</p>
                     </div>
                     <div class="detail-item">
-                        <strong>Budget</strong>
-                        <p>₱{{ itinerary.budget }}</p>
+                        <strong>Approved Budget</strong>
+                        <p style="font-weight: 600; color: #10b981;">₱{{ itinerary.budget }}</p>
                     </div>
                     <div class="detail-item">
-                        <strong>Notes</strong>
-                        <p>{{ itinerary.notes|default:"No notes added." }}</p>
+                        <strong>Mandate Notes</strong>
+                        <p>{{ itinerary.notes|default:"No formal mandate notes available." }}</p>
                     </div>
                 </div>
             </div>
+
             <div class="col-md-7">
                 <div class="card">
-                    <h2>Planned Destinations</h2>
-                    <div class="destination-list mt-3">
+                    <h2>Operational Deployment Locations</h2>
+                    <div class="destination-list mt-4">
                         {% for item in itinerary_destinations %}
                         <div class="destination-item">
-                            <span class="destination-icon">📍</span>
-                            <div>
+                            <span class="destination-icon">🏢</span> <div>
                                 <div class="destination-name">{{ item.destination.name }}</div>
-                                <div class="destination-location">{{ item.destination.location }}</div>
+                                <div class="destination-location">Location: {{ item.destination.location }}</div>
                             </div>
                         </div>
                         {% empty %}
                         <div class="empty-state">
-                            <p>No destinations added to this trip yet.</p>
-                            <p>Go to the Explore tab on your dashboard to add places.</p>
+                            <p style="font-size: 1rem; font-weight: 600;">No Operational Locations Defined.</p>
+                            <p style="font-size: 0.875rem; margin-top: 0.5rem;">Please review the project scope and define deployment sites.</p>
                         </div>
                         {% endfor %}
                     </div>
