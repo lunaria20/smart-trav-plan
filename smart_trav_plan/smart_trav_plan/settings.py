@@ -16,8 +16,12 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "k=c0cal@k_pz0!sfy#-bga)w82@#$c%4u8aoa
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
-# Replace your current ALLOWED_HOSTS line with:
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
+# --- HOSTS CONFIGURATION ---
+if DEBUG:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+else:
+    # Use environment variables set in Render
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -62,10 +66,10 @@ TEMPLATES = [
     },
 ]
 
-# Supabase Storage Configuration
+# --- SUPABASE STORAGE CONFIGURATION (New/Consolidated) ---
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
-SUPABASE_BUCKET = 'media'  # Create this bucket in Supabase
+SUPABASE_BUCKET = 'media'  # Use your actual bucket name
 
 WSGI_APPLICATION = 'smart_trav_plan.wsgi.application'
 
@@ -78,7 +82,7 @@ DATABASES = {
     )
 }
 
-# Password validation
+# Password validation (No changes)
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -86,31 +90,25 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
+# Internationalization (No changes)
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Manila'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# --- STATIC FILES CONFIGURATION ---
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "SmartTrav" / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files configuration
+# --- MEDIA FILES CONFIGURATION (Key changes) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
-# ADD THIS LINE - Use Cloudinary for media storage
+# Use custom Supabase storage class for media files (uploaded images)
 DEFAULT_FILE_STORAGE = 'smart_trav_plan.storage_backends.SupabaseStorage'
 
-# Use Cloudinary for media storage in production
-if DEBUG:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-else:
-    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
