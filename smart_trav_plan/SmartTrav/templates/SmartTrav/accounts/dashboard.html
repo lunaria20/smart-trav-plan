@@ -363,6 +363,15 @@
             transition: all 0.2s;
             font-size: 0.8125rem;
             font-weight: 600;
+            text-decoration: none; /* Added for View/Edit links */
+        }
+
+        .btn-view { /* Added a separate style for the view link */
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .btn-view:hover {
+            background: #bfdbfe;
         }
 
         .btn-edit {
@@ -794,7 +803,8 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="#" class="menu-link active" data-section="overview">
+                {# Removed 'active' class here. Initial activation is now handled by JavaScript using the 'active_section' context variable from the server. #}
+                <li><a href="#" class="menu-link" data-section="overview">
                     <span class="menu-icon">📊</span> Overview
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="itineraries">
@@ -816,7 +826,8 @@
         </aside>
 
         <main class="main-content">
-            <section id="overview" class="content-section active">
+            {# Removed 'active' class here. Initial activation is now handled by JavaScript. #}
+            <section id="overview" class="content-section">
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-header">
@@ -851,17 +862,17 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Quick Actions</h3>
-                    </div>
-                    <div class="quick-actions">
-                        <button class="btn-primary" onclick="showSection('itineraries')">
-                            <span>➕</span> Create Trip
-                        </button>
-                        <button class="btn-secondary" onclick="showSection('destinations')">
-                            Explore Destinations
-                        </button>
-                        <button class="btn-secondary" onclick="showSection('budget')">
-                            Track Expenses
-                        </button>
+                        <div class="quick-actions">
+                            <button class="btn-primary" onclick="showSection('itineraries')">
+                                <span>➕</span> Create Trip
+                            </button>
+                            <button class="btn-secondary" onclick="showSection('destinations')">
+                                Explore Destinations
+                            </button>
+                            <button class="btn-secondary" onclick="showSection('budget')">
+                                Track Expenses
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -879,8 +890,12 @@
                                 <p>💰 Budget: ₱{{ itinerary.budget }}</p>
                             </div>
                             <div class="itinerary-actions">
-                                <button class="btn-sm btn-edit">Edit</button>
-                                <button class="btn-sm btn-delete">Delete</button>
+                                <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-sm btn-view">View</a>
+                                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-sm btn-edit">Edit</a>
+                                <form method="post" action="{% url 'delete_itinerary' itinerary.id %}" onsubmit="return confirm('Are you sure you want to delete this trip?');" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-sm btn-delete">Delete</button>
+                                </form>
                             </div>
                         </div>
                         {% empty %}
@@ -943,8 +958,12 @@
                                 {% endif %}
                             </div>
                             <div class="itinerary-actions">
-                                <button class="btn-sm btn-edit">View</button>
-                                <button class="btn-sm btn-delete">Delete</button>
+                                <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-sm btn-view">View</a>
+                                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-sm btn-edit">Edit</a>
+                                <form method="post" action="{% url 'delete_itinerary' itinerary.id %}" onsubmit="return confirm('Are you sure you want to delete this trip?');" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-sm btn-delete">Delete</button>
+                                </form>
                             </div>
                         </div>
                         {% empty %}
@@ -961,16 +980,21 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Explore Destinations</h3>
-                        <input type="text" class="form-control" style="max-width: 280px;" placeholder="🔍 Search destinations...">
+                        {# FIX: Wrapped search input in a form to make it functional and added hidden input to preserve the section. #}
+                        <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: inline-block;">
+                            <input type="hidden" name="section" value="destinations">
+                            <input type="text" name="q" class="form-control" style="max-width: 280px;" placeholder="🔍 Search destinations...">
+                        </form>
                     </div>
 
                     <div class="filter-controls">
-                        <a href="?category=" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
-                        <a href="?category=resort" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
-                        <a href="?category=restaurant" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
-                        <a href="?category=attraction" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
-                        <a href="?category=beach" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
-                        <a href="?category=historical" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
+                        {# FIX: Added '&section=destinations' to all filter chips to stay on the correct tab after filtering. #}
+                        <a href="?category=&section=destinations" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
+                        <a href="?category=resort&section=destinations" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
+                        <a href="?category=restaurant&section=destinations" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
+                        <a href="?category=attraction&section=destinations" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
+                        <a href="?category=beach&section=destinations" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
+                        <a href="?category=historical&section=destinations" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
                     </div>
 
                     <div class="destination-grid">
@@ -1020,7 +1044,11 @@
                                 <div class="destination-name">{{ saved.destination.name }}</div>
                                 <div class="destination-location">📍 {{ saved.destination.location }}</div>
                                 <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 1rem;">{{ saved.destination.description|truncatewords:15 }}</p>
-                                <button class="btn-save" style="background: #fee2e2; color: #991b1b; border-color: #fee2e2;">Remove</button>
+                                <form method="post" action="{% url 'remove_saved_destination' saved.destination.id %}" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-save" style="background: #fee2e2; color: #991b1b; border-color: #fee2e2;">Remove</button>
+                                </form>
+                                <button class="btn-add-to-trip" onclick="openTripModal({{ saved.destination.id }}, '{{ saved.destination.name }}')">➕ Add to Trip</button>
                             </div>
                         </div>
                         {% empty %}
@@ -1135,7 +1163,6 @@
         </main>
     </div>
 
-    <!-- Add to Trip Modal -->
     <div id="tripModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1190,6 +1217,13 @@
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
+            // Update sidebar active state when switching sections via quick actions
+            document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
+            // Added null check
+            const activeLink = document.querySelector(`.menu-link[data-section="${sectionId}"]`);
+            if (activeLink) {
+                 activeLink.classList.add('active');
+            }
         }
 
         function toggleForm(formId) {
@@ -1212,6 +1246,12 @@
                 closeTripModal();
             }
         });
+
+        // REMOVED: openEditModal and closeEditModal functions are removed
+
+        // FIX: Check for the 'active_section' passed from the server and activate the corresponding tab on page load (e.g., after a filter/search).
+        const initialSection = "{{ active_section|default:'overview' }}";
+        showSection(initialSection);
     </script>
 </body>
 </html>
