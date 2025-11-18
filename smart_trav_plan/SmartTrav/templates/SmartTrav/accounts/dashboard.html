@@ -803,7 +803,8 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="#" class="menu-link active" data-section="overview">
+                {# Removed 'active' class here. Initial activation is now handled by JavaScript using the 'active_section' context variable from the server. #}
+                <li><a href="#" class="menu-link" data-section="overview">
                     <span class="menu-icon">📊</span> Overview
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="itineraries">
@@ -825,7 +826,8 @@
         </aside>
 
         <main class="main-content">
-            <section id="overview" class="content-section active">
+            {# Removed 'active' class here. Initial activation is now handled by JavaScript. #}
+            <section id="overview" class="content-section">
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-header">
@@ -978,16 +980,21 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Explore Destinations</h3>
-                        <input type="text" class="form-control" style="max-width: 280px;" placeholder="🔍 Search destinations...">
+                        {# FIX: Wrapped search input in a form to make it functional and added hidden input to preserve the section. #}
+                        <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: inline-block;">
+                            <input type="hidden" name="section" value="destinations">
+                            <input type="text" name="q" class="form-control" style="max-width: 280px;" placeholder="🔍 Search destinations...">
+                        </form>
                     </div>
 
                     <div class="filter-controls">
-                        <a href="?category=" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
-                        <a href="?category=resort" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
-                        <a href="?category=restaurant" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
-                        <a href="?category=attraction" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
-                        <a href="?category=beach" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
-                        <a href="?category=historical" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
+                        {# FIX: Added '&section=destinations' to all filter chips to stay on the correct tab after filtering. #}
+                        <a href="?category=&section=destinations" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
+                        <a href="?category=resort&section=destinations" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
+                        <a href="?category=restaurant&section=destinations" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
+                        <a href="?category=attraction&section=destinations" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
+                        <a href="?category=beach&section=destinations" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
+                        <a href="?category=historical&section=destinations" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
                     </div>
 
                     <div class="destination-grid">
@@ -1212,7 +1219,11 @@
             document.getElementById(sectionId).classList.add('active');
             // Update sidebar active state when switching sections via quick actions
             document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
-            document.querySelector(`.menu-link[data-section="${sectionId}"]`).classList.add('active');
+            // Added null check
+            const activeLink = document.querySelector(`.menu-link[data-section="${sectionId}"]`);
+            if (activeLink) {
+                 activeLink.classList.add('active');
+            }
         }
 
         function toggleForm(formId) {
@@ -1237,6 +1248,10 @@
         });
 
         // REMOVED: openEditModal and closeEditModal functions are removed
+
+        // FIX: Check for the 'active_section' passed from the server and activate the corresponding tab on page load (e.g., after a filter/search).
+        const initialSection = "{{ active_section|default:'overview' }}";
+        showSection(initialSection);
     </script>
 </body>
 </html>
