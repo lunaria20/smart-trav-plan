@@ -1,0 +1,672 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block extrahead %}
+<style>
+    /* SmartTrav Professional Admin Dashboard Styling */
+    :root {
+        --primary-color: #667eea;
+        --primary-dark: #5145cd;
+        --secondary-color: #764ba2;
+        --accent-orange: #FF9B50;
+        --accent-green: #4CAF50;
+        --accent-purple: #9333ea;
+        --dark-bg: #1e293b;
+        --light-gray: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    /* Header Styling */
+    #header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        padding: 1.25rem 2rem !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    #branding h1 {
+        color: white !important;
+        font-size: 1.5rem !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.02em;
+        margin: 0 !important;
+    }
+
+    #branding h1 a {
+        color: white !important;
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+    #branding h1 a:hover {
+        opacity: 0.9;
+    }
+
+    #user-tools {
+        color: rgba(255, 255, 255, 0.95) !important;
+        font-size: 0.9rem;
+    }
+
+    #user-tools a {
+        color: white !important;
+        font-weight: 500;
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+    #user-tools a:hover {
+        opacity: 0.8;
+    }
+
+    /* Main Content Area */
+    #content {
+        padding: 2rem !important;
+        background: var(--light-gray) !important;
+        min-height: 100vh;
+    }
+
+    #content-main {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Welcome Banner */
+    .welcome-banner {
+        background: white;
+        border-radius: 16px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid var(--primary-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .welcome-banner h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.03em;
+    }
+
+    .welcome-banner p {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .welcome-banner p strong {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: var(--icon-bg);
+        border-radius: 0 0 0 100%;
+        opacity: 0.3;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-4px);
+        border-color: var(--icon-color);
+    }
+
+    .stat-card:hover::before {
+        width: 120px;
+        height: 120px;
+    }
+
+    .stat-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        background: var(--icon-bg);
+        color: var(--icon-color);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .stat-card.blue {
+        --icon-bg: #EEF2FF;
+        --icon-color: #667eea;
+    }
+
+    .stat-card.orange {
+        --icon-bg: #FFF7ED;
+        --icon-color: #FF9B50;
+    }
+
+    .stat-card.green {
+        --icon-bg: #F0FDF4;
+        --icon-color: #4CAF50;
+    }
+
+    .stat-card.purple {
+        --icon-bg: #FAF5FF;
+        --icon-color: #9333ea;
+    }
+
+    .stat-content {
+        flex: 1;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.75rem;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        line-height: 1;
+        background: linear-gradient(135deg, var(--icon-color), var(--icon-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.75rem;
+        color: var(--icon-color);
+        font-weight: 600;
+        padding: 0.375rem 0.75rem;
+        background: var(--icon-bg);
+        border-radius: 20px;
+        border: 1px solid currentColor;
+        opacity: 0.9;
+    }
+
+    .stat-badge::before {
+        content: '●';
+        font-size: 0.5rem;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    /* Module Sections */
+    .dashboard-modules {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .module {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .module:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .module h2 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem 1.75rem;
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .module h2::before {
+        content: '●';
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .module h2 a {
+        color: white;
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+    .module h2 a:hover {
+        opacity: 0.9;
+    }
+
+    .module table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .module caption {
+        display: none;
+    }
+
+    .module th {
+        background: #f8fafc;
+        padding: 1rem 1.75rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .module td {
+        padding: 1.125rem 1.75rem;
+        border-bottom: 1px solid #f1f5f9;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+    }
+
+    .module tr:last-child td {
+        border-bottom: none;
+    }
+
+    .module tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .module tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .module .addlink,
+    .module .changelink,
+    .module .viewlink {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-size: 0.875rem;
+    }
+
+    .module .addlink:hover,
+    .module .changelink:hover,
+    .module .viewlink:hover {
+        background: #EEF2FF;
+        color: var(--primary-dark);
+        transform: translateX(2px);
+    }
+
+    .module .addlink::before {
+        content: "+";
+        font-weight: bold;
+        font-size: 1.125rem;
+    }
+
+    .module .changelink::before {
+        content: "✎";
+        font-size: 1rem;
+    }
+
+    .module .viewlink::before {
+        content: "👁";
+        font-size: 1rem;
+    }
+
+    /* Recent Actions */
+    #recent-actions-module {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    #recent-actions-module h2 {
+        background: none;
+        color: var(--text-primary);
+        padding: 0 0 1.25rem 0;
+        border-bottom: 2px solid var(--border-color);
+        margin-bottom: 1.5rem;
+        font-size: 1.375rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+    }
+
+    #recent-actions-module h3 {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    #recent-actions-module ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    #recent-actions-module li {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        transition: all 0.2s;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+    }
+
+    #recent-actions-module li:hover {
+        background: #f8fafc;
+        padding-left: 1.25rem;
+    }
+
+    #recent-actions-module li::before {
+        content: "●";
+        font-size: 0.875rem;
+        color: var(--primary-color);
+        flex-shrink: 0;
+        font-weight: bold;
+        margin-top: 0.125rem;
+    }
+
+    #recent-actions-module a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    #recent-actions-module a:hover {
+        color: var(--primary-dark);
+    }
+
+    .mini.quiet {
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        margin-top: 0.375rem;
+        display: block;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .dashboard-modules {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        #content {
+            padding: 1rem !important;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .welcome-banner {
+            padding: 1.75rem;
+        }
+
+        .welcome-banner h1 {
+            font-size: 1.5rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+        }
+
+        .module th,
+        .module td {
+            padding: 0.875rem 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .stat-header {
+            flex-direction: column-reverse;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            align-self: flex-end;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <h1>Welcome to SmartTrav Administration</h1>
+        <p>Manage your travel planning platform • Logged in as <strong>{{ user.username }}</strong></p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card blue">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-label">Destinations</div>
+                    <div class="stat-value">{{ destinations_count|default:"0" }}</div>
+                    <span class="stat-badge">Active</span>
+                </div>
+                <div class="stat-icon">🗺️</div>
+            </div>
+        </div>
+
+        <div class="stat-card orange">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-label">Itineraries</div>
+                    <div class="stat-value">{{ itineraries_count|default:"0" }}</div>
+                    <span class="stat-badge">Created</span>
+                </div>
+                <div class="stat-icon">📋</div>
+            </div>
+        </div>
+
+        <div class="stat-card green">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-label">Users</div>
+                    <div class="stat-value">{{ users_count|default:"0" }}</div>
+                    <span class="stat-badge">Registered</span>
+                </div>
+                <div class="stat-icon">👥</div>
+            </div>
+        </div>
+
+        <div class="stat-card purple">
+            <div class="stat-header">
+                <div class="stat-content">
+                    <div class="stat-label">Saved Plans</div>
+                    <div class="stat-value">{{ saved_destinations_count|default:"0" }}</div>
+                    <span class="stat-badge">Bookmarked</span>
+                </div>
+                <div class="stat-icon">⭐</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Modules -->
+    <div class="dashboard-modules">
+        {% if app_list %}
+            {% for app in app_list %}
+                <div class="module">
+                    <h2>
+                        <a href="{{ app.app_url }}">
+                            {{ app.name }}
+                        </a>
+                    </h2>
+                    <table>
+                        {% for model in app.models %}
+                            <tr class="model-{{ model.object_name|lower }}">
+                                {% if model.admin_url %}
+                                    <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+                                {% else %}
+                                    <th scope="row">{{ model.name }}</th>
+                                {% endif %}
+
+                                {% if model.add_url %}
+                                    <td><a href="{{ model.add_url }}" class="addlink">{% trans 'Add' %}</a></td>
+                                {% else %}
+                                    <td>&nbsp;</td>
+                                {% endif %}
+
+                                {% if model.admin_url %}
+                                    {% if model.view_only %}
+                                        <td><a href="{{ model.admin_url }}" class="viewlink">{% trans 'View' %}</a></td>
+                                    {% else %}
+                                        <td><a href="{{ model.admin_url }}" class="changelink">{% trans 'Change' %}</a></td>
+                                    {% endif %}
+                                {% else %}
+                                    <td>&nbsp;</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🔒</div>
+                <p>{% trans "You don't have permission to view or edit anything." %}</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Recent Actions -->
+    {% if user.is_active and user.is_staff %}
+        {% load log %}
+        {% get_admin_log 10 as admin_log for_user user %}
+        {% if admin_log %}
+            <div id="recent-actions-module">
+                <h2>{% trans 'Recent Actions' %}</h2>
+                <h3>{% trans 'My Actions' %}</h3>
+                <ul class="actionlist">
+                    {% for entry in admin_log %}
+                        <li>
+                            <div>
+                                {% if entry.is_deletion or not entry.get_admin_url %}
+                                    <strong>{{ entry.object_repr }}</strong>
+                                {% else %}
+                                    <a href="{{ entry.get_admin_url }}"><strong>{{ entry.object_repr }}</strong></a>
+                                {% endif %}
+                                <br>
+                                {% if entry.content_type %}
+                                    <span class="mini quiet">{% filter capfirst %}{{ entry.content_type.name }}{% endfilter %}</span>
+                                {% else %}
+                                    <span class="mini quiet">{% trans 'Unknown content' %}</span>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

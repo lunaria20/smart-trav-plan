@@ -49,7 +49,7 @@ ROOT_URLCONF = 'smart_trav_plan.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "smart_trav_plan" / "templates"],
+        'DIRS': [BASE_DIR / "SmartTrav" / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
