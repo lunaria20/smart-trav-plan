@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='destination',
             name='image',
-            field=models.ImageField(blank=True, null=True, upload_to='destinations/'),
+            field=models.ImageField(blank=True, null=True, upload_to='SmartTrav/static/images/'),
         ),
     ]
