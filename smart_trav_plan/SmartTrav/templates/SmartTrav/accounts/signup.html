@@ -15,14 +15,16 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
+            background: linear-gradient(135deg, #f0f4f8 0%, #eef1f5 100%); /* Clean, light background */
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Navigation */
+        /* Navigation (Kept consistent with your existing design) */
         .navbar {
             background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             padding: 1rem 2rem;
             position: relative;
             z-index: 10;
@@ -63,7 +65,7 @@
 
         .btn-signup-nav {
             padding: 0.5rem 1.5rem;
-            background: #FF9B50;
+            background: #FF9B50; /* Orange secondary button */
             color: white;
             border-radius: 25px;
             text-decoration: none;
@@ -74,110 +76,80 @@
             background: #ff8533;
         }
 
-        /* Hero Background Section */
-        .hero-background {
-            min-height: calc(100vh - 80px);
+        /* NEW Main Content Container */
+        .main-content {
+            flex: 1;
             display: flex;
             align-items: center;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            justify-content: center;
+            padding: 2rem;
         }
 
-        /* Decorative shapes */
-        .shape-orange {
-            position: absolute;
-            bottom: 10%;
-            right: 15%;
-            width: 400px;
-            height: 400px;
-            background: linear-gradient(135deg, #FF9B50 0%, #FFB570 100%);
-            border-radius: 50% 40% 60% 40%;
-            z-index: 1;
-            opacity: 0.8;
-        }
-
-        .shape-green {
-            position: absolute;
-            bottom: 15%;
-            right: 25%;
-            width: 350px;
-            height: 350px;
-            background: linear-gradient(135deg, #90EE90 0%, #98FB98 100%);
-            border-radius: 40% 60% 40% 60%;
-            z-index: 0;
-            opacity: 0.6;
-        }
-
-        .shape-blue {
-            position: absolute;
-            top: 20%;
-            right: 10%;
-            width: 60px;
-            height: 60px;
-            background: #667eea;
-            border-radius: 50%;
-            z-index: 1;
-        }
-
-        /* Airplane path */
-        .airplane-path {
-            position: absolute;
-            top: 15%;
-            right: 30%;
-            width: 200px;
-            height: 150px;
-            border: 3px dashed #667eea;
-            border-top: none;
-            border-left: none;
-            border-radius: 0 0 100px 0;
-            opacity: 0.5;
-        }
-
-        .airplane {
-            position: absolute;
-            top: 10%;
-            right: 35%;
-            font-size: 2rem;
-            transform: rotate(-45deg);
-        }
-
-        /* Tourist Image */
-        .hero-image {
-            position: absolute;
-            right: -50px;
-            bottom: 0;
-            width: 45%;
-            max-width: 600px;
-            z-index: 2;
-        }
-
-        .hero-image img {
-            width: 100%;
-            height: auto;
-        }
-
-        /* Signup Form Container */
-        .signup-container {
-            position: relative;
-            z-index: 5;
-            max-width: 450px;
-            margin-left: 5rem;
-        }
-
-        .signup-card {
+        .signup-wrapper {
             background: white;
             border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            overflow: hidden;
+            min-height: 550px; /* Set a minimum height */
         }
+
+        .form-section {
+            padding: 3rem;
+            flex: 1;
+            min-width: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .illustration-section {
+            flex: 1;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Light gradient background for the illustration side */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-width: 350px;
+            overflow: hidden;
+        }
+
+        /* Illustration styling (simplified, use an actual SVG/PNG if possible) */
+        .illustration-content {
+            text-align: center;
+            padding: 2rem;
+        }
+        .illustration-content h3 {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .illustration-content p {
+            color: #555;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+        .travel-icon {
+             font-size: 8rem;
+             margin-bottom: 1rem;
+             color: #667eea; /* Accent color - Blue for signup page */
+             animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
 
         .signup-header {
             margin-bottom: 2rem;
         }
 
         .signup-header h2 {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
             color: #2c3e50;
             margin-bottom: 0.5rem;
@@ -192,17 +164,18 @@
             font-weight: 600;
             color: #2c3e50;
             margin-bottom: 0.5rem;
+            font-size: 0.95rem;
         }
 
         .form-control {
-            padding: 0.75rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             transition: all 0.3s;
         }
 
         .form-control:focus {
-            border-color: #FF9B50;
+            border-color: #FF9B50; /* Using Orange focus color for signup fields */
             box-shadow: 0 0 0 0.2rem rgba(255, 155, 80, 0.15);
         }
 
@@ -213,15 +186,15 @@
 
         .btn-signup {
             width: 100%;
-            padding: 0.75rem;
-            background: linear-gradient(135deg, #FF9B50 0%, #FFB570 100%);
+            padding: 0.8rem;
+            background: linear-gradient(135deg, #FF9B50 0%, #FFB570 100%); /* Orange primary button */
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             color: white;
             font-weight: 600;
             font-size: 1.1rem;
             transition: transform 0.2s;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
         }
 
         .btn-signup:hover {
@@ -233,10 +206,11 @@
             text-align: center;
             margin-top: 1.5rem;
             color: #666;
+            font-size: 0.95rem;
         }
 
         .login-link a {
-            color: #667eea;
+            color: #667eea; /* Using Blue for the 'Login here' link */
             font-weight: 600;
             text-decoration: none;
         }
@@ -245,50 +219,24 @@
             text-decoration: underline;
         }
 
-        .alert {
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .text-danger {
-            font-size: 0.85rem;
-            margin-top: 0.3rem;
-        }
-
         /* Responsive */
-        @media (max-width: 992px) {
-            .signup-container {
-                margin-left: 2rem;
-            }
-            .hero-image {
-                right: -100px;
-                width: 50%;
-                opacity: 0.5;
-            }
-            .shape-orange, .shape-green {
-                width: 300px;
-                height: 300px;
-            }
-        }
-
         @media (max-width: 768px) {
-            .signup-container {
-                margin: 0 auto;
-                padding: 2rem;
+            .signup-wrapper {
+                flex-direction: column;
+                min-height: auto;
             }
-            .hero-image {
-                display: none;
+            .illustration-section {
+                display: none; /* Hide illustration on mobile for better focus */
             }
-            .nav-links {
-                display: none;
+            .form-section {
+                padding: 2rem 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
-        <div class="container-fluid">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="navbar-brand">✈️ SmartTrav</div>
             <div class="nav-links d-none d-md-flex">
                 <a href="{% url 'about' %}">About</a>
@@ -302,86 +250,75 @@
         </div>
     </nav>
 
-    <!-- Hero Background with Signup Form -->
-    <section class="hero-background">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="signup-container">
-                        <div class="signup-card">
-                            <div class="signup-header">
-                                <h2>Create Account</h2>
-                                <p>Sign up to start your journey</p>
-                            </div>
+    <section class="main-content">
+        <div class="signup-wrapper">
+            <div class="form-section">
+                <div class="signup-header">
+                    <h2>Create Account</h2>
+                    <p>Sign up to start your SmartTrav journey</p>
+                </div>
 
-                            <form method="post">
-                                {% csrf_token %}
-                                <div class="mb-3">
-                                    <label for="id_username" class="form-label">Username</label>
-                                    <input type="text" class="form-control" name="username" id="id_username"
-                                           placeholder="Choose a username" required>
-                                    {% if form.username.errors %}
-                                        <div class="text-danger">{{ form.username.errors }}</div>
-                                    {% endif %}
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="id_email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" id="id_email"
-                                           placeholder="Enter your email address" required>
-                                    {% if form.email.errors %}
-                                        <div class="text-danger">{{ form.email.errors }}</div>
-                                    <small class="form-text">150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
-                                    {% endif %}
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="id_password1" class="form-label">Password</label>
-                                    <input type="password" class="form-control" name="password1" id="id_password1"
-                                           placeholder="Create a password" required>
-                                    {% if form.password1.errors %}
-                                        <div class="text-danger">{{ form.password1.errors }}</div>
-                                    {% endif %}
-                                    <small class="form-text">Must contain at least 8 characters.</small>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="id_password2" class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-control" name="password2" id="id_password2"
-                                           placeholder="Confirm your password" required>
-                                    {% if form.password2.errors %}
-                                        <div class="text-danger">{{ form.password2.errors }}</div>
-                                    {% endif %}
-                                </div>
-
-                                {% if form.non_field_errors %}
-                                    <div class="alert alert-danger">
-                                        {{ form.non_field_errors }}
-                                    </div>
-                                {% endif %}
-
-                                <button type="submit" class="btn-signup">Sign Up</button>
-                            </form>
-
-                            <div class="login-link">
-                                Already have an account? <a href="{% url 'login' %}">Login here</a>
-                            </div>
-                        </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" id="id_username"
+                               placeholder="Choose a username" required>
+                        {% if form.username.errors %}
+                            <div class="text-danger">{{ form.username.errors }}</div>
+                        {% endif %}
                     </div>
+
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" name="email" id="id_email"
+                               placeholder="Enter your email address" required>
+                        {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors }}</div>
+                        {% endif %}
+                        <small class="form-text">We'll never share your email with anyone else.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password1" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password1" id="id_password1"
+                               placeholder="Create a password" required>
+                        {% if form.password1.errors %}
+                            <div class="text-danger">{{ form.password1.errors }}</div>
+                        {% endif %}
+                        <small class="form-text">Must contain at least 8 characters.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_password2" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" name="password2" id="id_password2"
+                               placeholder="Confirm your password" required>
+                        {% if form.password2.errors %}
+                            <div class="text-danger">{{ form.password2.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <button type="submit" class="btn-signup">Create Account</button>
+                </form>
+
+                <div class="login-link">
+                    Already have an account? <a href="{% url 'login' %}">Login here</a>
                 </div>
             </div>
-        </div>
 
-        <!-- Decorative Elements -->
-        <div class="airplane-path"></div>
-        <div class="airplane">✈️</div>
-        <div class="shape-blue"></div>
-        <div class="shape-green"></div>
-        <div class="shape-orange"></div>
-
-        <!-- Hero Image (Tourist with luggage) -->
-        <div class="hero-image">
-            <div style="font-size: 18rem; text-align: center;">🏖️</div>
+            <div class="illustration-section d-none d-md-flex">
+                <div class="illustration-content">
+                    <div class="travel-icon">✈️</div>
+                    <h3>Plan Your Next Trip</h3>
+                    <p>Sign up in seconds and unlock the best of Mactan travel planning.</p>
+                </div>
+            </div>
         </div>
     </section>
 
