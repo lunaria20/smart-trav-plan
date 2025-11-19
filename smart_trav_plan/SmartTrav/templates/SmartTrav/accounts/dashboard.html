@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SmartTrav</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,18 +16,20 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
             min-height: 100vh;
-            color: #1e293b;
+            color: #1a202c;
             font-size: 15px;
+            line-height: 1.6;
         }
 
         /* Navbar */
         .navbar {
-            background: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border-bottom: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -36,82 +38,86 @@
         .navbar-brand {
             display: flex;
             align-items: center;
-            gap: 0.625rem;
-            font-weight: 700;
-            font-size: 1.375rem;
-            color: #0f172a;
-            letter-spacing: -0.02em;
+            gap: 0.75rem;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #1a202c;
+            letter-spacing: -0.03em;
         }
 
         .brand-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.25);
         }
 
         .user-section {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
         .user-name {
-            font-weight: 500;
-            color: #475569;
-            font-size: 0.9375rem;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.95rem;
         }
 
         .user-avatar {
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            border: 3px solid white;
         }
 
         .btn-logout {
-            padding: 0.5rem 1.25rem;
-            background: #f1f5f9;
-            color: #475569;
-            border: none;
-            border-radius: 8px;
+            padding: 0.625rem 1.5rem;
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
+            transition: all 0.3s ease;
+            font-weight: 600;
             font-size: 0.875rem;
         }
 
         .btn-logout:hover {
-            background: #e2e8f0;
-            color: #1e293b;
+            background: #f7fafc;
+            border-color: #cbd5e0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         /* Layout */
         .dashboard-container {
             display: flex;
-            gap: 1.5rem;
-            padding: 2rem;
-            max-width: 1440px;
+            gap: 2.5rem;
+            padding: 2.5rem;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 240px;
+            width: 300px;
             height: fit-content;
             position: sticky;
-            top: 6rem;
+            top: 7rem;
         }
 
         .sidebar-menu {
@@ -120,40 +126,63 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.75rem;
+            background: white;
+            padding: 2rem 1.75rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
 
         .sidebar-menu a {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.625rem 0.875rem;
-            color: #64748b;
+            gap: 1.25rem;
+            padding: 1.125rem 1.5rem;
+            color: #718096;
             text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s;
-            font-weight: 500;
-            font-size: 0.9375rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 0 4px 4px 0;
+            transition: all 0.3s ease;
         }
 
         .sidebar-menu a:hover {
-            background: #f1f5f9;
-            color: #334155;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+            color: #5a67d8;
+            transform: translateX(4px);
         }
 
         .sidebar-menu a.active {
-            background: #6366f1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .sidebar-menu a.active::before {
+            height: 70%;
         }
 
         .menu-icon {
-            width: 20px;
-            height: 20px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.125rem;
+            font-size: 1.375rem;
         }
 
         /* Main Content */
@@ -164,144 +193,193 @@
 
         .content-section {
             display: none;
-            animation: fadeIn 0.3s ease;
+            animation: fadeInUp 0.5s ease;
         }
 
         .content-section.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
         }
 
         .stat-card {
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s;
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
 
         .stat-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+            transform: translateY(-6px);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
         }
 
         .stat-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .stat-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-icon.blue { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); }
-        .stat-icon.green { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
-        .stat-icon.orange { background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); }
-        .stat-icon.purple { background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); }
+        .stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-icon.green { background: linear-gradient(135deg, #38b2ac 0%, #2f855a 100%); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%); }
+        .stat-icon.purple { background: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%); }
 
         .stat-trend {
-            padding: 0.25rem 0.625rem;
-            background: #dcfce7;
-            color: #16a34a;
-            border-radius: 6px;
+            padding: 0.375rem 0.875rem;
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            color: #22543d;
+            border-radius: 8px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.02em;
         }
 
         .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.02em;
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .stat-label {
-            color: #64748b;
-            font-size: 0.875rem;
-            font-weight: 500;
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         /* Cards */
         .card {
             background: white;
-            border-radius: 12px;
-            padding: 1.75rem;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 1.5rem;
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #f7fafc;
         }
 
         .card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #0f172a;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1a202c;
             margin: 0;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
 
         /* Buttons */
         .btn-primary {
-            padding: 0.625rem 1.25rem;
-            background: #6366f1;
+            padding: 0.75rem 1.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 0.9rem;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.625rem;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            letter-spacing: 0.02em;
         }
 
         .btn-primary:hover {
-            background: #4f46e5;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
-            padding: 0.625rem 1.25rem;
-            background: #f1f5f9;
-            color: #475569;
-            border: none;
-            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             font-weight: 600;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
         }
 
         .btn-secondary:hover {
-            background: #e2e8f0;
-            color: #1e293b;
+            background: #f7fafc;
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         /* Quick Actions */
@@ -314,236 +392,298 @@
         /* Itinerary List */
         .itinerary-list {
             display: grid;
-            gap: 0.875rem;
+            gap: 1.25rem;
         }
 
         .itinerary-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            transition: all 0.2s;
+            padding: 1.75rem;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .itinerary-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .itinerary-item:hover {
             background: white;
-            border-color: #cbd5e1;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border-color: rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateX(4px);
+        }
+
+        .itinerary-item:hover::before {
+            opacity: 1;
         }
 
         .itinerary-info h4 {
-            margin: 0 0 0.625rem 0;
-            color: #0f172a;
-            font-weight: 600;
-            font-size: 1rem;
+            margin: 0 0 0.875rem 0;
+            color: #1a202c;
+            font-weight: 700;
+            font-size: 1.125rem;
         }
 
         .itinerary-info p {
-            margin: 0.25rem 0;
-            color: #64748b;
-            font-size: 0.875rem;
+            margin: 0.375rem 0;
+            color: #718096;
+            font-size: 0.9rem;
             display: flex;
             align-items: center;
-            gap: 0.375rem;
+            gap: 0.5rem;
+            font-weight: 500;
         }
 
         .itinerary-actions {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .btn-sm {
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
+            padding: 0.625rem 1.25rem;
+            border-radius: 10px;
             border: none;
             cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.8125rem;
-            font-weight: 600;
-            text-decoration: none; /* Added for View/Edit links */
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 0.02em;
         }
 
-        .btn-view { /* Added a separate style for the view link */
-            background: #dbeafe;
+        .btn-view {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
             color: #1e40af;
+            border: 2px solid #93c5fd;
         }
+
         .btn-view:hover {
-            background: #bfdbfe;
+            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
         }
 
         .btn-edit {
-            background: #fef3c7;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
             color: #92400e;
+            border: 2px solid #fcd34d;
         }
 
         .btn-edit:hover {
-            background: #fde68a;
+            background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(146, 64, 14, 0.2);
         }
 
         .btn-delete {
-            background: #fee2e2;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
             color: #991b1b;
+            border: 2px solid #fca5a5;
         }
 
         .btn-delete:hover {
-            background: #fecaca;
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(153, 27, 27, 0.2);
         }
 
         /* Filter Chips */
         .filter-controls {
             display: flex;
-            gap: 0.625rem;
+            gap: 0.875rem;
             flex-wrap: wrap;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .filter-chip {
-            padding: 0.5rem 1rem;
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
+            padding: 0.625rem 1.25rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 24px;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 500;
-            font-size: 0.875rem;
-            color: #475569;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #4a5568;
             text-decoration: none;
         }
 
         .filter-chip:hover {
-            background: #e2e8f0;
-            color: #1e293b;
+            background: #f7fafc;
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .filter-chip.active {
-            background: #6366f1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-color: #6366f1;
+            border-color: transparent;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
         /* Destination Grid */
         .destination-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.75rem;
         }
 
         .destination-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s;
+            border: 2px solid #e2e8f0;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .destination-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0);
+            transition: box-shadow 0.4s ease;
+            pointer-events: none;
         }
 
         .destination-card:hover {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            transform: translateY(-4px);
+            transform: translateY(-8px);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .destination-card:hover::after {
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
         }
 
         .destination-image {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .destination-info {
-            padding: 1.25rem;
+            padding: 1.75rem;
         }
 
         .destination-name {
-            font-size: 1.0625rem;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.625rem;
         }
 
         .destination-location {
-            color: #64748b;
-            font-size: 0.875rem;
-            margin-bottom: 0.875rem;
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.375rem;
+            font-weight: 500;
         }
 
         .btn-save {
             width: 100%;
-            padding: 0.625rem;
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
+            padding: 0.75rem;
+            background: white;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
         }
 
         .btn-save:hover {
-            background: #dcfce7;
-            color: #16a34a;
-            border-color: #16a34a;
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            color: #22543d;
+            border-color: #68d391;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 84, 61, 0.15);
         }
 
         .btn-add-to-trip {
             width: 100%;
-            padding: 0.625rem;
-            background: #6366f1;
+            padding: 0.75rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
             cursor: pointer;
-            margin-top: 0.5rem;
-            transition: all 0.2s;
+            margin-top: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .btn-add-to-trip:hover {
-            background: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
 
         /* Forms */
         .form-container {
             display: none;
-            margin-bottom: 2rem;
-            padding: 1.75rem;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+            margin-bottom: 2.5rem;
+            padding: 2.5rem;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
 
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-label {
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.75rem;
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .form-control, .form-select {
             width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            transition: all 0.2s;
-            font-size: 0.9375rem;
+            padding: 0.875rem 1.125rem;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
             background: white;
+            font-weight: 500;
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #6366f1;
+            border-color: #667eea;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
         }
 
         /* Modal */
@@ -555,9 +695,9 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            animation: fadeIn 0.2s;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s;
         }
 
         .modal.show {
@@ -568,180 +708,194 @@
 
         .modal-content {
             background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 520px;
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 560px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
-            animation: slideIn 0.3s;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: slideInScale 0.4s ease;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
         }
 
-        @keyframes slideIn {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes slideInScale {
+            from {
+                transform: scale(0.9) translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.25rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 2px solid #f7fafc;
         }
 
         .modal-title {
-            font-size: 1.375rem;
-            font-weight: 700;
-            color: #0f172a;
+            font-size: 1.625rem;
+            font-weight: 800;
+            color: #1a202c;
             margin: 0;
         }
 
         .close-modal {
-            background: #f1f5f9;
+            background: #f7fafc;
             border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             cursor: pointer;
-            color: #64748b;
-            font-size: 1.25rem;
+            color: #718096;
+            font-size: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
         }
 
         .close-modal:hover {
             background: #e2e8f0;
-            color: #1e293b;
+            color: #1a202c;
+            transform: rotate(90deg);
         }
 
         .trip-list {
             display: grid;
-            gap: 0.75rem;
+            gap: 1rem;
         }
 
         .trip-option {
-            padding: 1rem;
-            background: #f8fafc;
+            padding: 1.25rem;
+            background: #f7fafc;
             border: 2px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
         }
 
         .trip-option:hover {
             background: white;
-            border-color: #6366f1;
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
         }
 
         .trip-option input[type="radio"]:checked ~ div {
-            color: #6366f1;
+            color: #667eea;
         }
 
         .trip-option-title {
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 0.25rem;
-            font-size: 0.9375rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.375rem;
+            font-size: 1rem;
         }
 
         .trip-option-date {
-            font-size: 0.8125rem;
-            color: #64748b;
+            font-size: 0.85rem;
+            color: #718096;
+            font-weight: 500;
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
-            color: #64748b;
+            padding: 4rem 1.5rem;
+            color: #718096;
         }
 
         .empty-state-icon {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+            font-size: 4rem;
+            margin-bottom: 1.25rem;
+            opacity: 0.6;
         }
 
         .empty-state p {
-            font-size: 0.9375rem;
+            font-size: 1rem;
+            font-weight: 500;
         }
 
         /* Expense */
         .expense-list {
-            margin-top: 1rem;
+            margin-top: 1.25rem;
         }
 
         .expense-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            margin-bottom: 0.75rem;
-            transition: all 0.2s;
+            padding: 1.75rem;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
         }
 
         .expense-item:hover {
             background: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            transform: translateX(4px);
         }
 
         .expense-category {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: #ede9fe;
+            padding: 0.375rem 1rem;
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
             color: #6b21a8;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-weight: 700;
+            margin-bottom: 0.625rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         /* Alerts */
         .alert {
             border: none;
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            border-left: 4px solid;
+            border-radius: 16px;
+            padding: 1.25rem 2rem;
+            margin-bottom: 2rem;
+            border-left: 6px solid;
+            font-weight: 600;
         }
 
         .alert-success {
-            background-color: #dcfce7;
-            color: #166534;
-            border-color: #16a34a;
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            color: #22543d;
+            border-color: #38a169;
         }
 
         .alert-info {
-            background-color: #dbeafe;
-            color: #1e40af;
-            border-color: #3b82f6;
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            color: #2c5282;
+            border-color: #3182ce;
         }
 
         .alert-danger {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border-color: #dc2626;
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            color: #742a2a;
+            border-color: #e53e3e;
         }
 
         .alert-warning {
-            background-color: #fef3c7;
-            color: #92400e;
-            border-color: #f59e0b;
+            background: linear-gradient(135deg, #feebc8 0%, #fbd38d 100%);
+            color: #744210;
+            border-color: #ed8936;
         }
 
         /* Responsive */
         @media (max-width: 992px) {
             .dashboard-container {
                 flex-direction: column;
-                padding: 1.5rem;
+                padding: 2rem;
             }
 
             .sidebar {
@@ -752,7 +906,7 @@
             .sidebar-menu {
                 flex-direction: row;
                 overflow-x: auto;
-                padding-bottom: 0.5rem;
+                padding-bottom: 0.75rem;
             }
 
             .sidebar-menu a {
@@ -767,6 +921,14 @@
 
             .destination-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 1rem 1.5rem;
+            }
+
+            .dashboard-container {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -790,7 +952,7 @@
     </nav>
 
     {% if messages %}
-    <div style="max-width: 1440px; margin: 0 auto; padding: 0 2rem; padding-top: 1rem;">
+    <div style="max-width: 1600px; margin: 0 auto; padding: 0 2.5rem; padding-top: 1.5rem;">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
             {{ message }}
@@ -803,21 +965,20 @@
     <div class="dashboard-container">
         <aside class="sidebar">
             <ul class="sidebar-menu">
-                {# Removed 'active' class here. Initial activation is now handled by JavaScript using the 'active_section' context variable from the server. #}
                 <li><a href="#" class="menu-link" data-section="overview">
-                    <span class="menu-icon">📊</span> Overview
+                    <span class="menu-icon">🗎</span> Overview
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="itineraries">
-                    <span class="menu-icon">📝</span> My Trips
+                    <span class="menu-icon">⚲</span> My Trips
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="destinations">
-                    <span class="menu-icon">🏝️</span> Explore
+                    <span class="menu-icon">🏝</span> Explore
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="saved">
-                    <span class="menu-icon">❤️</span> Saved
+                    <span class="menu-icon">❤</span> Saved
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="budget">
-                    <span class="menu-icon">💰</span> Budget
+                    <span class="menu-icon">$</span> Budget
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="profile">
                     <span class="menu-icon">👤</span> Profile
@@ -826,33 +987,32 @@
         </aside>
 
         <main class="main-content">
-            {# Removed 'active' class here. Initial activation is now handled by JavaScript. #}
             <section id="overview" class="content-section">
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon blue">📝</div>
+                            <div class="stat-icon blue">⚲</div>
                         </div>
                         <div class="stat-value">{{ itinerary_count|default:0 }}</div>
                         <div class="stat-label">Total Itineraries</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon green">🏝️</div>
+                            <div class="stat-icon green">🏝</div>
                         </div>
                         <div class="stat-value">{{ saved_count|default:0 }}</div>
                         <div class="stat-label">Saved Destinations</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon orange">💰</div>
+                            <div class="stat-icon orange">$</div>
                         </div>
                         <div class="stat-value">₱{{ total_budget|default:0 }}</div>
                         <div class="stat-label">Total Budget</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon purple">📅</div>
+                            <div class="stat-icon purple">⌨</div>
                         </div>
                         <div class="stat-value">{{ upcoming_trips|default:0 }}</div>
                         <div class="stat-label">Upcoming Trips</div>
@@ -900,7 +1060,7 @@
                         </div>
                         {% empty %}
                         <div class="empty-state">
-                            <div class="empty-state-icon">📝</div>
+                            <div class="empty-state-icon">📍</div>
                             <p>No trips yet. Start planning your adventure!</p>
                         </div>
                         {% endfor %}
@@ -924,7 +1084,7 @@
                                 <label class="form-label">Trip Title</label>
                                 <input type="text" name="title" class="form-control" placeholder="e.g., Mactan Beach Getaway" required>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
                                 <div class="form-group">
                                     <label class="form-label">Start Date</label>
                                     <input type="date" name="start_date" class="form-control" required>
@@ -968,7 +1128,7 @@
                         </div>
                         {% empty %}
                         <div class="empty-state">
-                            <div class="empty-state-icon">📝</div>
+                            <div class="empty-state-icon">📍</div>
                             <p>No itineraries yet. Start planning your adventure!</p>
                         </div>
                         {% endfor %}
@@ -980,15 +1140,13 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Explore Destinations</h3>
-                        {# FIX: Wrapped search input in a form to make it functional and added hidden input to preserve the section. #}
                         <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: inline-block;">
                             <input type="hidden" name="section" value="destinations">
-                            <input type="text" name="q" class="form-control" style="max-width: 280px;" placeholder="🔍 Search destinations...">
+                            <input type="text" name="q" class="form-control" style="max-width: 320px;" placeholder="🔍 Search destinations...">
                         </form>
                     </div>
 
                     <div class="filter-controls">
-                        {# FIX: Added '&section=destinations' to all filter chips to stay on the correct tab after filtering. #}
                         <a href="?category=&section=destinations" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
                         <a href="?category=resort&section=destinations" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
                         <a href="?category=restaurant&section=destinations" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
@@ -1008,7 +1166,7 @@
                             <div class="destination-info">
                                 <div class="destination-name">{{ destination.name }}</div>
                                 <div class="destination-location">📍 {{ destination.location }}</div>
-                                <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 1rem;">{{ destination.description|truncatewords:15 }}</p>
+                                <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1.25rem; font-weight: 500;">{{ destination.description|truncatewords:15 }}</p>
                                 <form method="post" action="{% url 'save_destination' destination.id %}" style="margin: 0;">
                                     {% csrf_token %}
                                     <button type="submit" class="btn-save">❤️ Save Place</button>
@@ -1043,10 +1201,10 @@
                             <div class="destination-info">
                                 <div class="destination-name">{{ saved.destination.name }}</div>
                                 <div class="destination-location">📍 {{ saved.destination.location }}</div>
-                                <p style="color: #64748b; font-size: 0.875rem; margin-bottom: 1rem;">{{ saved.destination.description|truncatewords:15 }}</p>
+                                <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1.25rem; font-weight: 500;">{{ saved.destination.description|truncatewords:15 }}</p>
                                 <form method="post" action="{% url 'remove_saved_destination' saved.destination.id %}" style="margin: 0;">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn-save" style="background: #fee2e2; color: #991b1b; border-color: #fee2e2;">Remove</button>
+                                    <button type="submit" class="btn-save" style="background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); color: #742a2a; border-color: #fc8181;">Remove</button>
                                 </form>
                                 <button class="btn-add-to-trip" onclick="openTripModal({{ saved.destination.id }}, '{{ saved.destination.name }}')">➕ Add to Trip</button>
                             </div>
@@ -1082,7 +1240,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
                                 <div class="form-group">
                                     <label class="form-label">Category</label>
                                     <select name="category" class="form-select" required>
@@ -1116,10 +1274,10 @@
                         <div class="expense-item">
                             <div>
                                 <span class="expense-category">{{ expense.get_category_display }}</span>
-                                <div style="font-weight: 600; color: #0f172a; margin-bottom: 0.25rem;">{{ expense.description }}</div>
-                                <small style="color: #64748b;">{{ expense.date }} • {{ expense.itinerary.title }}</small>
+                                <div style="font-weight: 700; color: #1a202c; margin-bottom: 0.375rem; font-size: 1.05rem;">{{ expense.description }}</div>
+                                <small style="color: #718096; font-weight: 500;">{{ expense.date }} • {{ expense.itinerary.title }}</small>
                             </div>
-                            <div style="font-size: 1.25rem; font-weight: 700; color: #dc2626;">₱{{ expense.amount }}</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #c53030;">₱{{ expense.amount }}</div>
                         </div>
                         {% empty %}
                         <div class="empty-state">
@@ -1140,13 +1298,13 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="form-label">Username</label>
-                            <input type="text" class="form-control" value="{{ user.username }}" readonly style="background: #f8fafc; color: #64748b;">
+                            <input type="text" class="form-control" value="{{ user.username }}" readonly style="background: #f7fafc; color: #718096;">
                         </div>
                         <div class="form-group">
                             <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control" value="{{ user.email }}">
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
                             <div class="form-group">
                                 <label class="form-label">First Name</label>
                                 <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
@@ -1169,7 +1327,7 @@
                 <h3 class="modal-title">Add to Trip</h3>
                 <button class="close-modal" onclick="closeTripModal()">&times;</button>
             </div>
-            <p style="color: #64748b; margin-bottom: 1.5rem; font-size: 0.9375rem;">Select a trip to add <strong id="destinationName" style="color: #0f172a;"></strong></p>
+            <p style="color: #718096; margin-bottom: 2rem; font-size: 1rem; font-weight: 500;">Select a trip to add <strong id="destinationName" style="color: #1a202c;"></strong></p>
 
             <form method="post" action="{% url 'add_destination_to_trip' %}" id="addToTripForm">
                 {% csrf_token %}
@@ -1178,7 +1336,7 @@
                 <div class="trip-list">
                     {% for itinerary in all_itineraries %}
                     <label class="trip-option">
-                        <input type="radio" name="itinerary_id" value="{{ itinerary.id }}" required style="margin-right: 0.75rem;">
+                        <input type="radio" name="itinerary_id" value="{{ itinerary.id }}" required style="margin-right: 1rem;">
                         <div style="display: inline-block;">
                             <div class="trip-option-title">{{ itinerary.title }}</div>
                             <div class="trip-option-date">📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</div>
@@ -1193,7 +1351,7 @@
                 </div>
 
                 {% if all_itineraries %}
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1.5rem;">Add to Selected Trip</button>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 2rem;">Add to Selected Trip</button>
                 {% endif %}
             </form>
         </div>
@@ -1217,9 +1375,7 @@
                 section.classList.remove('active');
             });
             document.getElementById(sectionId).classList.add('active');
-            // Update sidebar active state when switching sections via quick actions
             document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
-            // Added null check
             const activeLink = document.querySelector(`.menu-link[data-section="${sectionId}"]`);
             if (activeLink) {
                  activeLink.classList.add('active');
@@ -1247,9 +1403,6 @@
             }
         });
 
-        // REMOVED: openEditModal and closeEditModal functions are removed
-
-        // FIX: Check for the 'active_section' passed from the server and activate the corresponding tab on page load (e.g., after a filter/search).
         const initialSection = "{{ active_section|default:'overview' }}";
         showSection(initialSection);
     </script>
