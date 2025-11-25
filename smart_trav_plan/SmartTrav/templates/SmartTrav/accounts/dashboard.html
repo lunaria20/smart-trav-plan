@@ -930,6 +930,40 @@
             .dashboard-container {
                 padding: 1.5rem;
             }
+
+            /* Make destination cards clickable */
+.destination-card {
+    cursor: pointer;
+}
+
+.destination-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+/* Modal improvements */
+.modal-content {
+    position: relative;
+}
+
+/* Scrollbar styling for modal */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #5a67d8;
+}
         }
     </style>
 </head>
@@ -978,7 +1012,7 @@
                     <span class="menu-icon">❤</span> Saved
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="budget">
-                    <span class="menu-icon">$</span> Budget
+                    <span class="menu-icon">₱</span> Budget
                 </a></li>
                 <li><a href="#" class="menu-link" data-section="profile">
                     <span class="menu-icon">👤</span> Profile
@@ -1005,7 +1039,7 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon orange">$</div>
+                            <div class="stat-icon orange">₱</div>
                         </div>
                         <div class="stat-value">₱{{ total_budget|default:0 }}</div>
                         <div class="stat-label">Total Budget</div>
@@ -1047,7 +1081,7 @@
                             <div class="itinerary-info">
                                 <h4>{{ itinerary.title }}</h4>
                                 <p>📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</p>
-                                <p>💰 Budget: ₱{{ itinerary.budget }}</p>
+                                <p>₱ Budget: ₱{{ itinerary.budget }}</p>
                             </div>
                             <div class="itinerary-actions">
                                 <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-sm btn-view">View</a>
@@ -1111,8 +1145,8 @@
                         <div class="itinerary-item">
                             <div class="itinerary-info">
                                 <h4>{{ itinerary.title }}</h4>
-                                <p>📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</p>
-                                <p>💰 Budget: ₱{{ itinerary.budget }}</p>
+                                <p>⌨ {{ itinerary.start_date }} - {{ itinerary.end_date }}</p>
+                                <p>₱ Budget: ₱{{ itinerary.budget }}</p>
                                 {% if itinerary.notes %}
                                 <p>📌 {{ itinerary.notes }}</p>
                                 {% endif %}
@@ -1155,32 +1189,121 @@
                         <a href="?category=historical&section=destinations" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
                     </div>
 
-                    <div class="destination-grid">
-                        {% for destination in destinations %}
-                        <div class="destination-card">
-                            {% if destination.image %}
-                            <img src="{{ destination.image.url }}" alt="{{ destination.name }}" class="destination-image">
-                            {% else %}
-                            <div class="destination-image"></div>
-                            {% endif %}
-                            <div class="destination-info">
-                                <div class="destination-name">{{ destination.name }}</div>
-                                <div class="destination-location">📍 {{ destination.location }}</div>
-                                <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1.25rem; font-weight: 500;">{{ destination.description|truncatewords:15 }}</p>
-                                <form method="post" action="{% url 'save_destination' destination.id %}" style="margin: 0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-save">❤️ Save Place</button>
-                                </form>
-                                <button class="btn-add-to-trip" onclick="openTripModal({{ destination.id }}, '{{ destination.name }}')">➕ Add to Trip</button>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <div class="empty-state" style="grid-column: 1/-1;">
-                            <div class="empty-state-icon">🏝️</div>
-                            <p>No destinations available yet.</p>
-                        </div>
-                        {% endfor %}
+<div class="destination-grid">
+    {% for destination in destinations %}
+    <div class="destination-card" onclick="openDestinationModal({{ destination.id }}, '{{ destination.name }}', '{{ destination.location }}', '{{ destination.description|escapejs }}', '{{ destination.category }}', '{{ destination.price_range }}')">
+        {% if destination.image %}
+        <img src="{{ destination.image.url }}" alt="{{ destination.name }}" class="destination-image">
+        {% else %}
+        <div class="destination-image"></div>
+        {% endif %}
+        <div class="destination-info">
+            <div class="destination-name">{{ destination.name }}</div>
+            <div class="destination-location">📍 {{ destination.location }}</div>
+            <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1.25rem; font-weight: 500;">{{ destination.description|truncatewords:15 }}</p>
+
+
+
+            <div style="display: flex; gap: 0.75rem;">
+                <form method="post" action="{% url 'save_destination' destination.id %}" style="margin: 0; flex: 1;" onclick="event.stopPropagation();">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-save" style="width: 100%;">❤️ Save</button>
+                </form>
+                <button type="button" class="btn-secondary" style="flex: 1; padding: 0.75rem; font-size: 0.85rem;" onclick="event.stopPropagation(); openTripModal({{ destination.id }}, '{{ destination.name }}')">Add to Trip</button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty-state" style="grid-column: 1/-1;">
+        <div class="empty-state-icon">🏝️</div>
+        <p>No destinations available yet.</p>
+    </div>
+    {% endfor %}
+</div>
+
+                    <!-- Destination Details Modal -->
+<div id="destinationModal" class="modal">
+    <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalDestinationName"></h3>
+            <button class="close-modal" onclick="closeDestinationModal()">&times;</button>
+        </div>
+
+        <div style="position: relative; height: 300px; margin: -2.5rem -2.5rem 2rem -2.5rem; border-radius: 24px 24px 0 0; overflow: hidden;">
+            <div id="modalDestinationImage" style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+            <span id="modalDestinationCategory" style="position: absolute; top: 1.5rem; right: 1.5rem; background: white; padding: 0.5rem 1.25rem; border-radius: 24px; font-weight: 700; text-transform: capitalize; font-size: 0.85rem;"></span>
+        </div>
+
+        <div>
+            <div style="display: flex; align-items: center; color: #718096; margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 600;">
+                <span style="margin-right: 0.5rem;">📍</span>
+                <span id="modalDestinationLocation"></span>
+            </div>
+
+            <div style="display: flex; align-items: center; color: #f59e0b; margin-bottom: 1.5rem;">
+                <span style="font-size: 1.25rem;">⭐⭐⭐⭐⭐</span>
+                <span style="margin-left: 0.5rem; color: #718096; font-size: 0.9rem;">(4.8/5.0 - 250+ reviews)</span>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h4 style="font-weight: 700; color: #1a202c; margin-bottom: 1rem; font-size: 1.25rem;">About</h4>
+                <p id="modalDestinationDescription" style="color: #4a5568; line-height: 1.8; font-size: 1rem;"></p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: start; gap: 1rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">₱</div>
+                    <div>
+                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Price Range</h5>
+                        <p id="modalDestinationPrice" style="color: #059669; font-weight: 600; margin: 0;"></p>
                     </div>
+                </div>
+
+                <div style="display: flex; align-items: start; gap: 1rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">⏱</div>
+                    <div>
+                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Operating Hours</h5>
+                        <p id="modalOperatingHours" style="color: #2563eb; font-weight: 600; margin: 0;">8:00 AM - 6:00 PM</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: start; gap: 1rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">☎</div>
+                    <div>
+                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Contact</h5>
+                        <p style="color: #7c3aed; font-weight: 600; margin: 0;">+63 32 495 XXXX</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: start; gap: 1rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">⚲</div>
+                    <div>
+                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Location</h5>
+                        <p style="color: #dc2626; font-weight: 600; margin: 0;">Mactan Island, Cebu</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h4 style="font-weight: 700; color: #1a202c; margin-bottom: 1rem; font-size: 1.25rem;" id="modalAmenitiesTitle">Amenities</h4>
+                <div id="modalAmenities" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;"></div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; padding-top: 1.5rem; border-top: 2px solid #f7fafc;">
+                <form method="post" action="" id="modalSaveForm" style="flex: 1; margin: 0;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                        <span>❤️</span> Save Place
+                    </button>
+                </form>
+                <button type="button" class="btn-secondary" style="flex: 1;" onclick="addToTripFromModal()">
+                    ➕ Add to Trip
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
                 </div>
             </section>
 
@@ -1359,6 +1482,71 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+
+        // Destination Modal Functions
+let currentDestinationId = null;
+
+function openDestinationModal(id, name, location, description, category, priceRange) {
+    currentDestinationId = id;
+
+    document.getElementById('modalDestinationName').textContent = name;
+    document.getElementById('modalDestinationLocation').textContent = location;
+    document.getElementById('modalDestinationDescription').textContent = description;
+    document.getElementById('modalDestinationCategory').textContent = category;
+    document.getElementById('modalDestinationPrice').textContent = '₱' + priceRange;
+
+    // Update save form action
+    document.getElementById('modalSaveForm').action = `/destination/save/${id}/`;
+
+    // Set operating hours based on category
+    const operatingHours = {
+        'restaurant': '10:00 AM - 10:00 PM',
+        'resort': '24 Hours (Check-in: 2PM)',
+        'beach': '6:00 AM - 6:00 PM',
+        'attraction': '8:00 AM - 6:00 PM',
+        'historical': '8:00 AM - 5:00 PM'
+    };
+    document.getElementById('modalOperatingHours').textContent = operatingHours[category] || '8:00 AM - 6:00 PM';
+
+    // Set amenities based on category
+    const amenitiesMap = {
+        'resort': [' Swimming Pool', ' Restaurant', ' Free WiFi', ' Parking', ' Beach Access', ' Spa Services'],
+        'beach': [' Beach Access', ' Shower Facilities', ' Nearby Stores', ' Parking', ' Beach Volleyball', ' Lifeguard'],
+        'restaurant': [' Dine-in', ' Take-out', ' Delivery', ' Air-conditioned', ' Family-friendly', ' Card Payment'],
+        'historical': [' Photo Spots', ' Guided Tours', ' Museum', ' Parking', ' Accessible', ' Restrooms'],
+        'attraction': [' Ticketing', ' Parking', ' Restrooms', ' Gift Shop', ' Photo Spots', ' Accessible']
+    };
+
+    const amenities = amenitiesMap[category] || amenitiesMap['attraction'];
+    const amenitiesHTML = amenities.map(amenity =>
+        `<div style="display: flex; align-items: center; color: #4a5568; font-size: 0.95rem; font-weight: 500;">${amenity}</div>`
+    ).join('');
+
+    document.getElementById('modalAmenities').innerHTML = amenitiesHTML;
+    document.getElementById('modalAmenitiesTitle').textContent = category === 'restaurant' ? 'Features' : 'Amenities';
+
+    document.getElementById('destinationModal').classList.add('show');
+}
+
+function closeDestinationModal() {
+    document.getElementById('destinationModal').classList.remove('show');
+}
+
+function addToTripFromModal() {
+    if (currentDestinationId) {
+        closeDestinationModal();
+        const destName = document.getElementById('modalDestinationName').textContent;
+        openTripModal(currentDestinationId, destName);
+    }
+}
+
+// Close modal when clicking outside
+document.getElementById('destinationModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDestinationModal();
+    }
+});
+
         document.querySelectorAll('.menu-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
