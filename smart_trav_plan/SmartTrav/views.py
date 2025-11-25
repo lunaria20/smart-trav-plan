@@ -98,6 +98,9 @@ def dashboard_view(request):
 
     saved_destinations = SavedDestination.objects.filter(user=request.user)
 
+    # Get the active section from URL parameter
+    active_section = request.GET.get('section', 'overview')  # ADD THIS LINE
+
     # Filter destinations by category if provided
     active_category = request.GET.get('category', '')
     if active_category:
@@ -124,7 +127,8 @@ def dashboard_view(request):
         'recent_itineraries': recent_itineraries,
         'all_itineraries': user_itineraries,
         'destinations': all_destinations,
-        'active_category': active_category,  # For filter chips
+        'active_category': active_category,
+        'active_section': active_section,  # ADD THIS LINE
         'saved_destinations': saved_destinations,
         'expenses': expenses,
     }
