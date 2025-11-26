@@ -1192,11 +1192,13 @@
 <div class="destination-grid">
     {% for destination in destinations %}
     <div class="destination-card" onclick="openDestinationModal({{ destination.id }}, '{{ destination.name }}', '{{ destination.location }}', '{{ destination.description|escapejs }}', '{{ destination.category }}', '{{ destination.price_range }}')">
-        {% if destination.image %}
-        <img src="{{ destination.image.url }}" alt="{{ destination.name }}" class="destination-image">
-        {% else %}
-        <div class="destination-image"></div>
-        {% endif %}
+        {% if destination.image_url %}
+<img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="destination-image">
+{% elif destination.image %}
+<img src="{{ destination.image.url }}" alt="{{ destination.name }}" class="destination-image">
+{% else %}
+<div class="destination-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+{% endif %}
         <div class="destination-info">
             <div class="destination-name">{{ destination.name }}</div>
             <div class="destination-location">📍 {{ destination.location }}</div>
@@ -1316,11 +1318,13 @@
                     <div class="destination-grid">
                         {% for saved in saved_destinations %}
                         <div class="destination-card">
-                            {% if saved.destination.image %}
-                            <img src="{{ saved.destination.image.url }}" alt="{{ saved.destination.name }}" class="destination-image">
-                            {% else %}
-                            <div class="destination-image"></div>
-                            {% endif %}
+                            {% if saved.destination.image_url %}
+<img src="{{ saved.destination.image_url }}" alt="{{ saved.destination.name }}" class="destination-image">
+{% elif saved.destination.image %}
+<img src="{{ saved.destination.image.url }}" alt="{{ saved.destination.name }}" class="destination-image">
+{% else %}
+<div class="destination-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+{% endif %}
                             <div class="destination-info">
                                 <div class="destination-name">{{ saved.destination.name }}</div>
                                 <div class="destination-location">📍 {{ saved.destination.location }}</div>
