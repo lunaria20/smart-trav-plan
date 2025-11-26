@@ -1201,21 +1201,46 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Explore Destinations</h3>
-                        <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: inline-block;">
+                        <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: flex; gap: 0.5rem; align-items: center;">
                             <input type="hidden" name="section" value="destinations">
-                            <input type="text" name="q" class="form-control" style="max-width: 320px;"
-                                placeholder="🔍 Search destinations..." value="{{ query|default:'' }}">
-                            <button type="submit" style="display: none;"></button> </form>
+                            {% if active_category %}
+                            <input type="hidden" name="category" value="{{ active_category }}">
+                            {% endif %}
+                            <input type="text"
+                                   name="q"
+                                   class="form-control"
+                                   style="max-width: 320px;"
+                                   placeholder="🔍 Search destinations..."
+                                   value="{{ query|default:'' }}">
+                            <button type="submit" class="btn-primary" style="padding: 0.875rem 1.5rem;">
+                                Search
+                            </button>
+                            {% if query %}
+                            <a href="?section=destinations{% if active_category %}&category={{ active_category }}{% endif %}"
+                               class="btn-secondary"
+                               style="padding: 0.875rem 1.5rem; text-decoration: none;">
+                                Clear
+                            </a>
+                            {% endif %}
+                        </form>
                     </div>
 
                     <div class="filter-controls">
-                        <a href="?category=&section=destinations&q={{ query|default:'' }}" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
+                        <a href="?section=destinations&q={{ query|default:'' }}" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
                         <a href="?category=resort&section=destinations&q={{ query|default:'' }}" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
                         <a href="?category=restaurant&section=destinations&q={{ query|default:'' }}" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
                         <a href="?category=attraction&section=destinations&q={{ query|default:'' }}" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
                         <a href="?category=beach&section=destinations&q={{ query|default:'' }}" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
                         <a href="?category=historical&section=destinations&q={{ query|default:'' }}" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
                     </div>
+
+                    {% if query %}
+                    <div class="alert alert-info" style="margin-bottom: 2rem;">
+                        Showing results for "<strong>{{ query }}</strong>"
+                        {% if active_category %} in <strong>{{ active_category|title }}</strong>{% endif %}
+                        - Found <strong>{{ destinations|length }}</strong> destination(s)
+                    </div>
+                    {% endif %}
 
                     <div class="destination-grid">
                         {% for destination in destinations %}
@@ -1247,7 +1272,14 @@
                         {% empty %}
                         <div class="empty-state" style="grid-column: 1/-1;">
                             <div class="empty-state-icon">🏝️</div>
+                            {% if query %}
+                            <p>No destinations found for "{{ query }}"{% if active_category %} in {{ active_category|title }}{% endif %}.</p>
+                            <a href="?section=destinations" class="btn-primary" style="margin-top: 1rem; text-decoration: none;">
+                                View All Destinations
+                            </a>
+                            {% else %}
                             <p>No destinations found for your search/filter criteria.</p>
+                            {% endif %}
                         </div>
                         {% endfor %}
                     </div>

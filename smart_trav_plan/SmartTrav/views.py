@@ -6,8 +6,8 @@ from django.contrib.auth.views import LogoutView
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Sum, Count
-from datetime import date  # date is used for validation
+from django.db.models import Sum, Count, Q
+from datetime import date
 from django.views.decorators.cache import never_cache
 from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination
 
@@ -42,7 +42,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 def login_view(request):
     if request.method == "POST":
-        input_value = request.POST.get("email", "").strip().lower()  # Normalize: strip spaces, lowercase
+        input_value = request.POST.get("email", "").strip().lower()
         password = request.POST.get("password")
 
         user = None
@@ -91,23 +91,32 @@ def signup_view(request):
 @never_cache
 @login_required
 def dashboard_view(request):
-    # Get user's data with destination count annotation
+    # Get the active section from URL parameter
+    active_section = request.GET.get('section', 'overview')
+
+    # Get user's itineraries, SORTED OLDEST TO NEWEST (Requested Change 1)
     user_itineraries = Itinerary.objects.filter(user=request.user).annotate(
         destination_count=Count('itinerary_destinations')
-    )
+    ).order_by('start_date') # Explicitly sort by start_date
+
+    # --- Destination Search/Filter Logic (Requested Change 2) ---
+    query = request.GET.get('q', '').strip()
+    active_category = request.GET.get('category', '')
+
+    # Start with all destinations
+    all_destinations = Destination.objects.all()
+
+    # Apply search filter if query exists: ONLY FILTER BY NAME (Requested Change 2)
+    if query:
+        # Use icontains for a flexible match on the destination name
+        all_destinations = all_destinations.filter(Q(name__icontains=query))
+
+    # Apply category filter if selected (applied AFTER search filter)
+    if active_category:
+        all_destinations = all_destinations.filter(category=active_category)
+    # -----------------------------------------------------------
 
     saved_destinations = SavedDestination.objects.filter(user=request.user)
-
-    # Get the active section from URL parameter
-    active_section = request.GET.get('section', 'overview')  # ADD THIS LINE
-
-    # Filter destinations by category if provided
-    active_category = request.GET.get('category', '')
-    if active_category:
-        all_destinations = Destination.objects.filter(category=active_category)
-    else:
-        all_destinations = Destination.objects.all()
-
     expenses = Expense.objects.filter(itinerary__user=request.user)
 
     # Calculate stats
@@ -116,7 +125,7 @@ def dashboard_view(request):
     total_budget = user_itineraries.aggregate(Sum('budget'))['budget__sum'] or 0
     upcoming_trips = user_itineraries.filter(start_date__gte=date.today()).count()
 
-    # Recent itineraries (last 3)
+    # Recent itineraries (first 3, automatically oldest due to sorting)
     recent_itineraries = user_itineraries[:3]
 
     context = {
@@ -128,9 +137,10 @@ def dashboard_view(request):
         'all_itineraries': user_itineraries,
         'destinations': all_destinations,
         'active_category': active_category,
-        'active_section': active_section,  # ADD THIS LINE
+        'active_section': active_section,
         'saved_destinations': saved_destinations,
         'expenses': expenses,
+        'query': query, # Pass the query back to the template
     }
     return render(request, 'SmartTrav/accounts/dashboard.html', context)
 
@@ -169,8 +179,7 @@ def create_itinerary(request):
         return redirect('dashboard')
 
     # If GET, or if validation fails, it redirects to dashboard.
-    return redirect(
-        'dashboard')  # Default redirect if somehow reached via GET (though @never_cache prevents direct access)
+    return redirect('dashboard')
 
 
 # UPDATED: Itinerary Edit View (Uses dedicated edit_itinerary.html)
