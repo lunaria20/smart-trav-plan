@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, Count
-from datetime import date
+from datetime import date  # date is used for validation
 from django.views.decorators.cache import never_cache
 from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination
 
@@ -132,7 +132,6 @@ def dashboard_view(request):
         'saved_destinations': saved_destinations,
         'expenses': expenses,
     }
-
     return render(request, 'SmartTrav/accounts/dashboard.html', context)
 
 
@@ -140,16 +139,38 @@ def dashboard_view(request):
 @login_required
 def create_itinerary(request):
     if request.method == 'POST':
+        title = request.POST.get('title')
+        start_date_str = request.POST.get('start_date')
+        end_date_str = request.POST.get('end_date')
+        budget = request.POST.get('budget')
+        notes = request.POST.get('notes', '')
+
+        # --- VALIDATION: Itinerary can only be created if the data is not before today. ---
+        try:
+            start_date_obj = date.fromisoformat(start_date_str)
+            if start_date_obj < date.today():
+                messages.error(request, "Start date cannot be in the past. Please choose today or a future date.")
+                return redirect('dashboard')
+        except (ValueError, TypeError):
+            # This handles cases where date strings are malformed or missing (though required in template)
+            messages.error(request, "Invalid or missing date submitted.")
+            return redirect('dashboard')
+        # -----------------------------------------------------------------------------------
+
         Itinerary.objects.create(
             user=request.user,
-            title=request.POST.get('title'),
-            start_date=request.POST.get('start_date'),
-            end_date=request.POST.get('end_date'),
-            budget=request.POST.get('budget'),
-            notes=request.POST.get('notes', '')
+            title=title,
+            start_date=start_date_str,
+            end_date=end_date_str,
+            budget=budget,
+            notes=notes
         )
         messages.success(request, 'Itinerary created successfully!')
-    return redirect('dashboard')
+        return redirect('dashboard')
+
+    # If GET, or if validation fails, it redirects to dashboard.
+    return redirect(
+        'dashboard')  # Default redirect if somehow reached via GET (though @never_cache prevents direct access)
 
 
 # UPDATED: Itinerary Edit View (Uses dedicated edit_itinerary.html)
@@ -158,52 +179,67 @@ def edit_itinerary(request, itinerary_id):
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
 
     if request.method == 'POST':
+        start_date_str = request.POST.get('start_date')
+
+        # --- VALIDATION: Ensure updated start date is not before today ---
+        try:
+            start_date_obj = date.fromisoformat(start_date_str)
+            if start_date_obj < date.today():
+                messages.error(request, "Start date cannot be in the past. Please choose today or a future date.")
+                # Redirect back to the edit page with the error
+                return render(request, 'SmartTrav/accounts/edit_itinerary.html', {'itinerary': itinerary})
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid or missing date submitted.")
+            return render(request, 'SmartTrav/accounts/edit_itinerary.html', {'itinerary': itinerary})
+        # ----------------------------------------------------------------
+
         itinerary.title = request.POST.get('title')
-        itinerary.start_date = request.POST.get('start_date')
+        itinerary.start_date = start_date_str
         itinerary.end_date = request.POST.get('end_date')
         itinerary.budget = request.POST.get('budget')
         itinerary.notes = request.POST.get('notes', '')
         itinerary.save()
-        messages.success(request, f'Itinerary "{itinerary.title}" updated successfully!')
+        messages.success(request, 'Itinerary updated successfully!')
         return redirect('dashboard')
 
-    # Handle GET request: Render the edit page with existing data
-    context = {
-        'itinerary': itinerary
-    }
-    return render(request, 'SmartTrav/accounts/edit_itinerary.html', context)
+    return render(request, 'SmartTrav/accounts/edit_itinerary.html', {'itinerary': itinerary})
 
 
-# Delete Itinerary View
 @login_required
 def delete_itinerary(request, itinerary_id):
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
-
     if request.method == 'POST':
-        title = itinerary.title
         itinerary.delete()
-        messages.success(request, f'Itinerary "{title}" deleted successfully.')
+        messages.success(request, f'Itinerary "{itinerary.title}" deleted successfully.')
     return redirect('dashboard')
 
 
-@never_cache
 @login_required
-def add_expense(request):
+def save_destination(request, destination_id):
+    destination = get_object_or_404(Destination, id=destination_id)
     if request.method == 'POST':
-        itinerary = get_object_or_404(Itinerary, id=request.POST.get('itinerary'), user=request.user)
-        Expense.objects.create(
-            itinerary=itinerary,
-            category=request.POST.get('category'),
-            description=request.POST.get('description'),
-            amount=request.POST.get('amount'),
-            date=request.POST.get('date')
-        )
-        messages.success(request, 'Expense added successfully!')
+        # Check if already saved
+        if not SavedDestination.objects.filter(user=request.user, destination=destination).exists():
+            SavedDestination.objects.create(user=request.user, destination=destination)
+            messages.success(request, f'Destination "{destination.name}" saved successfully!')
+        else:
+            messages.info(request, f'Destination "{destination.name}" is already in your saved list.')
+
     return redirect('dashboard')
 
 
 @login_required
-@never_cache
+def remove_saved_destination(request, destination_id):
+    destination = get_object_or_404(Destination, id=destination_id)
+    if request.method == 'POST':
+        saved_destination = get_object_or_404(SavedDestination, user=request.user, destination=destination)
+        saved_destination.delete()
+        messages.success(request, f'Destination "{destination.name}" removed from saved list.')
+
+    return redirect('dashboard')
+
+
+@login_required
 def add_destination_to_trip(request):
     if request.method == 'POST':
         destination_id = request.POST.get('destination_id')
@@ -212,62 +248,45 @@ def add_destination_to_trip(request):
         destination = get_object_or_404(Destination, id=destination_id)
         itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
 
-        # Check if already added
-        if ItineraryDestination.objects.filter(itinerary=itinerary, destination=destination).exists():
-            messages.warning(request, f'{destination.name} is already in {itinerary.title}')
+        # Check if the destination is already linked to the itinerary
+        if not ItineraryDestination.objects.filter(itinerary=itinerary, destination=destination).exists():
+            ItineraryDestination.objects.create(itinerary=itinerary, destination=destination)
+            messages.success(request, f'"{destination.name}" added to itinerary "{itinerary.title}"!')
         else:
-            ItineraryDestination.objects.create(
-                itinerary=itinerary,
-                destination=destination
-            )
-            messages.success(request, f'{destination.name} added to {itinerary.title}!')
+            messages.info(request, f'"{destination.name}" is already in itinerary "{itinerary.title}".')
 
     return redirect('dashboard')
 
 
 @login_required
-@never_cache
-def save_destination(request, destination_id):
+def add_expense(request):
     if request.method == 'POST':
-        destination = get_object_or_404(Destination, id=destination_id)
+        itinerary_id = request.POST.get('itinerary_id')
+        description = request.POST.get('description')
+        amount = request.POST.get('amount')
+        category = request.POST.get('category')
+        date_str = request.POST.get('date')
 
-        saved, created = SavedDestination.objects.get_or_create(
-            user=request.user,
-            destination=destination
+        itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
+
+        # Create the expense
+        Expense.objects.create(
+            itinerary=itinerary,
+            description=description,
+            amount=amount,
+            category=category,
+            date=date_str
         )
+        messages.success(request, 'Expense added successfully!')
+        return redirect('dashboard')
 
-        if created:
-            messages.success(request, f'{destination.name} saved to your favorites!')
-        else:
-            messages.info(request, f'{destination.name} is already in your favorites.')
-
-    return redirect('dashboard')
+    return redirect('dashboard')  # Fallback
 
 
-@login_required
-@never_cache
-def remove_saved_destination(request, destination_id):
-    if request.method == 'POST':
-        # Find the specific SavedDestination instance for the current user and destination
-        saved_destination = get_object_or_404(
-            SavedDestination,
-            user=request.user,
-            destination__id=destination_id
-        )
-        destination_name = saved_destination.destination.name
-
-        # Delete the saved instance
-        saved_destination.delete()
-        messages.success(request, f'"{destination_name}" removed from your saved places.')
-
-    return redirect('dashboard')
-
-
-@never_cache
 @login_required
 def update_profile(request):
+    user = request.user
     if request.method == 'POST':
-        user = request.user
         user.email = request.POST.get('email', user.email)
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
@@ -305,9 +324,3 @@ def service_view(request):
 
 def contact_view(request):
     return render(request, 'SmartTrav/accounts/contact.html')
-
-
-class CustomLogoutView(LogoutView):
-    def dispatch(self, request, *args, **kwargs):
-        messages.success(request, "You have been logged out successfully.")
-        return super().dispatch(request, *args, **kwargs)
