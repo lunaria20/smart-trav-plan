@@ -6,7 +6,7 @@ from django.contrib.auth.views import LogoutView
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Sum, Count, Q
+from django.db.models import Sum, Count, Q # Import Q for filtering
 from datetime import date
 from django.views.decorators.cache import never_cache
 from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination
