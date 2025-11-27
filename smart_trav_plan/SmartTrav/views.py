@@ -332,4 +332,22 @@ def service_view(request):
 
 
 def contact_view(request):
+
+# Contact view
+def contact(request):
     return render(request, 'SmartTrav/accounts/contact.html')
+
+# Destination detail view
+def destination_detail(request, destination_id):
+    destination = get_object_or_404(Destination, id=destination_id)
+    context = {
+        'destination': destination,
+    }
+    return render(request, 'SmartTrav/destination_detail.html', context)
+
+# Custom logout view
+class CustomLogoutView(LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        messages.success(request, "You have been logged out successfully.")
+        return super().dispatch(request, *args, **kwargs)
+
