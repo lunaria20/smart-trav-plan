@@ -32,7 +32,6 @@ urlpatterns = [
     path('destination/add-to-trip/', views.add_destination_to_trip, name='add_destination_to_trip'),
     path('destination/save/<int:destination_id>/', views.save_destination, name='save_destination'),
     path('destination/remove-saved/<int:destination_id>/', views.remove_saved_destination, name='remove_saved_destination'),
-    path('destination/<int:destination_id>/', views.destination_detail, name='destination_detail'),
 
     # Expenses
     path('expense/add/', views.add_expense, name='add_expense'),

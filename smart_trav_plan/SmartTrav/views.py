@@ -306,13 +306,6 @@ def service_view(request):
 def contact_view(request):
     return render(request, 'SmartTrav/accounts/contact.html')
 
-def destination_detail(request, destination_id):
-    destination = get_object_or_404(Destination, id=destination_id)
-    context = {
-        'destination': destination,
-    }
-    return render(request, 'SmartTrav/destination_detail.html', context)
-
 
 class CustomLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):

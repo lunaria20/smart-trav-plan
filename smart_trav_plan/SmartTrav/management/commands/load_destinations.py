@@ -9,14 +9,17 @@ class Command(BaseCommand):
     help = 'Load destinations from CSV file'
 
     def handle(self, *args, **kwargs):
+        # Path to CSV file
         csv_file = os.path.join(settings.BASE_DIR, 'SmartTrav', 'data', 'destinations.csv')
 
         self.stdout.write(self.style.WARNING(f'Loading destinations from: {csv_file}'))
 
+        # Check if file exists
         if not os.path.exists(csv_file):
             self.stdout.write(self.style.ERROR(f'CSV file not found at: {csv_file}'))
             return
 
+        # Read CSV and create destinations
         with open(csv_file, 'r', encoding='utf-8') as file:
             reader = csv.DictReader(file)
             created_count = 0
@@ -30,7 +33,6 @@ class Command(BaseCommand):
                         'location': row['location'],
                         'category': row['category'],
                         'price_range': row['price_range'],
-                        'image_url': row.get('image_url', ''),  # ADD THIS
                     }
                 )
 

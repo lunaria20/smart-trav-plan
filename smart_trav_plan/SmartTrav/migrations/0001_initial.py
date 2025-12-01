@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100)),
                 ('description', models.TextField()),
                 ('location', models.CharField(max_length=100)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='media/destinations/')),
+                ('image', models.ImageField(blank=True, null=True, upload_to='SmartTrav/static/images/')),
             ],
         ),
     ]
