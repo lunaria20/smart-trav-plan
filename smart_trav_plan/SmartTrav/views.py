@@ -9,10 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum, Count
 from datetime import date
 from django.views.decorators.cache import never_cache
-from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination
-
-# Import your models (make sure these exist in your models.py)
-from .models import Itinerary, Destination, SavedDestination, Expense
+from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination, Profile
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -42,28 +39,23 @@ class CustomUserCreationForm(UserCreationForm):
 
 def login_view(request):
     if request.method == "POST":
-        input_value = request.POST.get("email", "").strip().lower()  # Normalize: strip spaces, lowercase
+        input_value = request.POST.get("email", "").strip().lower()
         password = request.POST.get("password")
 
         user = None
 
-        # Check if input looks like an email (contains '@')
         if '@' in input_value:
-            # Try email query first (case-insensitive)
             email_users = User.objects.filter(email__iexact=input_value)
             if email_users.exists():
                 user = email_users.first()
 
-        # Fallback to username query
         if not user:
             username_users = User.objects.filter(username__iexact=input_value)
             if username_users.exists():
                 user = username_users.first()
             else:
-                # Also try standard authenticate (in case it's treated as username)
                 user = authenticate(request, username=input_value, password=password)
 
-        # Check password if user found
         if user and user.check_password(password):
             login(request, user)
             messages.success(request, "Login successful! Welcome back.")
@@ -91,18 +83,17 @@ def signup_view(request):
 @never_cache
 @login_required
 def dashboard_view(request):
-    # Get user's data with destination count annotation
+    # Ensure user has a profile (create if doesn't exist)
+    Profile.objects.get_or_create(user=request.user)
+
     user_itineraries = Itinerary.objects.filter(user=request.user).annotate(
         destination_count=Count('itinerary_destinations')
     )
 
     saved_destinations = SavedDestination.objects.filter(user=request.user)
-
-    # Get the active section from URL parameter
-    active_section = request.GET.get('section', 'overview')  # ADD THIS LINE
-
-    # Filter destinations by category if provided
+    active_section = request.GET.get('section', 'overview')
     active_category = request.GET.get('category', '')
+
     if active_category:
         all_destinations = Destination.objects.filter(category=active_category)
     else:
@@ -115,8 +106,6 @@ def dashboard_view(request):
     saved_count = saved_destinations.count()
     total_budget = user_itineraries.aggregate(Sum('budget'))['budget__sum'] or 0
     upcoming_trips = user_itineraries.filter(start_date__gte=date.today()).count()
-
-    # Recent itineraries (last 3)
     recent_itineraries = user_itineraries[:3]
 
     context = {
@@ -128,7 +117,7 @@ def dashboard_view(request):
         'all_itineraries': user_itineraries,
         'destinations': all_destinations,
         'active_category': active_category,
-        'active_section': active_section,  # ADD THIS LINE
+        'active_section': active_section,
         'saved_destinations': saved_destinations,
         'expenses': expenses,
     }
@@ -152,7 +141,6 @@ def create_itinerary(request):
     return redirect('dashboard')
 
 
-# UPDATED: Itinerary Edit View (Uses dedicated edit_itinerary.html)
 @login_required
 def edit_itinerary(request, itinerary_id):
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
@@ -167,14 +155,12 @@ def edit_itinerary(request, itinerary_id):
         messages.success(request, f'Itinerary "{itinerary.title}" updated successfully!')
         return redirect('dashboard')
 
-    # Handle GET request: Render the edit page with existing data
     context = {
         'itinerary': itinerary
     }
     return render(request, 'SmartTrav/accounts/edit_itinerary.html', context)
 
 
-# Delete Itinerary View
 @login_required
 def delete_itinerary(request, itinerary_id):
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
@@ -212,7 +198,6 @@ def add_destination_to_trip(request):
         destination = get_object_or_404(Destination, id=destination_id)
         itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
 
-        # Check if already added
         if ItineraryDestination.objects.filter(itinerary=itinerary, destination=destination).exists():
             messages.warning(request, f'{destination.name} is already in {itinerary.title}')
         else:
@@ -248,15 +233,12 @@ def save_destination(request, destination_id):
 @never_cache
 def remove_saved_destination(request, destination_id):
     if request.method == 'POST':
-        # Find the specific SavedDestination instance for the current user and destination
         saved_destination = get_object_or_404(
             SavedDestination,
             user=request.user,
             destination__id=destination_id
         )
         destination_name = saved_destination.destination.name
-
-        # Delete the saved instance
         saved_destination.delete()
         messages.success(request, f'"{destination_name}" removed from your saved places.')
 
@@ -268,18 +250,57 @@ def remove_saved_destination(request, destination_id):
 def update_profile(request):
     if request.method == 'POST':
         user = request.user
+
+        # Update basic user info
         user.email = request.POST.get('email', user.email)
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
         user.save()
-        messages.success(request, 'Profile updated successfully!')
+
+        # Get or create profile
+        profile, created = Profile.objects.get_or_create(user=user)
+
+        # Handle profile picture upload
+        if 'profile_picture' in request.FILES:
+            # Delete old profile picture if exists
+            if profile.profile_picture:
+                profile.profile_picture.delete(save=False)
+
+            # Save new profile picture
+            profile.profile_picture = request.FILES['profile_picture']
+            profile.save()
+            messages.success(request, 'Profile updated successfully with new picture!')
+        else:
+            messages.success(request, 'Profile updated successfully!')
+
+        return redirect('/dashboard/?section=profile')
+
     return redirect('dashboard')
+
+
+@login_required
+def remove_profile_picture(request):
+    if request.method == 'POST':
+        try:
+            profile = request.user.profile
+            if profile.profile_picture:
+                # Delete the file from storage
+                profile.profile_picture.delete(save=False)
+                # Clear the field
+                profile.profile_picture = None
+                profile.save()
+                messages.success(request, 'Profile picture removed successfully!')
+            else:
+                messages.info(request, 'No profile picture to remove.')
+        except Profile.DoesNotExist:
+            messages.error(request, 'Profile not found.')
+
+    return redirect('/dashboard/?section=profile')
 
 
 @login_required
 def itinerary_detail(request, itinerary_id):
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
-    # Fetch all destinations linked to the trip via the intermediary model
     itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary).select_related('destination')
 
     context = {

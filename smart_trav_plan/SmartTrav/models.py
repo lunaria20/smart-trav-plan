@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Destination(models.Model):
     name = models.CharField(max_length=200)
@@ -14,7 +15,6 @@ class Destination(models.Model):
         ('historical', 'Historical Site')
     ])
     price_range = models.CharField(max_length=50, blank=True)
-    # REMOVE ImageField, only use URL field for Supabase
     image_url = models.URLField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -80,3 +80,26 @@ class Expense(models.Model):
 
     class Meta:
         ordering = ['-date']
+
+
+# FIXED: Profile model should NOT be nested inside Expense
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Profile"
+
+
+# Auto-create profile when user is created
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    # Only save if profile exists
+    if hasattr(instance, 'profile'):
+        instance.profile.save()

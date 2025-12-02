@@ -989,6 +989,135 @@
     background: #5a67d8;
 }
         }
+
+        .profile-picture-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    border-radius: 20px;
+    border: 2px solid #e2e8f0;
+}
+
+.profile-picture-wrapper {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.profile-picture-display {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 4rem;
+    font-weight: 800;
+    border: 6px solid white;
+    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.profile-picture-display img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-picture-display:hover {
+    transform: scale(1.05);
+    box-shadow: 0 16px 50px rgba(102, 126, 234, 0.4);
+}
+
+.upload-overlay {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+}
+
+.upload-overlay:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.upload-overlay svg {
+    width: 24px;
+    height: 24px;
+    color: white;
+}
+
+.file-input-hidden {
+    display: none;
+}
+
+.profile-picture-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-upload {
+    padding: 0.625rem 1.5rem;
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-upload:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-remove {
+    padding: 0.625rem 1.5rem;
+    background: white;
+    color: #ef4444;
+    border: 2px solid #ef4444;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-remove:hover {
+    background: #ef4444;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.profile-info-text {
+    text-align: center;
+    color: #718096;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+
     </style>
 </head>
 <body>
@@ -1000,7 +1129,15 @@
             </div>
             <div class="user-section">
                 <span class="user-name">{{ user.username }}</span>
-                <div class="user-avatar">{{ user.username|first|upper }}</div>
+                <div class="user-avatar">
+    {% if user.profile.profile_picture %}
+        <img src="{{ user.profile.profile_picture.url }}"
+             alt="{{ user.username }}"
+             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+    {% else %}
+        {{ user.username|first|upper }}
+    {% endif %}
+</div>
                 <form method="post" action="{% url 'logout' %}" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn-logout">Logout</button>
@@ -1437,34 +1574,73 @@
             </section>
 
             <section id="profile" class="content-section">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">My Profile</h3>
-                    </div>
-                    <form method="post" action="{% url 'update_profile' %}">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" value="{{ user.username }}" readonly style="background: #f7fafc; color: #718096;">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" value="{{ user.email }}">
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
-                            <div class="form-group">
-                                <label class="form-label">First Name</label>
-                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-primary">Update Profile</button>
-                    </form>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">My Profile</h3>
+        </div>
+
+        <!-- Profile Picture Section -->
+        <div class="profile-picture-section">
+            <div class="profile-picture-wrapper">
+                <div class="profile-picture-display" id="profilePictureDisplay">
+                    <!-- If user has profile picture -->
+                    {% if user.profile.profile_picture %}
+                    <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" id="profileImage">
+                    {% else %}
+                    <!-- Show first letter of username if no picture -->
+                    <span id="profileInitial">{{ user.username|first|upper }}</span>
+                    {% endif %}
                 </div>
-            </section>
+                <label for="profilePictureInput" class="upload-overlay">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </label>
+            </div>
+
+            <p class="profile-info-text">{{ user.username }}</p>
+            <p class="profile-info-text" style="font-size: 0.85rem; margin-top: 0.25rem;">Click the camera icon to change your profile picture</p>
+
+            <div class="profile-picture-actions">
+                <button type="button" class="btn-upload" onclick="document.getElementById('profilePictureInput').click()">
+                    Upload Photo
+                </button>
+                {% if user.profile.profile_picture %}
+                <button type="button" class="btn-remove" onclick="removeProfilePicture()">
+                     Remove
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Profile Form -->
+        <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" id="profileForm">
+            {% csrf_token %}
+            <input type="file" id="profilePictureInput" name="profile_picture" class="file-input-hidden" accept="image/*" onchange="previewImage(event)">
+
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-control" value="{{ user.username }}" readonly style="background: #f7fafc; color: #718096;">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="{{ user.email }}">
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                </div>
+            </div>
+            <button type="submit" class="btn-primary"> Update Profile</button>
+        </form>
+    </div>
+</section>
         </main>
     </div>
 
@@ -1510,7 +1686,7 @@
         <!-- Icon Header -->
         <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 2rem; text-align: center;">
             <div style="width: 70px; height: 70px; margin: 0 auto; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; backdrop-filter: blur(10px);">
-                🗑️
+                🗑
             </div>
         </div>
 
@@ -1625,6 +1801,56 @@ function confirmDelete() {
         deleteForm.submit();
     }
     closeDeleteModal();
+}
+
+// Preview uploaded image before saving
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const display = document.getElementById('profilePictureDisplay');
+            const initial = document.getElementById('profileInitial');
+            const existingImg = document.getElementById('profileImage');
+
+            if (existingImg) {
+                existingImg.src = e.target.result;
+            } else {
+                if (initial) {
+                    initial.style.display = 'none';
+                }
+                const img = document.createElement('img');
+                img.id = 'profileImage';
+                img.src = e.target.result;
+                img.alt = 'Profile Picture';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                display.appendChild(img);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Remove profile picture
+function removeProfilePicture() {
+    if (confirm('Are you sure you want to remove your profile picture?')) {
+        // Create a form to submit the removal
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "remove_profile_picture" %}';
+
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 
 // Close modal when clicking outside
