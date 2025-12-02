@@ -69,7 +69,7 @@ TEMPLATES = [
 # --- SUPABASE STORAGE CONFIGURATION (New/Consolidated) ---
 SUPABASE_URL = os.environ.get('SUPABASE_URL')
 SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
-SUPABASE_BUCKET = 'media'  # Use your actual bucket name
+SUPABASE_BUCKET = 'destination-images'  # Use your actual bucket name
 
 WSGI_APPLICATION = 'smart_trav_plan.wsgi.application'
 
