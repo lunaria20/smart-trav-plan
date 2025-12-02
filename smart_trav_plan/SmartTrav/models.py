@@ -14,8 +14,8 @@ class Destination(models.Model):
         ('historical', 'Historical Site')
     ])
     price_range = models.CharField(max_length=50, blank=True)
-    image = models.ImageField(upload_to='images/', blank=True, null=True, max_length=500)
-    image_url = models.URLField(max_length=500, blank=True, null=True)  # ADD THIS LINE
+    # REMOVE ImageField, only use URL field for Supabase
+    image_url = models.URLField(max_length=500, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -38,6 +38,7 @@ class Itinerary(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+
 class ItineraryDestination(models.Model):
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name='itinerary_destinations')
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
@@ -50,6 +51,7 @@ class ItineraryDestination(models.Model):
 
     def __str__(self):
         return f"{self.destination.name} in {self.itinerary.title}"
+
 
 class SavedDestination(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_destinations')
@@ -78,4 +80,3 @@ class Expense(models.Model):
 
     class Meta:
         ordering = ['-date']
-

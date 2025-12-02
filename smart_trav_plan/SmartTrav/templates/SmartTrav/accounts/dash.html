@@ -566,9 +566,9 @@
 
                     <div class="destination-grid">
                         {% for destination in destinations %}
-                        <div class="destination-card">
-                            {% if destination.image %}
-                            <img src="{{ destination.image.url }}" alt="{{ destination.name }}" class="destination-image">
+                        <div class="destination-card" onclick="openDestinationModal({{ destination.id }}, '{{ destination.name }}', '{{ destination.location }}', '{{ destination.description|escapejs }}', '{{ destination.category }}', '{{ destination.price_range }}', '{{ destination.image_url|default:'' }}')">
+                            {% if destination.image_url %}
+                            <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="destination-image" loading="lazy">
                             {% else %}
                             <div class="destination-image"></div>
                             {% endif %}
@@ -600,7 +600,7 @@
                         {% for saved in saved_destinations %}
                         <div class="destination-card">
                             {% if saved.destination.image %}
-                            <img src="{{ saved.destination.image.url }}" alt="{{ saved.destination.name }}" class="destination-image">
+                            <img src="{{ saved.destination.image_url }}" alt="{{ saved.destination.name }}" class="destination-image" loading="lazy">
                             {% else %}
                             <div class="destination-image"></div>
                             {% endif %}
@@ -738,17 +738,57 @@
             });
         });
 
-        function showSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-        }
+        function openDestinationModal(id, name, location, description, category, priceRange, imageUrl) {
+    currentDestinationId = id;
 
-        function toggleForm(formId) {
-            const form = document.getElementById(formId);
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        }
+    document.getElementById('modalDestinationName').textContent = name;
+    document.getElementById('modalDestinationLocation').textContent = location;
+    document.getElementById('modalDestinationDescription').textContent = description;
+    document.getElementById('modalDestinationCategory').textContent = category;
+    document.getElementById('modalDestinationPrice').textContent = '₱' + priceRange;
+
+    // Handle image display
+    const modalImage = document.getElementById('modalDestinationImage');
+    if (imageUrl) {
+        modalImage.style.backgroundImage = `url('${imageUrl}')`;
+        modalImage.style.backgroundSize = 'cover';
+        modalImage.style.backgroundPosition = 'center';
+    } else {
+        modalImage.style.backgroundImage = 'none';
+        modalImage.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    }
+
+    // Update save form action
+    document.getElementById('modalSaveForm').action = `/destination/save/${id}/`;
+
+    // Rest of the function remains the same...
+    const operatingHours = {
+        'restaurant': '10:00 AM - 10:00 PM',
+        'resort': '24 Hours (Check-in: 2PM)',
+        'beach': '6:00 AM - 6:00 PM',
+        'attraction': '8:00 AM - 6:00 PM',
+        'historical': '8:00 AM - 5:00 PM'
+    };
+    document.getElementById('modalOperatingHours').textContent = operatingHours[category] || '8:00 AM - 6:00 PM';
+
+    const amenitiesMap = {
+        'resort': ['🏊 Swimming Pool', '🍽 Restaurant', '📶 Free WiFi', '🅿 Parking', '🏖 Beach Access', '💆 Spa Services'],
+        'beach': ['🏖 Beach Access', '🚿 Shower Facilities', '🏪 Nearby Stores', '🅿 Parking', '🏐 Beach Volleyball', '🛟 Lifeguard'],
+        'restaurant': ['🍽 Dine-in', '📦 Take-out', '🚚 Delivery', '❄ Air-conditioned', '👨‍👩‍👧 Family-friendly', '💳 Card Payment'],
+        'historical': ['📸 Photo Spots', '🎤 Guided Tours', '🏛 Museum', '🅿 Parking', '♿ Accessible', '🚻 Restrooms'],
+        'attraction': ['🎫 Ticketing', '🅿 Parking', '🚻 Restrooms', '🎁 Gift Shop', '📸 Photo Spots', '♿ Accessible']
+    };
+
+    const amenities = amenitiesMap[category] || amenitiesMap['attraction'];
+    const amenitiesHTML = amenities.map(amenity =>
+        `<div style="display: flex; align-items: center; color: #4a5568; font-size: 0.95rem; font-weight: 500;">${amenity}</div>`
+    ).join('');
+
+    document.getElementById('modalAmenities').innerHTML = amenitiesHTML;
+    document.getElementById('modalAmenitiesTitle').textContent = category === 'restaurant' ? 'Features' : 'Amenities';
+
+    document.getElementById('destinationModal').classList.add('show');
+}
     </script>
 </body>
 </html>
