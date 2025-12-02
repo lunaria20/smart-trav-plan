@@ -6,7 +6,7 @@ from django.contrib.auth.views import LogoutView
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from datetime import date
 from django.views.decorators.cache import never_cache
 from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination, Profile
@@ -93,11 +93,20 @@ def dashboard_view(request):
     saved_destinations = SavedDestination.objects.filter(user=request.user)
     active_section = request.GET.get('section', 'overview')
     active_category = request.GET.get('category', '')
+    search_query = request.GET.get('search', '').strip()
+
+    # Filter destinations
+    all_destinations = Destination.objects.all()
 
     if active_category:
-        all_destinations = Destination.objects.filter(category=active_category)
-    else:
-        all_destinations = Destination.objects.all()
+        all_destinations = all_destinations.filter(category=active_category)
+
+    if search_query:
+        all_destinations = all_destinations.filter(
+            Q(name__icontains=search_query) |
+            Q(location__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
 
     expenses = Expense.objects.filter(itinerary__user=request.user)
 
@@ -120,6 +129,7 @@ def dashboard_view(request):
         'active_section': active_section,
         'saved_destinations': saved_destinations,
         'expenses': expenses,
+        'search_query': search_query,
     }
 
     return render(request, 'SmartTrav/accounts/dashboard.html', context)
