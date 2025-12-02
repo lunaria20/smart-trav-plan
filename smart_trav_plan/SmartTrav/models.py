@@ -14,7 +14,7 @@ class Destination(models.Model):
         ('historical', 'Historical Site')
     ])
     price_range = models.CharField(max_length=50, blank=True)
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image = models.ImageField(upload_to='images/', blank=True, null=True, max_length=500)
     image_url = models.URLField(max_length=500, blank=True, null=True)  # ADD THIS LINE
     created_at = models.DateTimeField(auto_now_add=True)
 

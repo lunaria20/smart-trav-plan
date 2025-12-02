@@ -541,6 +541,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 1.75rem;
+            align-items: start;
         }
 
         .destination-card {
@@ -550,6 +551,9 @@
             border: 2px solid #e2e8f0;
             transition: all 0.4s ease;
             position: relative;
+            display: flex;                    /* ADD THIS */
+            flex-direction: column;           /* ADD THIS */
+            height: 100%;
         }
 
         .destination-card::after {
@@ -579,10 +583,14 @@
             height: 220px;
             object-fit: cover;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            flex-shrink: 0;
         }
 
         .destination-info {
             padding: 1.75rem;
+            display: flex;                    /* ADD THIS */
+            flex-direction: column;           /* ADD THIS */
+            flex-grow: 1;
         }
 
         .destination-name {
@@ -601,6 +609,22 @@
             gap: 0.375rem;
             font-weight: 500;
         }
+
+        .destination-description {           /* ADD THIS WHOLE BLOCK */
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+            line-height: 1.6;
+        }
+
+        .destination-actions {               /* ADD THIS WHOLE BLOCK */
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
 
         .btn-save {
             width: 100%;
@@ -633,7 +657,7 @@
             font-weight: 700;
             font-size: 0.9rem;
             cursor: pointer;
-            margin-top: 0.75rem;
+            margin-top: 0;
             transition: all 0.3s ease;
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
