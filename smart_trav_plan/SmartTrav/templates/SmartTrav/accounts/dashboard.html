@@ -1216,8 +1216,8 @@
 <div class="destination-grid">
     {% for destination in destinations %}
     <div class="destination-card" onclick="openDestinationModal({{ destination.id }}, '{{ destination.name }}', '{{ destination.location }}', '{{ destination.description|escapejs }}', '{{ destination.category }}', '{{ destination.price_range }}')">
-        {% if destination.image %}
-        <img src="{{ destination.image.url }}" alt="{{ destination.name }}" class="destination-image">
+        {% if destination.image_url %}
+        <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="destination-image">
         {% else %}
         <div class="destination-image"></div>
         {% endif %}
@@ -1340,7 +1340,7 @@
                     <div class="destination-grid">
                         {% for saved in saved_destinations %}
                         <div class="destination-card">
-                            {% if saved.destination.image %}
+                            {% if saved.destination.image_url %}
                             <img src="{{ saved.destination.image.url }}" alt="{{ saved.destination.name }}" class="destination-image">
                             {% else %}
                             <div class="destination-image"></div>
