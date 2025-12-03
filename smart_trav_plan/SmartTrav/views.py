@@ -59,7 +59,12 @@ def login_view(request):
         if user and user.check_password(password):
             login(request, user)
             messages.success(request, "Login successful! Welcome back.")
-            return redirect("dashboard")
+
+            # Check if user is staff/admin and redirect accordingly
+            if user.is_staff or user.is_superuser:
+                return redirect('/admin/')  # Redirect to admin panel
+            else:
+                return redirect("dashboard")  # Redirect regular users to dashboard
         else:
             messages.error(request, "Invalid credentials. Please try again.")
             return redirect('login')

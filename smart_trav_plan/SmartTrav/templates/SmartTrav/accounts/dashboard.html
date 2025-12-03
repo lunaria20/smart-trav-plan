@@ -1144,7 +1144,8 @@
                 <span>SmartTrav</span>
             </div>
             <div class="user-section">
-                <span class="user-name">{{ user.username }}</span>
+                <span class="user-name">{{ user.first_name }}</span>
+                <span class="user-name">{{ user.last_name }}</span>
                 <div class="user-avatar">
     {% if user.profile.profile_picture %}
         <img src="{{ user.profile.profile_picture.url }}"
