@@ -544,6 +544,14 @@
             align-items: start;
         }
 
+        .destination-description {
+            color: #718096;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1; /* Key for fixed button position */
+            line-height: 1.6;
+        }
+
         .destination-card {
             background: white;
             border-radius: 20px;
@@ -551,9 +559,9 @@
             border: 2px solid #e2e8f0;
             transition: all 0.4s ease;
             position: relative;
-            display: flex;                    /* ADD THIS */
-            flex-direction: column;           /* ADD THIS */
-            height: 100%;
+            display: flex; /* Key for fixed button position */
+            flex-direction: column; /* Key for fixed button position */
+            height: 100%; /* Key for fixed button position */
         }
 
         .destination-card::after {
@@ -588,9 +596,9 @@
 
         .destination-info {
             padding: 1.75rem;
-            display: flex;                    /* ADD THIS */
-            flex-direction: column;           /* ADD THIS */
-            flex-grow: 1;
+            display: flex; /* Key for fixed button position */
+            flex-direction: column; /* Key for fixed button position */
+            flex-grow: 1; /* Key for fixed button position */
         }
 
         .destination-name {
@@ -618,13 +626,21 @@
             line-height: 1.6;
         }
 
-        .destination-actions {               /* ADD THIS WHOLE BLOCK */
+        /* MODIFIED: New container for actions with margin-top: auto */
+        .destination-actions-container {
+            margin-top: auto;
+            display: flex;
+            gap: 0.75rem;
+            padding-top: 1rem;
+        }
+
+        .saved-destination-actions {
             margin-top: auto;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
+            padding-top: 1rem;
         }
-
 
         .btn-save {
             width: 100%;
@@ -1217,18 +1233,14 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Quick Actions</h3>
-                        <div class="quick-actions">
-                            <button class="btn-primary" onclick="showSection('itineraries')">
-                                <span>➕</span> Create Trip
-                            </button>
-                            <button class="btn-secondary" onclick="showSection('destinations')">
-                                Explore Destinations
-                            </button>
-                            <button class="btn-secondary" onclick="showSection('budget')">
-                                Track Expenses
-                            </button>
-                        </div>
+                        <h3 class="card-title">Explore Destinations</h3>
+                        <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: inline-block;">
+                            <input type="hidden" name="section" value="destinations">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" name="search" class="form-control" style="max-width: 320px;" placeholder="🔍 Search destinations..." value="{{ search_query }}">
+                                <button type="submit" class="btn-primary" style="padding: 0.75rem 1.25rem;">Search</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -1338,7 +1350,10 @@
                         <h3 class="card-title">Explore Destinations</h3>
                         <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: inline-block;">
                             <input type="hidden" name="section" value="destinations">
-                            <input type="text" name="q" class="form-control" style="max-width: 320px;" placeholder="🔍 Search destinations...">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" name="search" class="form-control" style="max-width: 320px;" placeholder="🔍 Search destinations..." value="{{ search_query }}">
+                                <button type="submit" class="btn-primary" style="padding: 0.75rem 1.25rem;">Search</button>
+                            </div>
                         </form>
                     </div>
 
@@ -1362,11 +1377,10 @@
         <div class="destination-info">
             <div class="destination-name">{{ destination.name }}</div>
             <div class="destination-location">📍 {{ destination.location }}</div>
-            <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1.25rem; font-weight: 500;">{{ destination.description|truncatewords:15 }}</p>
+            <p class="destination-description">{{ destination.description|truncatewords:15 }}</p>
 
 
-
-            <div style="display: flex; gap: 0.75rem;">
+            <div class="destination-actions-container">
                 <form method="post" action="{% url 'save_destination' destination.id %}" style="margin: 0; flex: 1;" onclick="event.stopPropagation();">
                     {% csrf_token %}
                     <button type="submit" class="btn-save" style="width: 100%;">❤️ Save</button>
@@ -1383,8 +1397,7 @@
     {% endfor %}
 </div>
 
-                    <!-- Destination Details Modal -->
-<div id="destinationModal" class="modal">
+                    <div id="destinationModal" class="modal">
     <div class="modal-content" style="max-width: 900px;">
         <div class="modal-header">
             <h3 class="modal-title" id="modalDestinationName"></h3>
@@ -1486,12 +1499,15 @@
                             <div class="destination-info">
                                 <div class="destination-name">{{ saved.destination.name }}</div>
                                 <div class="destination-location">📍 {{ saved.destination.location }}</div>
-                                <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1.25rem; font-weight: 500;">{{ saved.destination.description|truncatewords:15 }}</p>
-                                <form method="post" action="{% url 'remove_saved_destination' saved.destination.id %}" style="margin: 0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-save" style="background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); color: #742a2a; border-color: #fc8181;">Remove</button>
-                                </form>
-                                <button class="btn-add-to-trip" onclick="openTripModal({{ saved.destination.id }}, '{{ saved.destination.name }}')">➕ Add to Trip</button>
+                                <p class="destination-description">{{ saved.destination.description|truncatewords:15 }}</p>
+
+                                <div class="saved-destination-actions">
+                                    <form method="post" action="{% url 'remove_saved_destination' saved.destination.id %}" style="margin: 0;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-save" style="background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); color: #742a2a; border-color: #fc8181; width: 100%;">❌ Remove</button>
+                                    </form>
+                                    <button class="btn-add-to-trip" onclick="openTripModal({{ saved.destination.id }}, '{{ saved.destination.name }}')">➕ Add to Trip</button>
+                                </div>
                             </div>
                         </div>
                         {% empty %}
@@ -1580,15 +1596,12 @@
             <h3 class="card-title">My Profile</h3>
         </div>
 
-        <!-- Profile Picture Section -->
         <div class="profile-picture-section">
             <div class="profile-picture-wrapper">
                 <div class="profile-picture-display" id="profilePictureDisplay">
-                    <!-- If user has profile picture -->
                     {% if user.profile.profile_picture %}
                     <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" id="profileImage">
                     {% else %}
-                    <!-- Show first letter of username if no picture -->
                     <span id="profileInitial">{{ user.username|first|upper }}</span>
                     {% endif %}
                 </div>
@@ -1615,7 +1628,6 @@
             </div>
         </div>
 
-        <!-- Profile Form -->
         <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" id="profileForm">
             {% csrf_token %}
             <input type="file" id="profilePictureInput" name="profile_picture" class="file-input-hidden" accept="image/*" onchange="previewImage(event)">
@@ -1684,14 +1696,12 @@
 
     <div id="deleteModal" class="modal">
     <div class="modal-content" style="max-width: 440px; padding: 0; overflow: hidden;">
-        <!-- Icon Header -->
         <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 2rem; text-align: center;">
             <div style="width: 70px; height: 70px; margin: 0 auto; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; backdrop-filter: blur(10px);">
                 🗑
             </div>
         </div>
 
-        <!-- Content -->
         <div style="padding: 2rem;">
             <h3 style="font-size: 1.5rem; font-weight: 800; color: #1a202c; margin-bottom: 1rem; text-align: center; letter-spacing: -0.02em;">
                 Delete Trip?
@@ -1707,7 +1717,6 @@
                 This action cannot be undone. All trip details will be permanently removed.
             </p>
 
-            <!-- Action Buttons -->
             <div style="display: flex; gap: 0.75rem;">
                 <button onclick="closeDeleteModal()" style="flex: 1; padding: 0.875rem 1.5rem; background: white; color: #4a5568; border: 2px solid #e2e8f0; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;">
                     Cancel
