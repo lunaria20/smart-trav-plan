@@ -27,6 +27,7 @@ urlpatterns = [
     path('itinerary/edit/<int:itinerary_id>/', views.edit_itinerary, name='edit_itinerary'), # Correct route
     path('itinerary/delete/<int:itinerary_id>/', views.delete_itinerary, name='delete_itinerary'),
     path('itinerary/<int:itinerary_id>/', views.itinerary_detail, name='itinerary_detail'),
+    path('itinerary/<int:itinerary_id>/export-pdf/', views.export_itinerary_pdf, name='export_itinerary_pdf'),
 
     # Destinations
     path('destination/add-to-trip/', views.add_destination_to_trip, name='add_destination_to_trip'),
