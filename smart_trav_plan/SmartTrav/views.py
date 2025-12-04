@@ -10,6 +10,10 @@ from django.db.models import Sum, Count, Q
 from datetime import date
 from django.views.decorators.cache import never_cache
 from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination, Profile
+from django.template.loader import render_to_string
+from .models import Itinerary, ItineraryDestination, Expense
+from django.http import HttpResponse
+
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -313,16 +317,95 @@ def remove_profile_picture(request):
     return redirect('/dashboard/?section=profile')
 
 
+
+
+try:
+    from weasyprint import HTML
+
+    USE_WEASYPRINT = True
+except ImportError:
+    USE_WEASYPRINT = False
+
+# Option 2: xhtml2pdf (easier to install, good enough quality)
+if not USE_WEASYPRINT:
+    from xhtml2pdf import pisa
+    from io import BytesIO
+
+
 @login_required
-def itinerary_detail(request, itinerary_id):
+def export_itinerary_pdf(request, itinerary_id):
+    """
+    US-43 & US-44: Export itinerary and budget as PDF
+    Generates a professional PDF document with complete trip details
+    """
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
-    itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary).select_related('destination')
+    itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary)
+    expenses = Expense.objects.filter(itinerary=itinerary).order_by('-date')
+
+    # Calculate expense totals by category
+    expense_by_category = {}
+    total_expenses = 0
+
+    for expense in expenses:
+        category = expense.get_category_display()
+        if category not in expense_by_category:
+            expense_by_category[category] = 0
+        expense_by_category[category] += float(expense.amount)
+        total_expenses += float(expense.amount)
+
+    # Calculate budget utilization
+    budget_remaining = float(itinerary.budget) - total_expenses
+    budget_utilization = (total_expenses / float(itinerary.budget) * 100) if float(itinerary.budget) > 0 else 0
 
     context = {
         'itinerary': itinerary,
         'itinerary_destinations': itinerary_destinations,
+        'expenses': expenses,
+        'expense_by_category': expense_by_category,
+        'total_expenses': total_expenses,
+        'budget_remaining': budget_remaining,
+        'budget_utilization': budget_utilization,
     }
-    return render(request, 'SmartTrav/accounts/itinerary_detail.html', context)
+
+    # Render HTML template
+    html_string = render_to_string('SmartTrav/accounts/itinerary_pdf.html', context)
+
+    # Generate PDF using available library
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="SmartTrav_{itinerary.title.replace(" ", "_")}.pdf"'
+
+    if USE_WEASYPRINT:
+        # Option 1: WeasyPrint
+        html = HTML(string=html_string)
+        result = html.write_pdf()
+        response.write(result)
+    else:
+        # Option 2: xhtml2pdf
+        pisa_status = pisa.CreatePDF(html_string, dest=response)
+        if pisa_status.err:
+            return HttpResponse('PDF generation error', status=500)
+
+    return response
+
+
+@login_required
+def itinerary_detail(request, itinerary_id):
+    itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
+    itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary).select_related('destination')
+    expenses = Expense.objects.filter(itinerary=itinerary).order_by('-date')
+
+    # Calculate expense summary
+    total_expenses = sum(float(e.amount) for e in expenses)
+    budget_remaining = float(itinerary.budget) - total_expenses
+
+    context = {
+        'itinerary': itinerary,
+        'itinerary_destinations': itinerary_destinations,
+        'expenses': expenses,
+        'total_expenses': total_expenses,
+        'budget_remaining': budget_remaining,
+    }
+    return render(request, 'SmartTrav/accounts/itinerary_pdf.html', context)
 
 
 def logout_view(request):

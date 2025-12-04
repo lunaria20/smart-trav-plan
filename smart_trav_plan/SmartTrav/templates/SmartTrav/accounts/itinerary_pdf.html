@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ itinerary.title }} Project Overview - SmartTrav</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'SmartTrav/css/itinerary_overview.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="container">
+        <div class="header-section">
+            <a href="{% url 'dashboard' %}" class="btn-back no-print">← Return to Project Dashboard</a>
+            <div class="d-flex justify-content-between align-items-start mt-4">
+                <div>
+                    <h1>Project Overview: {{ itinerary.title }}</h1>
+                    <span style="color: #777; font-size: 1rem;">Detailed Report for ID: <strong>{{ itinerary.id }}</strong></span>
+                </div>
+            </div>
+
+            <div class="action-buttons no-print">
+                <button onclick="handlePrint()" class="btn-print">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    Print
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card">
+                    <h2>Project Financials & Mandate</h2>
+                    <div class="detail-item mt-4">
+                        <strong>Project Timeline</strong>
+                        <p>{{ itinerary.start_date }} to {{ itinerary.end_date }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Approved Budget</strong>
+                        <p style="font-weight: 600; color: #10b981;">₱{{ itinerary.budget }}</p>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Mandate Notes</strong>
+                        <p>{{ itinerary.notes|default:"No formal mandate notes available." }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card">
+                    <h2>Operational Deployment Locations</h2>
+                    <div class="destination-list mt-4">
+                        {% for item in itinerary_destinations %}
+                        <div class="destination-item">
+                            <span class="destination-icon">🏢</span>
+                            <div>
+                                <div class="destination-name">{{ item.destination.name }}</div>
+                                <div class="destination-location">Location: {{ item.destination.location }}</div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-state">
+                            <p style="font-size: 1rem; font-weight: 600;">No Operational Locations Defined.</p>
+                            <p style="font-size: 0.875rem; margin-top: 0.5rem;">Please review the project scope and define deployment sites.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if expenses %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <h2>Budget Tracking</h2>
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <strong>Total Expenses</strong>
+                                <p style="font-weight: 600; color: #dc2626;">₱{{ total_expenses|floatformat:2 }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <strong>Budget Remaining</strong>
+                                <p style="font-weight: 600; color: #10b981;">₱{{ budget_remaining|floatformat:2 }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="detail-item">
+                                <strong>Budget Status</strong>
+                                <p style="font-weight: 600;">
+                                    {% if budget_remaining >= 0 %}
+                                        <span style="color: #10b981;">✓ On Track</span>
+                                    {% else %}
+                                        <span style="color: #dc2626;">⚠ Over Budget</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="{% static 'SmartTrav/css/js/itinerary_overview.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

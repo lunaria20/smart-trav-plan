@@ -1,0 +1,259 @@
+/* Base Professional Styling */
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f4f7fa;
+    color: #333333;
+    padding-top: 2.5rem;
+}
+.container { max-width: 1000px; }
+
+/* Card - Structured containers with minimal shadow */
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    border: 1px solid #dcdcdc;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+}
+
+/* Header Section */
+.header-section {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.btn-export, .btn-print {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-export {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    color: white;
+}
+
+.btn-export:hover {
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.4);
+}
+
+.btn-export:active {
+    transform: translateY(0);
+}
+
+.btn-print {
+    background: white;
+    color: #1e3a8a;
+    border: 2px solid #1e3a8a;
+}
+
+.btn-print:hover {
+    background: #f0f4ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+}
+
+/* Loading State (Simplified for PDF) */
+.btn-loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Success Toast */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.success-toast {
+    background: white;
+    border-left: 4px solid #10b981;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 300px;
+    animation: slideIn 0.3s ease-out; /* Animation kept for web view */
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.success-icon {
+    width: 24px;
+    height: 24px;
+    background: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.toast-message {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.toast-text {
+    font-size: 0.875rem;
+    color: #777;
+}
+
+/* Heading */
+h1 {
+    font-weight: 700;
+    color: #1e3a8a;
+    font-size: 2.25rem;
+    margin-bottom: 0.25rem;
+}
+h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333333;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* Back Button */
+.btn-back {
+    background: transparent;
+    color: #666666;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 0.9375rem;
+    display: inline-block;
+}
+.btn-back:hover {
+    background: #e9ecef;
+    color: #333333;
+    border-color: #bbbbbb;
+}
+
+/* Detail Items */
+.detail-item {
+    margin-bottom: 1.25rem;
+    border-left: 3px solid #1e3a8a;
+    padding-left: 1rem;
+}
+.detail-item strong {
+    color: #1e3a8a;
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+    text-transform: uppercase;
+}
+.detail-item p {
+    margin-bottom: 0;
+    color: #555555;
+    font-size: 1rem;
+}
+
+/* Destination List */
+.destination-list {
+    display: grid;
+    gap: 0.75rem;
+}
+.destination-item {
+    display: flex;
+    align-items: center;
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    transition: background 0.2s;
+}
+.destination-item:hover {
+    background: #f4f7fa;
+}
+.destination-icon {
+    font-size: 1.25rem;
+    margin-right: 1.25rem;
+    color: #10b981;
+}
+.destination-name {
+    font-weight: 600;
+    color: #333333;
+}
+.destination-location {
+    font-size: 0.8125rem;
+    color: #777777;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #777777;
+    background: #fcfcfc;
+    border-radius: 6px;
+    border: 1px dashed #cccccc;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+        padding-top: 0;
+    }
+    .btn-back,
+    .action-buttons,
+    .no-print {
+        display: none !important;
+    }
+    .container {
+        max-width: 100%;
+    }
+    .card {
+        box-shadow: none;
+        border: 1px solid #dcdcdc;
+        page-break-inside: avoid;
+    }
+    .header-section {
+        border-bottom: 2px solid #1e3a8a;
+    }
+}
