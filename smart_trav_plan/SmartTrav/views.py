@@ -318,74 +318,17 @@ def remove_profile_picture(request):
 
 
 
-
-try:
-    from weasyprint import HTML
-
-    USE_WEASYPRINT = True
-except ImportError:
-    USE_WEASYPRINT = False
-
-# Option 2: xhtml2pdf (easier to install, good enough quality)
-if not USE_WEASYPRINT:
-    from xhtml2pdf import pisa
-    from io import BytesIO
+#AYSAAAA
 
 
 @login_required
 def export_itinerary_pdf(request, itinerary_id):
     """
-    US-43 & US-44: Export itinerary and budget as PDF
-    Generates a professional PDF document with complete trip details
+    PDF export disabled - redirects to print view
+    Users can use browser's print function to save as PDF
     """
-    itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
-    itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary)
-    expenses = Expense.objects.filter(itinerary=itinerary).order_by('-date')
-
-    # Calculate expense totals by category
-    expense_by_category = {}
-    total_expenses = 0
-
-    for expense in expenses:
-        category = expense.get_category_display()
-        if category not in expense_by_category:
-            expense_by_category[category] = 0
-        expense_by_category[category] += float(expense.amount)
-        total_expenses += float(expense.amount)
-
-    # Calculate budget utilization
-    budget_remaining = float(itinerary.budget) - total_expenses
-    budget_utilization = (total_expenses / float(itinerary.budget) * 100) if float(itinerary.budget) > 0 else 0
-
-    context = {
-        'itinerary': itinerary,
-        'itinerary_destinations': itinerary_destinations,
-        'expenses': expenses,
-        'expense_by_category': expense_by_category,
-        'total_expenses': total_expenses,
-        'budget_remaining': budget_remaining,
-        'budget_utilization': budget_utilization,
-    }
-
-    # Render HTML template
-    html_string = render_to_string('SmartTrav/accounts/itinerary_pdf.html', context)
-
-    # Generate PDF using available library
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="SmartTrav_{itinerary.title.replace(" ", "_")}.pdf"'
-
-    if USE_WEASYPRINT:
-        # Option 1: WeasyPrint
-        html = HTML(string=html_string)
-        result = html.write_pdf()
-        response.write(result)
-    else:
-        # Option 2: xhtml2pdf
-        pisa_status = pisa.CreatePDF(html_string, dest=response)
-        if pisa_status.err:
-            return HttpResponse('PDF generation error', status=500)
-
-    return response
+    messages.info(request, 'Please use the Print button to save your itinerary as PDF.')
+    return redirect('itinerary_detail', itinerary_id=itinerary_id)
 
 
 @login_required
