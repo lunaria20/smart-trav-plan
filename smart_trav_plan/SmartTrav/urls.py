@@ -46,6 +46,8 @@ urlpatterns = [
 
 path('profile/update/', views.update_profile, name='update_profile'),
     path('profile/remove-picture/', views.remove_profile_picture, name='remove_profile_picture'),
+
+
 ]
 
 # --- MEDIA FILE CONFIGURATION FOR DEVELOPMENT ONLY ---
