@@ -64,11 +64,10 @@ def login_view(request):
             login(request, user)
             messages.success(request, "Login successful! Welcome back.")
 
-            # Check if user is staff/admin and redirect accordingly
             if user.is_staff or user.is_superuser:
-                return redirect('/admin/')  # Redirect to admin panel
+                return redirect('/admin/')
             else:
-                return redirect("dashboard")  # Redirect regular users to dashboard
+                return redirect("dashboard")
         else:
             messages.error(request, "Invalid credentials. Please try again.")
             return redirect('login')
@@ -92,7 +91,6 @@ def signup_view(request):
 @never_cache
 @login_required
 def dashboard_view(request):
-    # Ensure user has a profile (create if doesn't exist)
     Profile.objects.get_or_create(user=request.user)
 
     user_itineraries = Itinerary.objects.filter(user=request.user).annotate(
@@ -104,7 +102,6 @@ def dashboard_view(request):
     active_category = request.GET.get('category', '')
     search_query = request.GET.get('search', '').strip()
 
-    # Filter destinations
     all_destinations = Destination.objects.all()
 
     if active_category:
@@ -119,7 +116,6 @@ def dashboard_view(request):
 
     expenses = Expense.objects.filter(itinerary__user=request.user)
 
-    # Calculate stats
     itinerary_count = user_itineraries.count()
     saved_count = saved_destinations.count()
     total_budget = user_itineraries.aggregate(Sum('budget'))['budget__sum'] or 0
@@ -213,6 +209,8 @@ def add_destination_to_trip(request):
     if request.method == 'POST':
         destination_id = request.POST.get('destination_id')
         itinerary_id = request.POST.get('itinerary_id')
+        visit_date = request.POST.get('visit_date')  # NEW
+        visit_time = request.POST.get('visit_time')  # NEW
 
         destination = get_object_or_404(Destination, id=destination_id)
         itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
@@ -222,7 +220,9 @@ def add_destination_to_trip(request):
         else:
             ItineraryDestination.objects.create(
                 itinerary=itinerary,
-                destination=destination
+                destination=destination,
+                visit_date=visit_date if visit_date else None,
+                visit_time=visit_time if visit_time else None
             )
             messages.success(request, f'{destination.name} added to {itinerary.title}!')
 
@@ -270,22 +270,17 @@ def update_profile(request):
     if request.method == 'POST':
         user = request.user
 
-        # Update basic user info
         user.email = request.POST.get('email', user.email)
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
         user.save()
 
-        # Get or create profile
         profile, created = Profile.objects.get_or_create(user=user)
 
-        # Handle profile picture upload
         if 'profile_picture' in request.FILES:
-            # Delete old profile picture if exists
             if profile.profile_picture:
                 profile.profile_picture.delete(save=False)
 
-            # Save new profile picture
             profile.profile_picture = request.FILES['profile_picture']
             profile.save()
             messages.success(request, 'Profile updated successfully with new picture!')
@@ -303,9 +298,7 @@ def remove_profile_picture(request):
         try:
             profile = request.user.profile
             if profile.profile_picture:
-                # Delete the file from storage
                 profile.profile_picture.delete(save=False)
-                # Clear the field
                 profile.profile_picture = None
                 profile.save()
                 messages.success(request, 'Profile picture removed successfully!')
@@ -317,16 +310,8 @@ def remove_profile_picture(request):
     return redirect('/dashboard/?section=profile')
 
 
-
-#AYSAAAA
-
-
 @login_required
 def export_itinerary_pdf(request, itinerary_id):
-    """
-    PDF export disabled - redirects to print view
-    Users can use browser's print function to save as PDF
-    """
     messages.info(request, 'Please use the Print button to save your itinerary as PDF.')
     return redirect('itinerary_detail', itinerary_id=itinerary_id)
 
@@ -337,7 +322,6 @@ def itinerary_detail(request, itinerary_id):
     itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary).select_related('destination')
     expenses = Expense.objects.filter(itinerary=itinerary).order_by('-date')
 
-    # Calculate expense summary
     total_expenses = sum(float(e.amount) for e in expenses)
     budget_remaining = float(itinerary.budget) - total_expenses
 

@@ -42,12 +42,14 @@ class Itinerary(models.Model):
 class ItineraryDestination(models.Model):
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name='itinerary_destinations')
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    visit_date = models.DateField(null=True, blank=True)  # NEW FIELD
+    visit_time = models.TimeField(null=True, blank=True)  # NEW FIELD
     added_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
 
     class Meta:
         unique_together = ('itinerary', 'destination')
-        ordering = ['added_at']
+        ordering = ['visit_date', 'visit_time', 'added_at']  # UPDATED ORDERING
 
     def __str__(self):
         return f"{self.destination.name} in {self.itinerary.title}"
@@ -82,7 +84,6 @@ class Expense(models.Model):
         ordering = ['-date']
 
 
-# FIXED: Profile model should NOT be nested inside Expense
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
@@ -100,6 +101,5 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    # Only save if profile exists
     if hasattr(instance, 'profile'):
         instance.profile.save()
