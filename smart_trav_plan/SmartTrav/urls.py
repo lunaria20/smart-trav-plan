@@ -1,19 +1,16 @@
-from django.urls import path, include
+from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
+    # Authentication
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
 
-
-# Forgot Password
+    # Forgot Password
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset.html'), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
@@ -24,7 +21,7 @@ urlpatterns = [
 
     # Itinerary (Trips)
     path('itinerary/create/', views.create_itinerary, name='create_itinerary'),
-    path('itinerary/edit/<int:itinerary_id>/', views.edit_itinerary, name='edit_itinerary'), # Correct route
+    path('itinerary/edit/<int:itinerary_id>/', views.edit_itinerary, name='edit_itinerary'),
     path('itinerary/delete/<int:itinerary_id>/', views.delete_itinerary, name='delete_itinerary'),
     path('itinerary/<int:itinerary_id>/', views.itinerary_detail, name='itinerary_detail'),
     path('itinerary/<int:itinerary_id>/export-pdf/', views.export_itinerary_pdf, name='export_itinerary_pdf'),
@@ -39,15 +36,12 @@ urlpatterns = [
 
     # Profile
     path('profile/update/', views.update_profile, name='update_profile'),
+    path('profile/remove-picture/', views.remove_profile_picture, name='remove_profile_picture'),
 
+    # Static Pages
     path('about/', views.about_view, name='about'),
     path('service/', views.service_view, name='service'),
     path('contact/', views.contact_view, name='contact'),
-
-path('profile/update/', views.update_profile, name='update_profile'),
-    path('profile/remove-picture/', views.remove_profile_picture, name='remove_profile_picture'),
-
-
 ]
 
 # --- MEDIA FILE CONFIGURATION FOR DEVELOPMENT ONLY ---
