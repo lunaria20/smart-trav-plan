@@ -10,10 +10,7 @@ from django.db.models import Sum, Count, Q
 from datetime import date
 from django.views.decorators.cache import never_cache
 from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination, Profile
-from django.template.loader import render_to_string
-from .models import Itinerary, ItineraryDestination, Expense
 from django.http import HttpResponse
-
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -64,11 +61,10 @@ def login_view(request):
             login(request, user)
             messages.success(request, "Login successful! Welcome back.")
 
-            # Check if user is staff/admin and redirect accordingly
             if user.is_staff or user.is_superuser:
-                return redirect('/admin/')  # Redirect to admin panel
+                return redirect('/admin/')
             else:
-                return redirect("dashboard")  # Redirect regular users to dashboard
+                return redirect("dashboard")
         else:
             messages.error(request, "Invalid credentials. Please try again.")
             return redirect('login')
@@ -92,7 +88,6 @@ def signup_view(request):
 @never_cache
 @login_required
 def dashboard_view(request):
-    # Ensure user has a profile (create if doesn't exist)
     Profile.objects.get_or_create(user=request.user)
 
     user_itineraries = Itinerary.objects.filter(user=request.user).annotate(
@@ -104,18 +99,53 @@ def dashboard_view(request):
     active_category = request.GET.get('category', '')
     search_query = request.GET.get('search', '').strip()
 
+    # --- FILTER PARAMETERS ---
+    price_filter = request.GET.get('price', '')
+    tags_filter = request.GET.get('tags', '').strip()
+
     # Filter destinations
     all_destinations = Destination.objects.all()
 
+    # Category filter
     if active_category:
         all_destinations = all_destinations.filter(category=active_category)
 
+    # Search query
     if search_query:
         all_destinations = all_destinations.filter(
             Q(name__icontains=search_query) |
             Q(location__icontains=search_query) |
             Q(description__icontains=search_query)
         )
+
+    # --- UPDATED PRICE FILTER (1000-5000 range) ---
+    if price_filter:
+        if price_filter == 'budget':
+            # Less than ₱2,000
+            all_destinations = all_destinations.filter(price_per_day__lt=2000)
+        elif price_filter == 'moderate':
+            # ₱2,000 - ₱3,000
+            all_destinations = all_destinations.filter(price_per_day__gte=2000, price_per_day__lt=3000)
+        elif price_filter == 'premium':
+            # ₱3,000 - ₱4,000
+            all_destinations = all_destinations.filter(price_per_day__gte=3000, price_per_day__lt=4000)
+        elif price_filter == 'luxury':
+            # ₱4,000 and above
+            all_destinations = all_destinations.filter(price_per_day__gte=4000)
+
+    # --- FIXED TAGS FILTER LOGIC ---
+    if tags_filter:
+        # Split by comma and clean up whitespace
+        tag_list = [tag.strip().lower() for tag in tags_filter.split(',') if tag.strip()]
+
+        if tag_list:
+            # Build Q objects for OR matching
+            tag_query = Q()
+            for tag in tag_list:
+                # Match tags that contain the search term (case-insensitive)
+                tag_query |= Q(tags__icontains=tag)
+
+            all_destinations = all_destinations.filter(tag_query)
 
     expenses = Expense.objects.filter(itinerary__user=request.user)
 
@@ -139,6 +169,8 @@ def dashboard_view(request):
         'saved_destinations': saved_destinations,
         'expenses': expenses,
         'search_query': search_query,
+        'price_filter': price_filter,
+        'tags_filter': tags_filter,
     }
 
     return render(request, 'SmartTrav/accounts/dashboard.html', context)
@@ -171,6 +203,11 @@ def edit_itinerary(request, itinerary_id):
         itinerary.budget = request.POST.get('budget')
         itinerary.notes = request.POST.get('notes', '')
         itinerary.save()
+
+        # --- RECALCULATE DESTINATION PRICES ---
+        for itinerary_dest in itinerary.itinerary_destinations.all():
+            itinerary_dest.save()
+
         messages.success(request, f'Itinerary "{itinerary.title}" updated successfully!')
         return redirect('dashboard')
 
@@ -220,11 +257,19 @@ def add_destination_to_trip(request):
         if ItineraryDestination.objects.filter(itinerary=itinerary, destination=destination).exists():
             messages.warning(request, f'{destination.name} is already in {itinerary.title}')
         else:
-            ItineraryDestination.objects.create(
+            itinerary_dest = ItineraryDestination.objects.create(
                 itinerary=itinerary,
                 destination=destination
             )
-            messages.success(request, f'{destination.name} added to {itinerary.title}!')
+
+            # Show calculated cost in message
+            days = itinerary.get_duration_days()
+            total_price = itinerary_dest.calculated_price or 0
+
+            messages.success(
+                request,
+                f'{destination.name} added to {itinerary.title}! Cost: ₱{total_price:,.2f} for {days} day(s)'
+            )
 
     return redirect('dashboard')
 
@@ -270,22 +315,17 @@ def update_profile(request):
     if request.method == 'POST':
         user = request.user
 
-        # Update basic user info
         user.email = request.POST.get('email', user.email)
         user.first_name = request.POST.get('first_name', user.first_name)
         user.last_name = request.POST.get('last_name', user.last_name)
         user.save()
 
-        # Get or create profile
         profile, created = Profile.objects.get_or_create(user=user)
 
-        # Handle profile picture upload
         if 'profile_picture' in request.FILES:
-            # Delete old profile picture if exists
             if profile.profile_picture:
                 profile.profile_picture.delete(save=False)
 
-            # Save new profile picture
             profile.profile_picture = request.FILES['profile_picture']
             profile.save()
             messages.success(request, 'Profile updated successfully with new picture!')
@@ -303,9 +343,7 @@ def remove_profile_picture(request):
         try:
             profile = request.user.profile
             if profile.profile_picture:
-                # Delete the file from storage
                 profile.profile_picture.delete(save=False)
-                # Clear the field
                 profile.profile_picture = None
                 profile.save()
                 messages.success(request, 'Profile picture removed successfully!')
@@ -317,16 +355,8 @@ def remove_profile_picture(request):
     return redirect('/dashboard/?section=profile')
 
 
-
-#AYSAAAA
-
-
 @login_required
 def export_itinerary_pdf(request, itinerary_id):
-    """
-    PDF export disabled - redirects to print view
-    Users can use browser's print function to save as PDF
-    """
     messages.info(request, 'Please use the Print button to save your itinerary as PDF.')
     return redirect('itinerary_detail', itinerary_id=itinerary_id)
 
@@ -337,16 +367,21 @@ def itinerary_detail(request, itinerary_id):
     itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary).select_related('destination')
     expenses = Expense.objects.filter(itinerary=itinerary).order_by('-date')
 
-    # Calculate expense summary
+    # Calculate costs
     total_expenses = sum(float(e.amount) for e in expenses)
-    budget_remaining = float(itinerary.budget) - total_expenses
+    total_destination_cost = itinerary.get_total_destination_cost()
+    total_cost = total_expenses + total_destination_cost
+    budget_remaining = float(itinerary.budget) - total_cost
 
     context = {
         'itinerary': itinerary,
         'itinerary_destinations': itinerary_destinations,
         'expenses': expenses,
         'total_expenses': total_expenses,
+        'total_destination_cost': total_destination_cost,
+        'total_cost': total_cost,
         'budget_remaining': budget_remaining,
+        'trip_days': itinerary.get_duration_days(),
     }
     return render(request, 'SmartTrav/accounts/itinerary_pdf.html', context)
 
