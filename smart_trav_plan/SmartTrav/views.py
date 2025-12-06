@@ -149,7 +149,6 @@ def dashboard_view(request):
 
     expenses = Expense.objects.filter(itinerary__user=request.user)
 
-    # Calculate stats
     itinerary_count = user_itineraries.count()
     saved_count = saved_destinations.count()
     total_budget = user_itineraries.aggregate(Sum('budget'))['budget__sum'] or 0
@@ -250,6 +249,8 @@ def add_destination_to_trip(request):
     if request.method == 'POST':
         destination_id = request.POST.get('destination_id')
         itinerary_id = request.POST.get('itinerary_id')
+        visit_date = request.POST.get('visit_date')  # NEW
+        visit_time = request.POST.get('visit_time')  # NEW
 
         destination = get_object_or_404(Destination, id=destination_id)
         itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
@@ -259,7 +260,9 @@ def add_destination_to_trip(request):
         else:
             itinerary_dest = ItineraryDestination.objects.create(
                 itinerary=itinerary,
-                destination=destination
+                destination=destination,
+                visit_date=visit_date if visit_date else None,
+                visit_time=visit_time if visit_time else None
             )
 
             # Show calculated cost in message

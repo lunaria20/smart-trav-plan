@@ -1175,6 +1175,76 @@ color: #718096;
     font-weight: 500;
 }
 
+#dateTimeSelection {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    background: transparent;
+    bottom: 0;
+    color: transparent;
+    height: auto;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: auto;
+}
+
+input[type="date"],
+input[type="time"] {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Trip option hover effect when selecting */
+.trip-option:has(input[type="radio"]:checked) {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+/* Modal content max height adjustment for date/time section */
+.modal-content {
+    max-height: 90vh;
+}
+
+/* Scrollbar styling for modals with date/time */
+#tripModal .modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#tripModal .modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+#tripModal .modal-content::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+#tripModal .modal-content::-webkit-scrollbar-thumb:hover {
+    background: #5a67d8;
+}
+
+/* Responsive adjustments for date/time fields */
+@media (max-width: 640px) {
+    #dateTimeSelection > div:first-of-type {
+        grid-template-columns: 1fr !important;
 /* Scrollbar Styling */
 .modal-content::-webkit-scrollbar {
     width: 8px;

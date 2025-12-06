@@ -78,6 +78,8 @@ class Itinerary(models.Model):
 class ItineraryDestination(models.Model):
     itinerary = models.ForeignKey(Itinerary, on_delete=models.CASCADE, related_name='itinerary_destinations')
     destination = models.ForeignKey(Destination, on_delete=models.CASCADE)
+    visit_date = models.DateField(null=True, blank=True)  # NEW FIELD
+    visit_time = models.TimeField(null=True, blank=True)  # NEW FIELD
     added_at = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
 
@@ -86,7 +88,7 @@ class ItineraryDestination(models.Model):
 
     class Meta:
         unique_together = ('itinerary', 'destination')
-        ordering = ['added_at']
+        ordering = ['visit_date', 'visit_time', 'added_at']  # UPDATED ORDERING
 
     def __str__(self):
         return f"{self.destination.name} in {self.itinerary.title}"
