@@ -133,9 +133,15 @@ class Expense(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    profile_picture_url = models.URLField(max_length=500, blank=True, null=True)  # Add this if missing
 
-    def __str__(self):
-        return f"{self.user.username}'s Profile"
+    def get_profile_picture_url(self):
+        """Return Supabase URL if available, otherwise local file"""
+        if self.profile_picture_url:
+            return self.profile_picture_url
+        elif self.profile_picture:
+            return self.profile_picture.url
+        return None  # Or return a default avatar URL
 
 
 # Auto-create profile when user is created
@@ -149,3 +155,19 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
+
+        # In models.py
+        class ContactMessage(models.Model):
+            name = models.CharField(max_length=200)
+            email = models.EmailField()
+            phone = models.CharField(max_length=20, blank=True)
+            subject = models.CharField(max_length=200)
+            message = models.TextField()
+            created_at = models.DateTimeField(auto_now_add=True)
+            is_read = models.BooleanField(default=False)
+
+            def __str__(self):
+                return f"{self.name} - {self.subject}"
+
+            class Meta:
+                ordering = ['-created_at']

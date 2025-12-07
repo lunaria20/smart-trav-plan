@@ -14,47 +14,30 @@ def get_supabase_client():
     return create_client(url, key)
 
 
-def upload_image_to_supabase(image_file, folder_name):
-    """
-    Upload an image to Supabase Storage
-
-    Args:
-        image_file: Django UploadedFile object
-        folder_name: Folder name in bucket (e.g., 'destinations', 'images')
-
-    Returns:
-        Public URL of the uploaded image
-    """
+def upload_image_to_supabase(image_file, bucket_name):
+    """Upload an image to Supabase Storage"""
     try:
         supabase = get_supabase_client()
-        bucket_name = "destination-images"  # Your Supabase bucket name
 
-        # Generate unique filename to avoid conflicts
         file_extension = image_file.name.split('.')[-1]
         unique_filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = f"{unique_filename}"  # Don't nest in folders
 
-        # Create file path
-        file_path = f"{folder_name}/{unique_filename}"
-
-        # Read file content
         file_content = image_file.read()
 
-        print(f"Uploading {file_path} to Supabase...")  # Debug log
+        print(f"Uploading {file_path} to bucket: {bucket_name}")
 
-        # Upload to Supabase
+        # Use the ACTUAL bucket_name parameter, not hardcoded 'destination-images'
         response = supabase.storage.from_(bucket_name).upload(
             file_path,
             file_content,
             file_options={"content-type": image_file.content_type}
         )
 
-        print(f"Upload response: {response}")  # Debug log
-
-        # Get public URL
+        # Get public URL from the CORRECT bucket
         public_url = supabase.storage.from_(bucket_name).get_public_url(file_path)
 
-        print(f"Public URL: {public_url}")  # Debug log
-
+        print(f"Public URL: {public_url}")
         return public_url
 
     except Exception as e:
