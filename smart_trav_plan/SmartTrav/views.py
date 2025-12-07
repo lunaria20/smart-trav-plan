@@ -11,7 +11,9 @@ from datetime import date
 from django.views.decorators.cache import never_cache
 from .models import Itinerary, Destination, SavedDestination, Expense, ItineraryDestination, Profile
 from django.http import HttpResponse
-
+from .utils import upload_image_to_supabase
+from django.core.mail import send_mail
+from django.conf import settings
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
@@ -326,12 +328,22 @@ def update_profile(request):
         profile, created = Profile.objects.get_or_create(user=user)
 
         if 'profile_picture' in request.FILES:
-            if profile.profile_picture:
-                profile.profile_picture.delete(save=False)
+            profile_pic = request.FILES['profile_picture']
 
-            profile.profile_picture = request.FILES['profile_picture']
-            profile.save()
-            messages.success(request, 'Profile updated successfully with new picture!')
+            try:
+                # Upload to Supabase Storage using 'destination-images' bucket
+                # (since that's the actual bucket name based on your utils.py)
+                image_url = upload_image_to_supabase(profile_pic, 'profile-pictures')
+
+                # Save ONLY the Supabase URL, clear the local file field
+                profile.profile_picture_url = image_url
+                profile.profile_picture = None  # This should be None, not empty string
+                profile.save()
+
+                messages.success(request, 'Profile updated successfully with new picture!')
+            except Exception as e:
+                messages.error(request, f'Error uploading profile picture: {str(e)}')
+                print(f"Full error: {e}")  # Debug print
         else:
             messages.success(request, 'Profile updated successfully!')
 
@@ -345,13 +357,20 @@ def remove_profile_picture(request):
     if request.method == 'POST':
         try:
             profile = request.user.profile
-            if profile.profile_picture:
-                profile.profile_picture.delete(save=False)
-                profile.profile_picture = None
+
+            # Clear both local file AND Supabase URL
+            if profile.profile_picture or profile.profile_picture_url:
+                if profile.profile_picture:
+                    profile.profile_picture.delete(save=False)
+                    profile.profile_picture = None
+
+                profile.profile_picture_url = None  # Clear Supabase URL
                 profile.save()
+
                 messages.success(request, 'Profile picture removed successfully!')
             else:
                 messages.info(request, 'No profile picture to remove.')
+
         except Profile.DoesNotExist:
             messages.error(request, 'Profile not found.')
 
