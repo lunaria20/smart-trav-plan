@@ -95,7 +95,10 @@ def dashboard_view(request):
 
     user_itineraries = Itinerary.objects.filter(user=request.user).annotate(
         destination_count=Count('itinerary_destinations')
-    )
+    ).order_by('-id')  # Add this line to show newest first
+
+    # Also update this line (around line 180):
+    recent_itineraries = user_itineraries[:3]
 
     saved_destinations = SavedDestination.objects.filter(user=request.user)
     active_section = request.GET.get('section', 'overview')
@@ -196,17 +199,26 @@ def create_itinerary(request):
 
 @login_required
 def edit_itinerary(request, itinerary_id):
+    from datetime import datetime
+
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
 
     if request.method == 'POST':
         itinerary.title = request.POST.get('title')
-        itinerary.start_date = request.POST.get('start_date')
-        itinerary.end_date = request.POST.get('end_date')
+
+        # ✅ FIX: Convert string dates to date objects
+        start_date_str = request.POST.get('start_date')
+        end_date_str = request.POST.get('end_date')
+
+        # Parse the date strings to date objects
+        itinerary.start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        itinerary.end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+
         itinerary.budget = request.POST.get('budget')
         itinerary.notes = request.POST.get('notes', '')
         itinerary.save()
 
-        # --- RECALCULATE DESTINATION PRICES ---
+        # Recalculate destination prices
         for itinerary_dest in itinerary.itinerary_destinations.all():
             itinerary_dest.save()
 

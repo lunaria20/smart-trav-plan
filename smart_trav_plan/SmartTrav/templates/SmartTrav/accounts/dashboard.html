@@ -7,145 +7,164 @@
     <title>Dashboard - SmartTrav</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="{% static 'SmartTrav/css/dashboard_styles.css' %}">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <div class="navbar-brand">
-                <div class="brand-icon">✈️</div>
-                <span>SmartTrav</span>
-            </div>
-            <div class="user-section">
-                <span class="user-name">{{ user.first_name }}</span>
-                <span class="user-name">{{ user.last_name }}</span>
-                <div class="user-avatar">
-    {% if user.profile.profile_picture_url %}
-        <img src="{{ user.profile.profile_picture_url }}"
-             alt="{{ user.username }}"
-             style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-    {% else %}
-        {{ user.username|first|upper }}
-    {% endif %}
-</div>
-                <form method="post" action="{% url 'logout' %}" style="display:inline;">
+
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">✈️</div>
+            <span>SmartTrav</span>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><h6 class="sidebar-header">MENU</h6></li>
+            <li><a href="#" class="menu-link active" data-section="overview">
+                <span class="menu-icon">🗺️</span> Overview
+            </a></li>
+            <li><a href="#" class="menu-link" data-section="itineraries">
+                <span class="menu-icon">✈️</span> My Trips
+            </a></li>
+            <li><a href="#" class="menu-link" data-section="destinations">
+                <span class="menu-icon">🌍</span> Explore
+            </a></li>
+            <li><a href="#" class="menu-link" data-section="saved">
+                <span class="menu-icon">❤️</span> Saved
+            </a></li>
+            <li><a href="#" class="menu-link" data-section="budget">
+                <span class="menu-icon">💰</span> Budget
+            </a></li>
+
+            <li><h6 class="sidebar-header">SETTINGS</h6></li>
+            <li><a href="#" class="menu-link" data-section="profile">
+                <span class="menu-icon">👤</span> Profile
+            </a></li>
+             <li>
+                <form method="post" action="{% url 'logout' %}" class="logout-form">
                     {% csrf_token %}
-                    <button type="submit" class="btn-logout">Logout</button>
+                    <button type="submit" class="logout-btn">
+                        <span class="menu-icon">🚪</span> Logout
+                    </button>
                 </form>
+            </li>
+        </ul>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="top-navbar">
+            <h2 class="page-title">Dashboard</h2>
+            <div class="user-section">
+                <div class="user-info">
+                    <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+                    <span class="user-role">Traveler</span>
+                </div>
+                <div class="user-avatar">
+                    {% if user.profile.profile_picture_url %}
+                        <img src="{{ user.profile.profile_picture_url }}" alt="{{ user.username }}">
+                    {% else %}
+                        {{ user.username|first|upper }}
+                    {% endif %}
+                </div>
             </div>
+        </header>
+
+        {% if messages %}
+        <div class="alert-container" style="padding: 0 2.5rem; margin-top: 1.5rem;">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
         </div>
-    </nav>
+        {% endif %}
 
-    {% if messages %}
-    <div style="max-width: 1600px; margin: 0 auto; padding: 0 2.5rem; padding-top: 1.5rem;">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <ul class="sidebar-menu">
-                <li><a href="#" class="menu-link" data-section="overview">
-                    <span class="menu-icon">🗺️</span> Overview
-                </a></li>
-                <li><a href="#" class="menu-link" data-section="itineraries">
-                    <span class="menu-icon">✈️</span> My Trips
-                </a></li>
-                <li><a href="#" class="menu-link" data-section="destinations">
-                    <span class="menu-icon">🌍</span> Explore
-                </a></li>
-                <li><a href="#" class="menu-link" data-section="saved">
-                    <span class="menu-icon">❤️</span> Saved
-                </a></li>
-                <li><a href="#" class="menu-link" data-section="budget">
-                    <span class="menu-icon">₱</span> Budget
-                </a></li>
-                <li><a href="#" class="menu-link" data-section="profile">
-                    <span class="menu-icon">👤</span> Profile
-                </a></li>
-            </ul>
-        </aside>
-
-        <main class="main-content">
-            <section id="overview" class="content-section">
+        <div class="content-container">
+            <section id="overview" class="content-section active">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon blue">✈️</div>
+                        <div class="stat-icon-wrapper blue">✈️</div>
+                        <div class="stat-details">
+                            <div class="stat-value">{{ itinerary_count|default:0 }}</div>
+                            <div class="stat-label">Total Itineraries</div>
                         </div>
-                        <div class="stat-value">{{ itinerary_count|default:0 }}</div>
-                        <div class="stat-label">Total Itineraries</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon green">🌍</div>
+                        <div class="stat-icon-wrapper green">🌍</div>
+                        <div class="stat-details">
+                            <div class="stat-value">{{ saved_count|default:0 }}</div>
+                            <div class="stat-label">Saved Places</div>
                         </div>
-                        <div class="stat-value">{{ saved_count|default:0 }}</div>
-                        <div class="stat-label">Saved Destinations</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon orange">₱</div>
+                        <div class="stat-icon-wrapper orange">₱</div>
+                        <div class="stat-details">
+                            <div class="stat-value">₱{{ total_budget|default:0 }}</div>
+                            <div class="stat-label">Total Budget</div>
                         </div>
-                        <div class="stat-value">₱{{ total_budget|default:0 }}</div>
-                        <div class="stat-label">Total Budget</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <div class="stat-icon purple">⏰</div>
+                        <div class="stat-icon-wrapper purple">⏰</div>
+                        <div class="stat-details">
+                            <div class="stat-value">{{ upcoming_trips|default:0 }}</div>
+                            <div class="stat-label">Upcoming Trips</div>
                         </div>
-                        <div class="stat-value">{{ upcoming_trips|default:0 }}</div>
-                        <div class="stat-label">Upcoming Trips</div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Explore Destinations</h3>
-                        <form method="get" action="{% url 'dashboard' %}" style="margin: 0; display: inline-block;">
-                            <input type="hidden" name="section" value="destinations">
-                            <div style="display: flex; gap: 0.5rem;">
-                                <input type="text" name="search" class="form-control" style="max-width: 320px;" placeholder="🔍 Search destinations..." value="{{ search_query }}">
-                                <button type="submit" class="btn-primary" style="padding: 0.75rem 1.25rem;">Search</button>
-                            </div>
-                        </form>
+                <div class="section-split">
+                    <div class="card recent-trips-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Trips</h3>
+                            <button class="btn-link" onclick="showSection('itineraries')">View All</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Trip Name</th>
+                                        <th>Date</th>
+                                        <th>Budget</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for itinerary in recent_itineraries %}
+                                    <tr>
+                                        <td>
+                                            <div class="trip-name-cell">
+                                                <span class="trip-icon">🗺️</span>
+                                                {{ itinerary.title }}
+                                            </div>
+                                        </td>
+                                        <td>{{ itinerary.start_date }}</td>
+                                        <td>₱{{ itinerary.budget }}</td>
+                                        <td>
+                                            <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-icon">👁️</a>
+                                            <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-icon">✏️</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">No trips found. Start your journey!</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Recent Trips</h3>
-                        <button class="btn-secondary" onclick="showSection('itineraries')">View All</button>
-                    </div>
-                    <div class="itinerary-list">
-                        {% for itinerary in recent_itineraries %}
-                        <div class="itinerary-item">
-                            <div class="itinerary-info">
-                                <h4>{{ itinerary.title }}</h4>
-                                <p>📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</p>
-                                <p>₱ Budget: ₱{{ itinerary.budget }}</p>
-                            </div>
-                            <div class="itinerary-actions">
-                                <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-sm btn-view">View</a>
-                                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-sm btn-edit">Edit</a>
-                                <form method="post" action="{% url 'delete_itinerary' itinerary.id %}" onsubmit="event.preventDefault(); openDeleteModal('{{ itinerary.title }}', this);" style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" class="btn-sm btn-delete">Delete</button>
-</form>
-                            </div>
+                    <div class="card search-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Find Next Destination</h3>
                         </div>
-                        {% empty %}
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📋</div>
-                            <p>No trips yet. Start planning your adventure!</p>
+                        <div class="card-body">
+                            <form method="get" action="{% url 'dashboard' %}" class="quick-search-form">
+                                <input type="hidden" name="section" value="destinations">
+                                <input type="text" name="search" class="form-control" placeholder="Where do you want to go?">
+                                <button type="submit" class="btn-primary w-100 mt-3">Search Places</button>
+                            </form>
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
             </section>
@@ -154,35 +173,29 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">My Itineraries</h3>
-                        <button class="btn-primary" onclick="toggleForm('itinerary-form')">
-                            <span>✨</span> New Trip
-                        </button>
+                        <button class="btn-primary" onclick="toggleForm('itinerary-form')">New Trip</button>
                     </div>
 
-                    <div id="itinerary-form" class="form-container">
+                    <div id="itinerary-form" class="form-container" style="display:none; margin-bottom: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 12px;">
                         <form method="post" action="{% url 'create_itinerary' %}">
                             {% csrf_token %}
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="form-label">Trip Title</label>
                                 <input type="text" name="title" class="form-control" placeholder="e.g., Mactan Beach Getaway" required>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
-                                <div class="form-group">
+                            <div class="row mb-3">
+                                <div class="col">
                                     <label class="form-label">Start Date</label>
                                     <input type="date" name="start_date" class="form-control" required>
                                 </div>
-                                <div class="form-group">
+                                <div class="col">
                                     <label class="form-label">End Date</label>
                                     <input type="date" name="end_date" class="form-control" required>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="form-label">Budget (₱)</label>
                                 <input type="number" name="budget" class="form-control" placeholder="10000" step="100" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Notes</label>
-                                <textarea name="notes" class="form-control" rows="3" placeholder="Any special notes..."></textarea>
                             </div>
                             <button type="submit" class="btn-primary">Create Itinerary</button>
                         </form>
@@ -190,28 +203,24 @@
 
                     <div class="itinerary-list">
                         {% for itinerary in all_itineraries %}
-                        <div class="itinerary-item">
-                            <div class="itinerary-info">
-                                <h4>{{ itinerary.title }}</h4>
-                                <p>⏰ {{ itinerary.start_date }} - {{ itinerary.end_date }} ({{ itinerary.get_duration_days }} days)</p>
-                                <p>₱ Budget: ₱{{ itinerary.budget }}</p>
-                                {% if itinerary.notes %}
-                                <p>📌 {{ itinerary.notes }}</p>
-                                {% endif %}
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #f1f5f9;">
+                            <div>
+                                <h4 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem;">{{ itinerary.title }}</h4>
+                                <p style="color: #64748b; font-size: 0.9rem; margin: 0;">📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</p>
+                                <p style="color: #64748b; font-size: 0.9rem; margin: 0;">₱ Budget: ₱{{ itinerary.budget }}</p>
                             </div>
-                            <div class="itinerary-actions">
-                                <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn-sm btn-view">View</a>
-                                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-sm btn-edit">Edit</a>
-                                <form method="post" action="{% url 'delete_itinerary' itinerary.id %}" onsubmit="event.preventDefault(); openDeleteModal('{{ itinerary.title }}', this);" style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" class="btn-sm btn-delete">Delete</button>
-</form>
+                            <div>
+                                <a href="{% url 'itinerary_detail' itinerary.id %}" class="btn btn-sm btn-outline-primary me-1">View</a>
+                                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn btn-sm btn-outline-secondary me-1">Edit</a>
+                                <form method="post" action="{% url 'delete_itinerary' itinerary.id %}" style="display:inline;" onsubmit="event.preventDefault(); openDeleteModal('{{ itinerary.title }}', this);">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
                             </div>
                         </div>
                         {% empty %}
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📋</div>
-                            <p>No itineraries yet. Start planning your adventure!</p>
+                        <div class="text-center py-5">
+                            <p class="text-muted">No itineraries yet. Create your first trip!</p>
                         </div>
                         {% endfor %}
                     </div>
@@ -220,165 +229,76 @@
 
             <section id="destinations" class="content-section">
                 <div class="card">
-                    <div class="card-header" style="flex-direction: column; align-items: flex-start; border-bottom: none; margin-bottom: 1rem; padding-bottom: 0;">
-                        <h3 class="card-title" style="margin-bottom: 1.5rem;">Explore Destinations</h3>
+                    <div class="card-header">
+                        <h3 class="card-title">Explore Destinations</h3>
+                    </div>
 
-                        <form method="get" action="{% url 'dashboard' %}" class="filter-form" style="width: 100%;">
-                            <input type="hidden" name="section" value="destinations">
-                            <input type="hidden" name="category" value="{{ active_category }}">
+                    <form method="get" action="{% url 'dashboard' %}" class="filter-form mb-4" style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <input type="hidden" name="section" value="destinations">
 
-                            <div class="filter-bar">
-                                <div class="filter-group" style="flex: 2;">
-                                    <label class="form-label">Search</label>
-                                    <input type="text" name="search" class="form-control" placeholder="🔍 Search name, location..." value="{{ search_query }}">
-                                </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold">Search</label>
+                            <input type="text" name="search" class="form-control" placeholder="Search name, location..." value="{{ search_query }}">
+                        </div>
 
-                                <div class="filter-group">
-                                    <label class="form-label">Price Range</label>
-                                    <select name="price" class="form-select">
-                                        <option value="" {% if not price_filter %}selected{% endif %}>Any Price</option>
-                                        <option value="budget" {% if price_filter == 'budget' %}selected{% endif %}>Budget (< ₱2,000)</option>
-                                        <option value="moderate" {% if price_filter == 'moderate' %}selected{% endif %}>Moderate (2,000-3,000)</option>
-                                        <option value="premium" {% if price_filter == 'premium' %}selected{% endif %}>Premium (₱3,000-4,000)</option>
-                                        <option value="luxury" {% if price_filter == 'luxury' %}selected{% endif %}>Luxury (> ₱4,000)</option>
-                                    </select>
-                                </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold">Price Range</label>
+                            <select name="price" class="form-select">
+                                <option value="" {% if not price_filter %}selected{% endif %}>Any Price</option>
+                                <option value="budget" {% if price_filter == 'budget' %}selected{% endif %}>Budget (< ₱2,000)</option>
+                                <option value="moderate" {% if price_filter == 'moderate' %}selected{% endif %}>Moderate (₱2,000-₱3,000)</option>
+                                <option value="premium" {% if price_filter == 'premium' %}selected{% endif %}>Premium (₱3,000-₱4,000)</option>
+                                <option value="luxury" {% if price_filter == 'luxury' %}selected{% endif %}>Luxury (> ₱4,000)</option>
+                            </select>
+                        </div>
 
-                                <div class="filter-group">
-                                    <label class="form-label">Tags</label>
-                                    <input type="text" name="tags" class="form-control" placeholder="🏷 Enter tags (e.g. beach, family, food)" value="{{ tags_filter }}">
-                                </div>
-                                <button type="submit" class="btn-primary" style="margin-top: auto;">Filter</button>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold">Tags</label>
+                            <input type="text" name="tags" class="form-control" placeholder="Enter tags (e.g. beach, family, food)" value="{{ tags_filter }}">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </form>
+
+                    <div class="filter-controls mb-4">
+                        <a href="?category=&section=destinations&search={{ search_query }}" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
+                        <a href="?category=resort&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
+                        <a href="?category=restaurant&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
+                        <a href="?category=attraction&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
+                        <a href="?category=beach&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
+                        <a href="?category=historical&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
+                    </div>
+
+                    <div class="destination-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+                        {% for destination in destinations %}
+                        <div class="destination-card"
+                             style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; transition: transform 0.2s; cursor: pointer; background: white;"
+                             onclick="openDestinationModal('{{ destination.id }}', '{{ destination.name|escapejs }}', '{{ destination.location|escapejs }}', '{{ destination.description|escapejs }}', '{{ destination.category|escapejs }}', '{{ destination.price_per_day }}', '{{ destination.image_url|escapejs }}')">
+
+                            <div style="height: 180px; background: #cbd5e1; position: relative;">
+                                {% if destination.image_url %}
+                                <img src="{{ destination.image_url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% endif %}
                             </div>
-                        </form>
+
+                            <div style="padding: 1rem;">
+                                <h5 style="font-weight: 600; margin-bottom: 0.5rem;">{{ destination.name }}</h5>
+                                <p style="color: #64748b; font-size: 0.9rem;">📍 {{ destination.location }}</p>
+                                <p style="color: #64748b; font-size: 0.9rem;">₱{{ destination.price_per_day|floatformat:2 }} / day</p>
+
+                                <div class="d-flex gap-2 mt-3">
+                                    <form method="post" action="{% url 'save_destination' destination.id %}" style="flex:1; margin:0;" onclick="event.stopPropagation();">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">❤️ Save</button>
+                                    </form>
+                                    <button class="btn btn-sm btn-outline-primary w-100" style="flex:1;" onclick="event.stopPropagation(); openTripModal('{{ destination.id }}', '{{ destination.name|escapejs }}')">Add to Trip</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted" style="grid-column: 1/-1; padding: 1rem;">No destinations found matching filters.</p>
+                        {% endfor %}
                     </div>
-
-                    <div class="filter-controls">
-                        <a href="?category=&section=destinations&search={{ search_query }}&price={{ price_filter }}&tags={{ tags_filter }}" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
-                        <a href="?category=resort&section=destinations&search={{ search_query }}&price={{ price_filter }}&tags={{ tags_filter }}" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
-                        <a href="?category=restaurant&section=destinations&search={{ search_query }}&price={{ price_filter }}&tags={{ tags_filter }}" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
-                        <a href="?category=attraction&section=destinations&search={{ search_query }}&price={{ price_filter }}&tags={{ tags_filter }}" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
-                        <a href="?category=beach&section=destinations&search={{ search_query }}&price={{ price_filter }}&tags={{ tags_filter }}" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
-                        <a href="?category=historical&section=destinations&search={{ search_query }}&price={{ price_filter }}&tags={{ tags_filter }}" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
-                    </div>
-
-<div class="destination-grid">
-    {% for destination in destinations %}
-    <div class="destination-card" onclick="openDestinationModal({{ destination.id }}, '{{ destination.name }}', '{{ destination.location }}', '{{ destination.description|escapejs }}', '{{ destination.category }}', '{{ destination.price_per_day }}')">
-        {% if destination.image_url %}
-        <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="destination-image">
-        {% else %}
-        <div class="destination-image"></div>
-        {% endif %}
-        <div class="destination-info">
-            <div class="destination-name">{{ destination.name }}</div>
-            <div class="destination-location">📍 {{ destination.location }}</div>
-
-            <div class="destination-price-alignment">
-                ₱{{ destination.price_per_day|floatformat:2 }} / day
-            </div>
-
-            <p class="destination-description">{{ destination.description|truncatewords:15 }}</p>
-
-            <div class="destination-actions-container">
-                <form method="post" action="{% url 'save_destination' destination.id %}" style="margin: 0; flex: 1;" onclick="event.stopPropagation();">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-save" style="width: 100%;">❤️ Save</button>
-                </form>
-                <button type="button" class="btn-secondary" style="flex: 1; padding: 0.75rem; font-size: 0.85rem;" onclick="event.stopPropagation(); openTripModal({{ destination.id }}, '{{ destination.name }}')">Add to Trip</button>
-            </div>
-        </div>
-    </div>
-    {% empty %}
-    <div class="empty-state" style="grid-column: 1/-1;">
-        <div class="empty-state-icon">🏝️</div>
-        <p>No destinations found matching filters.</p>
-    </div>
-    {% endfor %}
-</div>
-
-                    <div id="destinationModal" class="modal">
-    <div class="modal-content" style="max-width: 900px;">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modalDestinationName"></h3>
-            <button class="close-modal" onclick="closeDestinationModal()">&times;</button>
-        </div>
-
-        <div style="position: relative; height: 300px; margin: -2.5rem -2.5rem 2rem -2.5rem; border-radius: 24px 24px 0 0; overflow: hidden;">
-            <div id="modalDestinationImage" style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
-            <span id="modalDestinationCategory" style="position: absolute; top: 1.5rem; right: 1.5rem; background: white; padding: 0.5rem 1.25rem; border-radius: 24px; font-weight: 700; text-transform: capitalize; font-size: 0.85rem;"></span>
-        </div>
-
-        <div>
-            <div style="display: flex; align-items: center; color: #718096; margin-bottom: 1.5rem; font-size: 1.1rem; font-weight: 600;">
-                <span style="margin-right: 0.5rem;">📍</span>
-                <span id="modalDestinationLocation"></span>
-            </div>
-
-            <div style="display: flex; align-items: center; color: #f59e0b; margin-bottom: 1.5rem;">
-                <span style="font-size: 1.25rem;">⭐⭐⭐⭐⭐</span>
-                <span style="margin-left: 0.5rem; color: #718096; font-size: 0.9rem;">(4.8/5.0 - 250+ reviews)</span>
-            </div>
-
-            <div style="margin-bottom: 2rem;">
-                <h4 style="font-weight: 700; color: #1a202c; margin-bottom: 1rem; font-size: 1.25rem;">About</h4>
-                <p id="modalDestinationDescription" style="color: #4a5568; line-height: 1.8; font-size: 1rem;"></p>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                <div style="display: flex; align-items: start; gap: 1rem;">
-                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">₱</div>
-                    <div>
-                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Price Per Day</h5>
-                        <p id="modalDestinationPrice" style="color: #059669; font-weight: 600; margin: 0;"></p>
-                    </div>
-                </div>
-
-                <div style="display: flex; align-items: start; gap: 1rem;">
-                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">⏱️</div>
-                    <div>
-                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Operating Hours</h5>
-                        <p id="modalOperatingHours" style="color: #2563eb; font-weight: 600; margin: 0;">8:00 AM - 6:00 PM</p>
-                    </div>
-                </div>
-
-                <div style="display: flex; align-items: start; gap: 1rem;">
-                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">☎️</div>
-                    <div>
-                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Contact</h5>
-                        <p style="color: #7c3aed; font-weight: 600; margin: 0;">+63 32 495 XXXX</p>
-                    </div>
-                </div>
-
-                <div style="display: flex; align-items: start; gap: 1rem;">
-                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">✈️</div>
-                    <div>
-                        <h5 style="font-weight: 700; color: #1a202c; margin-bottom: 0.25rem; font-size: 0.9rem;">Location</h5>
-                        <p style="color: #dc2626; font-weight: 600; margin: 0;">Mactan Island, Cebu</p>
-                    </div>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 2rem;">
-                <h4 style="font-weight: 700; color: #1a202c; margin-bottom: 1rem; font-size: 1.25rem;" id="modalAmenitiesTitle">Amenities</h4>
-                <div id="modalAmenities" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;"></div>
-            </div>
-
-            <div style="display: flex; gap: 1rem; padding-top: 1.5rem; border-top: 2px solid #f7fafc;">
-                <form method="post" action="" id="modalSaveForm" style="flex: 1; margin: 0;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                        <span>❤️</span> Save Place
-                    </button>
-                </form>
-                <button type="button" class="btn-secondary" style="flex: 1;" onclick="addToTripFromModal()">
-                    ✨ Add to Trip
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
                 </div>
             </section>
 
@@ -387,39 +307,34 @@
                     <div class="card-header">
                         <h3 class="card-title">Saved Places</h3>
                     </div>
-
-                    <div class="destination-grid">
+                    <div class="destination-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
                         {% for saved in saved_destinations %}
-                        <div class="destination-card">
-                            {% if saved.destination.image_url %}
-                            <img src="{{ saved.destination.image_url }}" alt="{{ saved.destination.name }}" class="destination-image">
-                            {% else %}
-                            <div class="destination-image"></div>
-                            {% endif %}
-                            <div class="destination-info">
-                                <div class="destination-name">{{ saved.destination.name }}</div>
-                                <div class="destination-location">📍 {{ saved.destination.location }}</div>
+                        <div class="destination-card"
+                             style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: white; transition: transform 0.2s; cursor: pointer;"
+                             onclick="openDestinationModal('{{ saved.destination.id }}', '{{ saved.destination.name|escapejs }}', '{{ saved.destination.location|escapejs }}', '{{ saved.destination.description|escapejs }}', '{{ saved.destination.category|escapejs }}', '{{ saved.destination.price_per_day }}', '{{ saved.destination.image_url|escapejs }}')">
 
-                                <div class="destination-price-alignment">
-                                    ₱{{ saved.destination.price_per_day|floatformat:2 }} / day
-                                </div>
+                            <div style="height: 180px; background: #cbd5e1; position: relative;">
+                                {% if saved.destination.image_url %}
+                                <img src="{{ saved.destination.image_url }}" alt="{{ saved.destination.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% endif %}
+                            </div>
 
-                                <p class="destination-description">{{ saved.destination.description|truncatewords:15 }}</p>
+                            <div style="padding: 1rem;">
+                                <h5 style="font-weight: 600; margin-bottom: 0.5rem;">{{ saved.destination.name }}</h5>
+                                <p style="color: #64748b; font-size: 0.9rem;">📍 {{ saved.destination.location }}</p>
+                                <p style="color: #64748b; font-size: 0.9rem;">₱{{ saved.destination.price_per_day|floatformat:2 }} / day</p>
 
-                                <div class="saved-destination-actions">
-                                    <form method="post" action="{% url 'remove_saved_destination' saved.destination.id %}" style="margin: 0;">
+                                <div class="d-flex gap-2 mt-3">
+                                    <form method="post" action="{% url 'remove_saved_destination' saved.destination.id %}" style="flex:1; margin:0;" onclick="event.stopPropagation();">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn-save" style="background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); color: #742a2a; border-color: #fc8181; width: 100%;">✖ Remove</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">Remove</button>
                                     </form>
-                                    <button class="btn-add-to-trip" onclick="openTripModal({{ saved.destination.id }}, '{{ saved.destination.name }}')">✨ Add to Trip</button>
+                                    <button class="btn btn-sm btn-outline-primary w-100" style="flex:1;" onclick="event.stopPropagation(); openTripModal('{{ saved.destination.id }}', '{{ saved.destination.name|escapejs }}')">Add to Trip</button>
                                 </div>
                             </div>
                         </div>
                         {% empty %}
-                        <div class="empty-state" style="grid-column: 1/-1;">
-                            <div class="empty-state-icon">❤️</div>
-                            <p>No saved destinations yet. Start exploring!</p>
-                        </div>
+                        <p class="text-muted">No saved places yet.</p>
                         {% endfor %}
                     </div>
                 </div>
@@ -429,45 +344,42 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Budget Tracker</h3>
-                        <button class="btn-primary" onclick="toggleForm('expense-form')">
-                            <span>✨</span> Add Expense
-                        </button>
+                        <button class="btn-primary" onclick="toggleForm('expense-form')">Add Expense</button>
                     </div>
 
-                    <div id="expense-form" class="form-container">
+                    <div id="expense-form" class="form-container" style="display:none; margin-bottom: 2rem; padding: 1.5rem; background: #f8fafc; border-radius: 12px;">
                         <form method="post" action="{% url 'add_expense' %}">
                             {% csrf_token %}
-                            <div class="form-group">
-                                <label class="form-label">Select Itinerary</label>
+                            <div class="mb-3">
+                                <label class="form-label">Itinerary</label>
                                 <select name="itinerary" class="form-select" required>
-                                    <option value="">Choose a trip...</option>
                                     {% for itinerary in all_itineraries %}
                                     <option value="{{ itinerary.id }}">{{ itinerary.title }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
-                                <div class="form-group">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label class="form-label">Amount</label>
+                                    <input type="number" name="amount" class="form-control" required>
+                                </div>
+                                <div class="col">
                                     <label class="form-label">Category</label>
-                                    <select name="category" class="form-select" required>
-                                        <option value="transport">Transportation</option>
-                                        <option value="lodging">Lodging</option>
-                                        <option value="food">Food & Drinks</option>
-                                        <option value="activity">Activities</option>
+                                    <select name="category" class="form-select">
+                                        <option value="transport">Transport</option>
+                                        <option value="food">Food</option>
                                         <option value="shopping">Shopping</option>
+                                        <option value="activity">Activities</option>
+                                        <option value="lodging">Lodging</option>
                                         <option value="other">Other</option>
                                     </select>
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label">Amount (₱)</label>
-                                    <input type="number" name="amount" class="form-control" step="100" required>
-                                </div>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="form-label">Description</label>
-                                <input type="text" name="description" class="form-control" placeholder="e.g., Taxi to resort" required>
+                                <input type="text" name="description" class="form-control" required>
                             </div>
-                            <div class="form-group">
+                            <div class="mb-3">
                                 <label class="form-label">Date</label>
                                 <input type="date" name="date" class="form-control" required>
                             </div>
@@ -477,203 +389,168 @@
 
                     <div class="expense-list">
                         {% for expense in expenses %}
-                        <div class="expense-item">
+                        <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
                             <div>
-                                <span class="expense-category">{{ expense.get_category_display }}</span>
-                                <div style="font-weight: 700; color: #1a202c; margin-bottom: 0.375rem; font-size: 1.05rem;">{{ expense.description }}</div>
-                                <small style="color: #718096; font-weight: 500;">{{ expense.date }} • {{ expense.itinerary.title }}</small>
+                                <span class="badge bg-secondary mb-1">{{ expense.get_category_display }}</span>
+                                <h6 class="mb-0">{{ expense.description }}</h6>
+                                <small class="text-muted">{{ expense.date }} • {{ expense.itinerary.title }}</small>
                             </div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #c53030;">₱{{ expense.amount }}</div>
+                            <div class="fw-bold text-danger">₱{{ expense.amount }}</div>
                         </div>
                         {% empty %}
-                        <div class="empty-state">
-                            <div class="empty-state-icon">💰</div>
-                            <p>No expenses tracked yet.</p>
-                        </div>
+                        <p class="text-muted p-3">No expenses tracked yet.</p>
                         {% endfor %}
                     </div>
                 </div>
             </section>
 
             <section id="profile" class="content-section">
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">My Profile</h3>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">My Profile</h3>
+                    </div>
+
+                    <div class="profile-picture-section">
+                        <div class="profile-picture-wrapper">
+                            <div class="profile-picture-display" id="profilePictureDisplay">
+                                {% if user.profile.profile_picture_url %}
+                                <img src="{{ user.profile.profile_picture_url }}" alt="Profile Picture" id="profileImage">
+                                {% else %}
+                                <span id="profileInitial">{{ user.username|first|upper }}</span>
+                                {% endif %}
+                            </div>
+                            <label for="profilePictureInput" class="upload-overlay">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </label>
+                        </div>
+
+                        <p class="profile-info-text" style="font-weight: 600; font-size: 1.1rem; margin-top: 1rem;">{{ user.username }}</p>
+                        <p class="profile-info-text" style="font-size: 0.85rem; color: #64748b;">Click the camera icon to change your profile picture</p>
+
+                        <div class="profile-picture-actions" style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center;">
+                            <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('profilePictureInput').click()">
+                                Upload Photo
+                            </button>
+                            {% if user.profile.profile_picture_url %}
+                            <form method="post" action="{% url 'remove_profile_picture' %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger">Remove</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" id="profileForm" style="max-width: 600px; margin: 0 auto;">
+                        {% csrf_token %}
+                        <input type="file" id="profilePictureInput" name="profile_picture" style="display: none;" accept="image/*" onchange="previewImage(event)">
+
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" value="{{ user.username }}" readonly style="background: #f7fafc; color: #718096;">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ user.email }}">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label">First Name</label>
+                                <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary w-100">💾 Update Profile</button>
+                    </form>
+                </div>
+            </section>
+
         </div>
+    </main>
 
-        <div class="profile-picture-section">
-            <div class="profile-picture-wrapper">
-                <div class="profile-picture-display" id="profilePictureDisplay">
-                    {% if user.profile.profile_picture_url %}
-                    <img src="{{ user.profile.profile_picture_url }}" alt="Profile Picture" id="profileImage">
-                    {% else %}
-                    <span id="profileInitial">{{ user.username|first|upper }}</span>
-                    {% endif %}
-                </div>
-                <label for="profilePictureInput" class="upload-overlay">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                </label>
+    <div id="destinationModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalDestinationName"></h3>
+                <button class="close-modal" onclick="closeDestinationModal()">&times;</button>
             </div>
 
-            <p class="profile-info-text">{{ user.username }}</p>
-            <p class="profile-info-text" style="font-size: 0.85rem; margin-top: 0.25rem;">Click the camera icon to change your profile picture</p>
+            <div style="position: relative; height: 300px; margin: -1rem -2rem 2rem -2rem; background: #eee;">
+                <div id="modalDestinationImage" style="width: 100%; height: 100%;"></div>
+                <span id="modalDestinationCategory" style="position: absolute; top: 1rem; right: 1rem; background: white; padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; text-transform: capitalize; z-index: 10;"></span>
+            </div>
 
-            <div class="profile-picture-actions">
-                <button type="button" class="btn-upload" onclick="document.getElementById('profilePictureInput').click()">
-                    Upload Photo
-                </button>
-                {% if user.profile.profile_picture_url %}
-<form method="post" action="{% url 'remove_profile_picture' %}" style="display:inline;">
-    {% csrf_token %}
-    <button type="submit" class="btn-remove">Remove</button>
-</form>
-{% endif %}
+            <p id="modalDestinationLocation" style="color: #666; font-size: 1.1rem; margin-bottom: 1rem;">📍 Location</p>
+            <p id="modalDestinationDescription" style="line-height: 1.6; color: #444; margin-bottom: 2rem;"></p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h5>Price</h5>
+                    <p id="modalDestinationPrice" style="color: #2ecc71; font-weight: bold; font-size: 1.2rem;"></p>
+                </div>
+                <div>
+                    <h5>Operating Hours</h5>
+                    <p id="modalOperatingHours"></p>
+                </div>
+            </div>
+
+            <h5 id="modalAmenitiesTitle">Amenities</h5>
+            <div id="modalAmenities" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;"></div>
+
+            <div style="display: flex; gap: 1rem;">
+                <form method="post" action="" id="modalSaveForm" style="flex:1;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-primary w-100">❤️ Save Place</button>
+                </form>
+                <button type="button" class="btn-secondary w-100" style="flex:1;" onclick="addToTripFromModal()">Add to Trip</button>
             </div>
         </div>
-
-        <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" id="profileForm">
-            {% csrf_token %}
-            <input type="file" id="profilePictureInput" name="profile_picture" class="file-input-hidden" accept="image/*" onchange="previewImage(event)">
-
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" class="form-control" value="{{ user.username }}" readonly style="background: #f7fafc; color: #718096;">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" value="{{ user.email }}">
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
-                <div class="form-group">
-                    <label class="form-label">First Name</label>
-                    <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Last Name</label>
-                    <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
-                </div>
-            </div>
-            <button type="submit" class="btn-primary">💾 Update Profile</button>
-        </form>
-    </div>
-</section>
-        </main>
     </div>
 
     <div id="tripModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
                 <h3 class="modal-title">Add to Trip</h3>
                 <button class="close-modal" onclick="closeTripModal()">&times;</button>
             </div>
-            <p style="color: #718096; margin-bottom: 2rem; font-size: 1rem; font-weight: 500;">
-                Select a trip to add <strong id="destinationName" style="color: #1a202c;"></strong>
-            </p>
-
+            <p style="margin-bottom: 1rem;">Select a trip to add <strong id="destinationName"></strong>:</p>
             <form method="post" action="{% url 'add_destination_to_trip' %}" id="addToTripForm">
                 {% csrf_token %}
                 <input type="hidden" name="destination_id" id="destinationId">
-
                 <div class="trip-list">
                     {% for itinerary in all_itineraries %}
                     <label class="trip-option">
-                        <input type="radio"
-                               name="itinerary_id"
-                               value="{{ itinerary.id }}"
-                               data-start-date="{{ itinerary.start_date|date:'Y-m-d' }}"
-                               data-end-date="{{ itinerary.end_date|date:'Y-m-d' }}"
-                               required
-                               style="margin-right: 1rem;">
-                        <div style="display: inline-block;">
-                            <div class="trip-option-title">{{ itinerary.title }}</div>
-                            <div class="trip-option-date">📅 {{ itinerary.start_date }} - {{ itinerary.end_date }}</div>
+                        <input type="radio" name="itinerary_id" value="{{ itinerary.id }}" required style="margin-right: 1rem;">
+                        <div>
+                            <div style="font-weight:600;">{{ itinerary.title }}</div>
+                            <div style="font-size:0.85rem; color:#666;">{{ itinerary.start_date }}</div>
                         </div>
                     </label>
                     {% empty %}
-                    <div class="empty-state">
-                        <p>You don't have any trips yet. Create one first!</p>
-                        <button type="button" class="btn-primary" onclick="closeTripModal(); showSection('itineraries'); toggleForm('itinerary-form');">Create Trip</button>
-                    </div>
+                    <p>No trips created yet.</p>
                     {% endfor %}
                 </div>
-
-                {% if all_itineraries %}
-                <!-- Date/Time Selection (shown after selecting a trip) -->
-                <div id="dateTimeSelection" style="display: none; margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-radius: 16px; border: 2px solid #e2e8f0;">
-                    <h4 style="font-weight: 700; color: #1a202c; margin-bottom: 1rem; font-size: 1.1rem;">📅 Schedule Visit (Optional)</h4>
-                    <p style="color: #718096; font-size: 0.9rem; margin-bottom: 1rem;">
-                        Choose when you'd like to visit during your trip: <strong id="tripDateRange" style="color: #667eea;"></strong>
-                    </p>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" style="font-size: 0.85rem;">Visit Date</label>
-                            <input type="date"
-                                   name="visit_date"
-                                   id="visitDate"
-                                   class="form-control"
-                                   style="font-size: 0.9rem;">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" style="font-size: 0.85rem;">Visit Time</label>
-                            <input type="time"
-                                   name="visit_time"
-                                   id="visitTime"
-                                   class="form-control"
-                                   style="font-size: 0.9rem;">
-                        </div>
-                    </div>
-                    <p style="color: #718096; font-size: 0.8rem; margin-top: 0.75rem; font-style: italic;">
-                        💡 Leave blank if you haven't decided yet - you can add it later!
-                    </p>
-                </div>
-
-                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 2rem;">Add to Selected Trip</button>
-                {% endif %}
+                <button type="submit" class="btn-primary w-100 mt-3">Add to Trip</button>
             </form>
         </div>
     </div>
 
-
     <div id="deleteModal" class="modal">
-    <div class="modal-content" style="max-width: 440px; padding: 0; overflow: hidden;">
-        <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 2rem; text-align: center;">
-            <div style="width: 70px; height: 70px; margin: 0 auto; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; backdrop-filter: blur(10px);">
-                🗑️
-            </div>
-        </div>
-
-        <div style="padding: 2rem;">
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: #1a202c; margin-bottom: 1rem; text-align: center; letter-spacing: -0.02em;">
-                Delete Trip?
-            </h3>
-
-            <p style="color: #4a5568; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.5rem; text-align: center;">
-                Are you sure you want to delete
-            </p>
-            <p style="color: #dc2626; font-size: 1.05rem; font-weight: 700; margin-bottom: 1.5rem; text-align: center;">
-                "<span id="deleteItemName"></span>"?
-            </p>
-            <p style="color: #718096; font-size: 0.85rem; text-align: center; margin-bottom: 2rem;">
-                This action cannot be undone. All trip details will be permanently removed.
-            </p>
-
-            <div style="display: flex; gap: 0.75rem;">
-                <button onclick="closeDeleteModal()" style="flex: 1; padding: 0.875rem 1.5rem; background: white; color: #4a5568; border: 2px solid #e2e8f0; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 0.9rem;">
-                    Cancel
-                </button>
-                <button onclick="confirmDelete()" style="flex: 1; padding: 0.875rem 1.5rem; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3); font-size: 0.9rem;">
-                    Delete
-                </button>
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div style="margin-bottom: 1rem; font-size: 3rem;">🗑️</div>
+            <h3>Delete Trip?</h3>
+            <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+                <button onclick="closeDeleteModal()" class="btn-secondary">Cancel</button>
+                <button onclick="confirmDelete()" class="btn-sm btn-delete" style="padding: 0.75rem 1.5rem;">Delete</button>
             </div>
         </div>
     </div>
-</div>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'SmartTrav/css/js/dashboard_scripts.js' %}"></script>
