@@ -82,6 +82,7 @@ def signup_view(request):
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created successfully for {username}! Please log in to continue.')
             return redirect('login')
+        # If form is invalid, it will fall through and render with errors
     else:
         form = CustomUserCreationForm()
     return render(request, 'SmartTrav/accounts/signup.html', {'form': form})

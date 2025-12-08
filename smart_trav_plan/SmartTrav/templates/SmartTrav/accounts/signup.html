@@ -259,53 +259,91 @@
                 </div>
 
                 <form method="post">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label for="id_username" class="form-label">Username</label>
-                        <input type="text" class="form-control" name="username" id="id_username"
-                               placeholder="Choose a username" required>
-                        {% if form.username.errors %}
-                            <div class="text-danger">{{ form.username.errors }}</div>
-                        {% endif %}
-                    </div>
+    {% csrf_token %}
 
-                    <div class="mb-3">
-                        <label for="id_email" class="form-label">Email</label>
-                        <input type="email" class="form-control" name="email" id="id_email"
-                               placeholder="Enter your email address" required>
-                        {% if form.email.errors %}
-                            <div class="text-danger">{{ form.email.errors }}</div>
-                        {% endif %}
-                        <small class="form-text">We'll never share your email with anyone else.</small>
-                    </div>
+    <!-- Show general form errors at the top -->
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+            {% for error in form.non_field_errors %}
+                {{ error }}
+            {% endfor %}
+        </div>
+    {% endif %}
 
-                    <div class="mb-3">
-                        <label for="id_password1" class="form-label">Password</label>
-                        <input type="password" class="form-control" name="password1" id="id_password1"
-                               placeholder="Create a password" required>
-                        {% if form.password1.errors %}
-                            <div class="text-danger">{{ form.password1.errors }}</div>
-                        {% endif %}
-                        <small class="form-text">Must contain at least 8 characters.</small>
-                    </div>
+    <div class="mb-3">
+        <label for="id_username" class="form-label">Username</label>
+        <input type="text"
+               class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+               name="username"
+               id="id_username"
+               value="{{ form.username.value|default:'' }}"
+               placeholder="Choose a username"
+               required>
+        {% if form.username.errors %}
+            <div class="invalid-feedback d-block">
+                {% for error in form.username.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 
-                    <div class="mb-3">
-                        <label for="id_password2" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" name="password2" id="id_password2"
-                               placeholder="Confirm your password" required>
-                        {% if form.password2.errors %}
-                            <div class="text-danger">{{ form.password2.errors }}</div>
-                        {% endif %}
-                    </div>
+    <div class="mb-3">
+        <label for="id_email" class="form-label">Email</label>
+        <input type="email"
+               class="form-control {% if form.email.errors %}is-invalid{% endif %}"
+               name="email"
+               id="id_email"
+               value="{{ form.email.value|default:'' }}"
+               placeholder="Enter your email address"
+               required>
+        {% if form.email.errors %}
+            <div class="invalid-feedback d-block">
+                {% for error in form.email.errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <small class="form-text">We'll never share your email with anyone else.</small>
+    </div>
 
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
-                        </div>
-                    {% endif %}
+    <div class="mb-3">
+        <label for="id_password1" class="form-label">Password</label>
+        <input type="password"
+               class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+               name="password1"
+               id="id_password1"
+               placeholder="Create a password"
+               required>
+        {% if form.password1.errors %}
+            <div class="invalid-feedback d-block">
+                {% for error in form.password1.errors %}
+                    • {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <small class="form-text">Must contain at least 8 characters.</small>
+    </div>
 
-                    <button type="submit" class="btn-signup">Create Account</button>
-                </form>
+    <div class="mb-3">
+        <label for="id_password2" class="form-label">Confirm Password</label>
+        <input type="password"
+               class="form-control {% if form.password2.errors %}is-invalid{% endif %}"
+               name="password2"
+               id="id_password2"
+               placeholder="Confirm your password"
+               required>
+        {% if form.password2.errors %}
+            <div class="invalid-feedback d-block">
+                {% for error in form.password2.errors %}
+                    • {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn-signup">Create Account</button>
+</form>
 
                 <div class="login-link">
                     Already have an account? <a href="{% url 'login' %}">Login here</a>
