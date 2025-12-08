@@ -424,6 +424,22 @@ def service_view(request):
 
 
 def contact_view(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone', 'Not provided')
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+
+        # Save to database if you created the ContactMessage model
+        # ContactMessage.objects.create(
+        #     name=name, email=email, phone=phone,
+        #     subject=subject, message=message
+        # )
+
+        messages.success(request, 'Thank you for your message! We will get back to you soon.')
+        return redirect('contact')
+
     return render(request, 'SmartTrav/accounts/contact.html')
 
 

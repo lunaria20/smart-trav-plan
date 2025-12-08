@@ -118,6 +118,19 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # For Gmail
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@gmail.com'  # Your email
+EMAIL_HOST_PASSWORD = 'your-app-password'  # Gmail App Password
+DEFAULT_FROM_EMAIL = 'SmartTrav <your-email@gmail.com>'
+
+# For development/testing, you can use console backend instead:
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Message tags
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
