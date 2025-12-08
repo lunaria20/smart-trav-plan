@@ -1,19 +1,40 @@
 // Destination Modal Functions
 let currentDestinationId = null;
 
-function openDestinationModal(id, name, location, description, category, priceRange) {
+function openDestinationModal(id, name, location, description, category, priceRange, imageUrl) {
     currentDestinationId = id;
 
-    document.getElementById('modalDestinationName').textContent = name;
-    document.getElementById('modalDestinationLocation').textContent = location;
-    document.getElementById('modalDestinationDescription').textContent = description;
-    document.getElementById('modalDestinationCategory').textContent = category;
-    document.getElementById('modalDestinationPrice').textContent = '₱' + priceRange;
+    // Safety checks for elements
+    if(document.getElementById('modalDestinationName')) document.getElementById('modalDestinationName').textContent = name;
+    if(document.getElementById('modalDestinationLocation')) document.getElementById('modalDestinationLocation').textContent = location;
+    if(document.getElementById('modalDestinationDescription')) document.getElementById('modalDestinationDescription').textContent = description;
+
+    // SAFETY CHECK: This is what was crashing before!
+    const catSpan = document.getElementById('modalDestinationCategory');
+    if (catSpan) {
+        catSpan.textContent = category;
+    }
+
+    if(document.getElementById('modalDestinationPrice')) document.getElementById('modalDestinationPrice').textContent = '₱' + priceRange;
 
     // Update save form action
-    document.getElementById('modalSaveForm').action = `/destination/save/${id}/`;
+    const saveForm = document.getElementById('modalSaveForm');
+    if (saveForm) {
+        saveForm.action = `/destination/save/${id}/`;
+    }
 
-    // Set operating hours based on category
+    // Handle the Modal Image
+    const imageContainer = document.getElementById('modalDestinationImage');
+    if (imageContainer) {
+        if (imageUrl && imageUrl !== 'None' && imageUrl !== '') {
+            imageContainer.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        } else {
+            imageContainer.innerHTML = '';
+            imageContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+    }
+
+    // Set operating hours
     const operatingHours = {
         'restaurant': '10:00 AM - 10:00 PM',
         'resort': '24 Hours (Check-in: 2PM)',
@@ -21,9 +42,10 @@ function openDestinationModal(id, name, location, description, category, priceRa
         'attraction': '8:00 AM - 6:00 PM',
         'historical': '8:00 AM - 5:00 PM'
     };
-    document.getElementById('modalOperatingHours').textContent = operatingHours[category] || '8:00 AM - 6:00 PM';
+    const hours = operatingHours[String(category).toLowerCase()] || '8:00 AM - 6:00 PM';
+    if(document.getElementById('modalOperatingHours')) document.getElementById('modalOperatingHours').textContent = hours;
 
-    // Set amenities based on category
+    // Set amenities
     const amenitiesMap = {
         'resort': ['🏊 Swimming Pool', '🍽 Restaurant', '📶 Free WiFi', '🅿 Parking', '🏖 Beach Access', '💆 Spa Services'],
         'beach': ['🏖 Beach Access', '🚿 Shower Facilities', '🏪 Nearby Stores', '🅿 Parking', '🏐 Beach Volleyball', '🏊 Lifeguard'],
@@ -32,25 +54,33 @@ function openDestinationModal(id, name, location, description, category, priceRa
         'attraction': ['🎫 Ticketing', '🅿 Parking', '🚻 Restrooms', '🎁 Gift Shop', '📷 Photo Spots', '♿ Accessible']
     };
 
-    const amenities = amenitiesMap[category] || amenitiesMap['attraction'];
+    const key = String(category).toLowerCase();
+    const amenities = amenitiesMap[key] || amenitiesMap['attraction'];
     const amenitiesHTML = amenities.map(amenity =>
         `<div style="display: flex; align-items: center; color: #4a5568; font-size: 0.95rem; font-weight: 500;">${amenity}</div>`
     ).join('');
 
-    document.getElementById('modalAmenities').innerHTML = amenitiesHTML;
-    document.getElementById('modalAmenitiesTitle').textContent = category === 'restaurant' ? 'Features' : 'Amenities';
+    const amenitiesContainer = document.getElementById('modalAmenities');
+    if(amenitiesContainer) amenitiesContainer.innerHTML = amenitiesHTML;
 
-    document.getElementById('destinationModal').classList.add('show');
+    if(document.getElementById('modalAmenitiesTitle')) {
+        document.getElementById('modalAmenitiesTitle').textContent = key === 'restaurant' ? 'Features' : 'Amenities';
+    }
+
+    const modal = document.getElementById('destinationModal');
+    if(modal) modal.classList.add('show');
 }
 
 function closeDestinationModal() {
-    document.getElementById('destinationModal').classList.remove('show');
+    const modal = document.getElementById('destinationModal');
+    if(modal) modal.classList.remove('show');
 }
 
 function addToTripFromModal() {
     if (currentDestinationId) {
         closeDestinationModal();
-        const destName = document.getElementById('modalDestinationName').textContent;
+        const nameElem = document.getElementById('modalDestinationName');
+        const destName = nameElem ? nameElem.textContent : 'Destination';
         openTripModal(currentDestinationId, destName);
     }
 }
@@ -59,13 +89,15 @@ function addToTripFromModal() {
 let deleteForm = null;
 
 function openDeleteModal(tripName, formElement) {
-    document.getElementById('deleteItemName').textContent = tripName;
+    if(document.getElementById('deleteItemName')) document.getElementById('deleteItemName').textContent = tripName;
     deleteForm = formElement;
-    document.getElementById('deleteModal').classList.add('show');
+    const modal = document.getElementById('deleteModal');
+    if(modal) modal.classList.add('show');
 }
 
 function closeDeleteModal() {
-    document.getElementById('deleteModal').classList.remove('show');
+    const modal = document.getElementById('deleteModal');
+    if(modal) modal.classList.remove('show');
     deleteForm = null;
 }
 
@@ -76,7 +108,7 @@ function confirmDelete() {
     closeDeleteModal();
 }
 
-// Preview uploaded image before saving
+// Preview uploaded image
 function previewImage(event) {
     const file = event.target.files[0];
     if (file) {
@@ -89,82 +121,64 @@ function previewImage(event) {
             if (existingImg) {
                 existingImg.src = e.target.result;
             } else {
-                if (initial) {
-                    initial.style.display = 'none';
+                if (initial) initial.style.display = 'none';
+                if (display) {
+                    const img = document.createElement('img');
+                    img.id = 'profileImage';
+                    img.src = e.target.result;
+                    img.alt = 'Profile Picture';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    display.appendChild(img);
                 }
-                const img = document.createElement('img');
-                img.id = 'profileImage';
-                img.src = e.target.result;
-                img.alt = 'Profile Picture';
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.objectFit = 'cover';
-                display.appendChild(img);
             }
         };
         reader.readAsDataURL(file);
     }
 }
 
-// Remove profile picture
-function removeProfilePicture() {
-    if (confirm('Are you sure you want to remove your profile picture?')) {
-        // Create a form to submit the removal
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/remove-profile-picture/'; // Update this URL to match your Django URL
+// Close modals when clicking outside
+window.onclick = function(event) {
+    const destModal = document.getElementById('destinationModal');
+    const tripModal = document.getElementById('tripModal');
+    const deleteModal = document.getElementById('deleteModal');
 
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = 'csrfmiddlewaretoken';
-        csrfInput.value = csrfToken;
-
-        form.appendChild(csrfInput);
-        document.body.appendChild(form);
-        form.submit();
-    }
+    if (event.target === destModal) closeDestinationModal();
+    if (event.target === tripModal) closeTripModal();
+    if (event.target === deleteModal) closeDeleteModal();
 }
 
-// Close modals when clicking outside
-document.getElementById('deleteModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeDeleteModal();
-    }
-});
-
-document.getElementById('destinationModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeDestinationModal();
-    }
-});
-
-document.getElementById('tripModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeTripModal();
-    }
-});
-
-// Menu link functionality
-document.querySelectorAll('.menu-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        const section = this.getAttribute('data-section');
-        showSection(section);
-
-        document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
-        this.classList.add('active');
+// Navigation Logic
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.menu-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            // Only handle section switching if data-section exists
+            if (this.getAttribute('data-section')) {
+                e.preventDefault();
+                const section = this.getAttribute('data-section');
+                showSection(section);
+            }
+        });
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sectionParam = urlParams.get('section');
+    if (sectionParam) {
+        showSection(sectionParam);
+    }
 });
 
 function showSection(sectionId) {
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
+        section.style.display = 'none';
     });
 
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
-        targetSection.classList.add('active');
+        targetSection.style.display = 'block';
+        setTimeout(() => targetSection.classList.add('active'), 10);
     }
 
     document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
@@ -177,35 +191,18 @@ function showSection(sectionId) {
 function toggleForm(formId) {
     const form = document.getElementById(formId);
     if (form) {
-        form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+        form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
     }
 }
 
 function openTripModal(destinationId, destinationName) {
     document.getElementById('destinationId').value = destinationId;
     document.getElementById('destinationName').textContent = destinationName;
-    document.getElementById('tripModal').classList.add('show');
+    const modal = document.getElementById('tripModal');
+    if(modal) modal.classList.add('show');
 }
 
 function closeTripModal() {
-    document.getElementById('tripModal').classList.remove('show');
+    const modal = document.getElementById('tripModal');
+    if(modal) modal.classList.remove('show');
 }
-
-// Initialize the page - Show the correct section on load
-document.addEventListener('DOMContentLoaded', function() {
-    // Get the active section from the template variable or default to 'overview'
-    const urlParams = new URLSearchParams(window.location.search);
-    const sectionParam = urlParams.get('section');
-
-    // Try to get from URL parameter, then from template variable, then default to 'overview'
-    let initialSection = sectionParam || 'overview';
-
-    // Check if there's a template variable (this will be replaced by Django)
-    const templateSection = "{{ active_section|default:'overview' }}";
-    if (templateSection && templateSection !== "{{ active_section|default:'overview' }}") {
-        initialSection = templateSection;
-    }
-
-    // Show the initial section
-    showSection(initialSection);
-});
