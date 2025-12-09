@@ -15,6 +15,7 @@ from .utils import upload_image_to_supabase
 from django.core.mail import send_mail
 from django.conf import settings
 
+
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
@@ -82,7 +83,6 @@ def signup_view(request):
             username = form.cleaned_data.get('username')
             messages.success(request, f'Account created successfully for {username}! Please log in to continue.')
             return redirect('login')
-        # If form is invalid, it will fall through and render with errors
     else:
         form = CustomUserCreationForm()
     return render(request, 'SmartTrav/accounts/signup.html', {'form': form})
@@ -95,9 +95,8 @@ def dashboard_view(request):
 
     user_itineraries = Itinerary.objects.filter(user=request.user).annotate(
         destination_count=Count('itinerary_destinations')
-    ).order_by('-id')  # Add this line to show newest first
+    ).order_by('-id')
 
-    # Also update this line (around line 180):
     recent_itineraries = user_itineraries[:3]
 
     saved_destinations = SavedDestination.objects.filter(user=request.user)
@@ -105,18 +104,25 @@ def dashboard_view(request):
     active_category = request.GET.get('category', '')
     search_query = request.GET.get('search', '').strip()
 
-    # --- FILTER PARAMETERS ---
     price_filter = request.GET.get('price', '')
     tags_filter = request.GET.get('tags', '').strip()
 
-    # Filter destinations
     all_destinations = Destination.objects.all()
 
-    # Category filter
+    # --- NEW LOGIC: Extract unique tags for suggestions ---
+    unique_tags = set()
+    for dest in all_destinations:
+        if dest.tags:
+            # Split by comma and clean up whitespace
+            d_tags = [t.strip().lower() for t in dest.tags.split(',') if t.strip()]
+            unique_tags.update(d_tags)
+
+    available_tags = sorted(list(unique_tags))
+    # ------------------------------------------------------
+
     if active_category:
         all_destinations = all_destinations.filter(category=active_category)
 
-    # Search query
     if search_query:
         all_destinations = all_destinations.filter(
             Q(name__icontains=search_query) |
@@ -124,33 +130,22 @@ def dashboard_view(request):
             Q(description__icontains=search_query)
         )
 
-    # --- UPDATED PRICE FILTER (1000-5000 range) ---
     if price_filter:
         if price_filter == 'budget':
-            # Less than ₱2,000
             all_destinations = all_destinations.filter(price_per_day__lt=2000)
         elif price_filter == 'moderate':
-            # ₱2,000 - ₱3,000
             all_destinations = all_destinations.filter(price_per_day__gte=2000, price_per_day__lt=3000)
         elif price_filter == 'premium':
-            # ₱3,000 - ₱4,000
             all_destinations = all_destinations.filter(price_per_day__gte=3000, price_per_day__lt=4000)
         elif price_filter == 'luxury':
-            # ₱4,000 and above
             all_destinations = all_destinations.filter(price_per_day__gte=4000)
 
-    # --- FIXED TAGS FILTER LOGIC ---
     if tags_filter:
-        # Split by comma and clean up whitespace
         tag_list = [tag.strip().lower() for tag in tags_filter.split(',') if tag.strip()]
-
         if tag_list:
-            # Build Q objects for OR matching
             tag_query = Q()
             for tag in tag_list:
-                # Match tags that contain the search term (case-insensitive)
                 tag_query |= Q(tags__icontains=tag)
-
             all_destinations = all_destinations.filter(tag_query)
 
     expenses = Expense.objects.filter(itinerary__user=request.user)
@@ -159,7 +154,6 @@ def dashboard_view(request):
     saved_count = saved_destinations.count()
     total_budget = user_itineraries.aggregate(Sum('budget'))['budget__sum'] or 0
     upcoming_trips = user_itineraries.filter(start_date__gte=date.today()).count()
-    recent_itineraries = user_itineraries[:3]
 
     context = {
         'itinerary_count': itinerary_count,
@@ -176,6 +170,7 @@ def dashboard_view(request):
         'search_query': search_query,
         'price_filter': price_filter,
         'tags_filter': tags_filter,
+        'available_tags': available_tags,  # Passing tags to frontend
     }
 
     return render(request, 'SmartTrav/accounts/dashboard.html', context)
@@ -206,11 +201,9 @@ def edit_itinerary(request, itinerary_id):
     if request.method == 'POST':
         itinerary.title = request.POST.get('title')
 
-        # ✅ FIX: Convert string dates to date objects
         start_date_str = request.POST.get('start_date')
         end_date_str = request.POST.get('end_date')
 
-        # Parse the date strings to date objects
         itinerary.start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
         itinerary.end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
 
@@ -218,7 +211,6 @@ def edit_itinerary(request, itinerary_id):
         itinerary.notes = request.POST.get('notes', '')
         itinerary.save()
 
-        # Recalculate destination prices
         for itinerary_dest in itinerary.itinerary_destinations.all():
             itinerary_dest.save()
 
@@ -264,11 +256,22 @@ def add_destination_to_trip(request):
     if request.method == 'POST':
         destination_id = request.POST.get('destination_id')
         itinerary_id = request.POST.get('itinerary_id')
-        visit_date = request.POST.get('visit_date')  # NEW
-        visit_time = request.POST.get('visit_time')  # NEW
+        visit_date = request.POST.get('visit_date')
+        visit_time = request.POST.get('visit_time')
 
         destination = get_object_or_404(Destination, id=destination_id)
         itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
+
+        # Validate visit date is within trip range
+        if visit_date:
+            from datetime import datetime
+            visit_date_obj = datetime.strptime(visit_date, '%Y-%m-%d').date()
+            if visit_date_obj < itinerary.start_date or visit_date_obj > itinerary.end_date:
+                messages.error(
+                    request,
+                    f'Visit date must be between {itinerary.start_date} and {itinerary.end_date}'
+                )
+                return redirect('dashboard')
 
         if ItineraryDestination.objects.filter(itinerary=itinerary, destination=destination).exists():
             messages.warning(request, f'{destination.name} is already in {itinerary.title}')
@@ -280,7 +283,6 @@ def add_destination_to_trip(request):
                 visit_time=visit_time if visit_time else None
             )
 
-            # Show calculated cost in message
             days = itinerary.get_duration_days()
             total_price = itinerary_dest.calculated_price or 0
 
@@ -344,19 +346,15 @@ def update_profile(request):
             profile_pic = request.FILES['profile_picture']
 
             try:
-                # Upload to Supabase Storage using 'destination-images' bucket
-                # (since that's the actual bucket name based on your utils.py)
                 image_url = upload_image_to_supabase(profile_pic, 'profile-pictures')
-
-                # Save ONLY the Supabase URL, clear the local file field
                 profile.profile_picture_url = image_url
-                profile.profile_picture = None  # This should be None, not empty string
+                profile.profile_picture = None
                 profile.save()
 
                 messages.success(request, 'Profile updated successfully with new picture!')
             except Exception as e:
                 messages.error(request, f'Error uploading profile picture: {str(e)}')
-                print(f"Full error: {e}")  # Debug print
+                print(f"Full error: {e}")
         else:
             messages.success(request, 'Profile updated successfully!')
 
@@ -371,13 +369,12 @@ def remove_profile_picture(request):
         try:
             profile = request.user.profile
 
-            # Clear both local file AND Supabase URL
             if profile.profile_picture or profile.profile_picture_url:
                 if profile.profile_picture:
                     profile.profile_picture.delete(save=False)
                     profile.profile_picture = None
 
-                profile.profile_picture_url = None  # Clear Supabase URL
+                profile.profile_picture_url = None
                 profile.save()
 
                 messages.success(request, 'Profile picture removed successfully!')
@@ -399,14 +396,34 @@ def export_itinerary_pdf(request, itinerary_id):
 @login_required
 def itinerary_detail(request, itinerary_id):
     itinerary = get_object_or_404(Itinerary, id=itinerary_id, user=request.user)
-    itinerary_destinations = ItineraryDestination.objects.filter(itinerary=itinerary).select_related('destination')
+    itinerary_destinations = ItineraryDestination.objects.filter(
+        itinerary=itinerary
+    ).select_related('destination').order_by('visit_date', 'visit_time', 'added_at')
+
     expenses = Expense.objects.filter(itinerary=itinerary).order_by('-date')
 
-    # Calculate costs
+    # Calculate comprehensive budget tracking
     total_expenses = sum(float(e.amount) for e in expenses)
     total_destination_cost = itinerary.get_total_destination_cost()
-    total_cost = total_expenses + total_destination_cost
-    budget_remaining = float(itinerary.budget) - total_cost
+    total_spent = total_expenses + total_destination_cost
+    budget = float(itinerary.budget)
+    budget_remaining = budget - total_spent
+    budget_percentage = (total_spent / budget * 100) if budget > 0 else 0
+
+    trip_days = itinerary.get_duration_days()
+
+    daily_budget = budget / trip_days if trip_days > 0 else 0
+
+    # Determine budget status
+    if budget_remaining < 0:
+        budget_status = 'over'
+        budget_message = f'Over Budget: ₱{abs(budget_remaining):,.2f}'
+    elif budget_percentage >= 85:
+        budget_status = 'at_risk'
+        budget_message = f'Budget At Risk: ₱{budget_remaining:,.2f} remaining'
+    else:
+        budget_status = 'good'
+        budget_message = f'On Track: ₱{budget_remaining:,.2f} remaining'
 
     context = {
         'itinerary': itinerary,
@@ -414,11 +431,74 @@ def itinerary_detail(request, itinerary_id):
         'expenses': expenses,
         'total_expenses': total_expenses,
         'total_destination_cost': total_destination_cost,
-        'total_cost': total_cost,
+        'total_spent': total_spent,
         'budget_remaining': budget_remaining,
-        'trip_days': itinerary.get_duration_days(),
+        'budget_percentage': budget_percentage,
+        'budget_status': budget_status,
+        'budget_message': budget_message,
+        'trip_days': trip_days,
+        'daily_budget': daily_budget,
     }
-    return render(request, 'SmartTrav/accounts/itinerary_pdf.html', context)
+    return render(request, 'SmartTrav/accounts/itinerary_detail.html', context)
+
+
+@login_required
+def update_destination_schedule(request, itinerary_destination_id):
+    """Update the visit date and time for a destination in an itinerary"""
+    if request.method == 'POST':
+        itinerary_dest = get_object_or_404(
+            ItineraryDestination,
+            id=itinerary_destination_id,
+            itinerary__user=request.user
+        )
+
+        visit_date = request.POST.get('visit_date')
+        visit_time = request.POST.get('visit_time')
+
+        if visit_date:
+            from datetime import datetime
+            visit_date_obj = datetime.strptime(visit_date, '%Y-%m-%d').date()
+
+            # Validate date is within trip range
+            if visit_date_obj < itinerary_dest.itinerary.start_date or visit_date_obj > itinerary_dest.itinerary.end_date:
+                messages.error(
+                    request,
+                    f'Visit date must be between {itinerary_dest.itinerary.start_date} and {itinerary_dest.itinerary.end_date}'
+                )
+                return redirect('itinerary_detail', itinerary_id=itinerary_dest.itinerary.id)
+
+            itinerary_dest.visit_date = visit_date_obj
+
+        if visit_time:
+            itinerary_dest.visit_time = visit_time
+
+        itinerary_dest.save()
+        messages.success(request, f'Schedule updated for {itinerary_dest.destination.name}')
+
+        return redirect('itinerary_detail', itinerary_id=itinerary_dest.itinerary.id)
+
+    return redirect('dashboard')
+
+
+@login_required
+def remove_destination_from_trip(request, itinerary_destination_id):
+    """Remove a destination from an itinerary"""
+    if request.method == 'POST':
+        itinerary_dest = get_object_or_404(
+            ItineraryDestination,
+            id=itinerary_destination_id,
+            itinerary__user=request.user
+        )
+
+        itinerary_id = itinerary_dest.itinerary.id
+        destination_name = itinerary_dest.destination.name
+
+        itinerary_dest.delete()
+        messages.success(request, f'{destination_name} removed from trip')
+
+        return redirect('itinerary_detail', itinerary_id=itinerary_id)
+
+    return redirect('dashboard')
 
 
 def logout_view(request):
@@ -442,12 +522,6 @@ def contact_view(request):
         phone = request.POST.get('phone', 'Not provided')
         subject = request.POST.get('subject')
         message = request.POST.get('message')
-
-        # Save to database if you created the ContactMessage model
-        # ContactMessage.objects.create(
-        #     name=name, email=email, phone=phone,
-        #     subject=subject, message=message
-        # )
 
         messages.success(request, 'Thank you for your message! We will get back to you soon.')
         return redirect('contact')

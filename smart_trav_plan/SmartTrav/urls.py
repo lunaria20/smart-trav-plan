@@ -11,10 +11,15 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
 
     # Forgot Password
-    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset.html'), name='password_reset'),
-    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'), name='password_reset_confirm'),
-    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'), name='password_reset_complete'),
+    path('password_reset/', auth_views.PasswordResetView.as_view(template_name='password_reset.html'),
+         name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='password_reset_done.html'),
+         name='password_reset_done'),
+    path('reset/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'),
+         name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
+         name='password_reset_complete'),
 
     # Dashboard
     path('dashboard/', views.dashboard_view, name='dashboard'),
@@ -29,7 +34,14 @@ urlpatterns = [
     # Destinations
     path('destination/add-to-trip/', views.add_destination_to_trip, name='add_destination_to_trip'),
     path('destination/save/<int:destination_id>/', views.save_destination, name='save_destination'),
-    path('destination/remove-saved/<int:destination_id>/', views.remove_saved_destination, name='remove_saved_destination'),
+    path('destination/remove-saved/<int:destination_id>/', views.remove_saved_destination,
+         name='remove_saved_destination'),
+
+    # Destination Actions
+    path('destination/remove-from-trip/<int:itinerary_destination_id>/', views.remove_destination_from_trip,
+         name='remove_destination_from_trip'),
+    path('destination/update-schedule/<int:itinerary_destination_id>/', views.update_destination_schedule,
+         name='update_destination_schedule'),
 
     # Expenses
     path('expense/add/', views.add_expense, name='add_expense'),

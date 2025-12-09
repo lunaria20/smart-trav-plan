@@ -167,6 +167,84 @@ document.addEventListener('DOMContentLoaded', function() {
     if (sectionParam) {
         showSection(sectionParam);
     }
+
+    // --- BUBBLE TAG INPUT LOGIC ---
+    const tagInput = document.getElementById('tagInput');
+    const tagsContainer = document.getElementById('tagsContainer');
+    const hiddenInput = document.getElementById('hiddenTagsInput');
+
+    // Arrays to store tags
+    let tags = [];
+
+    // 1. Initialize from existing hidden input (if page reloaded/searched)
+    if (hiddenInput && hiddenInput.value) {
+        const existing = hiddenInput.value.split(',').map(t => t.trim()).filter(t => t);
+        existing.forEach(tag => addTag(tag));
+    }
+
+    // 2. Add tag on Enter or Comma
+    if(tagInput) {
+        tagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                const tag = tagInput.value.trim().replace(',', '');
+                if (tag.length > 0) {
+                    addTag(tag);
+                    tagInput.value = '';
+                }
+            } else if (e.key === 'Backspace' && tagInput.value === '' && tags.length > 0) {
+                // Remove last tag on backspace if input empty
+                removeTag(tags.length - 1);
+            }
+        });
+
+        // Add tag when clicking an option from the datalist (if supported browser event)
+        tagInput.addEventListener('input', function(e) {
+            // Simple check if value is in datalist options logic could be added here
+            // For now, we rely on Enter key
+        });
+    }
+
+    function addTag(text) {
+        // Prevent duplicates
+        if (tags.includes(text.toLowerCase())) return;
+
+        tags.push(text.toLowerCase());
+        updateHiddenInput();
+        renderTags();
+    }
+
+    function removeTag(index) {
+        tags.splice(index, 1);
+        updateHiddenInput();
+        renderTags();
+    }
+
+    function renderTags() {
+        // Clear current tags visually (except input)
+        // We select all .tag-bubble elements and remove them
+        const bubbles = tagsContainer.querySelectorAll('.tag-bubble');
+        bubbles.forEach(b => b.remove());
+
+        // Re-render
+        tags.forEach((tag, index) => {
+            const bubble = document.createElement('div');
+            bubble.className = 'tag-bubble';
+            bubble.innerHTML = `${tag} <span class="remove-tag" data-index="${index}">×</span>`;
+
+            // Insert before the input
+            tagsContainer.insertBefore(bubble, tagInput);
+
+            // Add click listener to the X
+            bubble.querySelector('.remove-tag').addEventListener('click', function() {
+                removeTag(index);
+            });
+        });
+    }
+
+    function updateHiddenInput() {
+        hiddenInput.value = tags.join(',');
+    }
 });
 
 function showSection(sectionId) {

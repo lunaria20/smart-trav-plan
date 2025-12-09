@@ -1245,6 +1245,9 @@ input[type="time"] {
 @media (max-width: 640px) {
     #dateTimeSelection > div:first-of-type {
         grid-template-columns: 1fr !important;
+    }
+}
+
 /* Scrollbar Styling */
 .modal-content::-webkit-scrollbar {
     width: 8px;
@@ -1324,5 +1327,100 @@ input[type="time"] {
 
     .destination-actions-container {
         flex-direction: column;
+    }
+}
+
+/* --- Tag Input Styling (Bubble/Chip Style) --- */
+
+/* The main container that looks like an input box */
+.tag-input-wrapper {
+    background: white;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: text; /* Indicates you can click anywhere to type */
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+/* Highlight border when typing */
+.tag-input-wrapper:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+}
+
+/* Container for bubbles and input */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    align-items: center;
+}
+
+/* The visual "Bubble" or "Chip" */
+.tag-bubble {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%); /* Light Purple */
+    color: #6b21a8; /* Dark Purple Text */
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy animation */
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+    user-select: none;
+}
+
+/* The 'X' button to remove a tag */
+.remove-tag {
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: #5b21b6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.remove-tag:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #4c1d95;
+}
+
+/* The actual text input field */
+.tag-input-field {
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.25rem;
+    flex: 1; /* Takes up remaining space */
+    min-width: 120px;
+    font-size: 0.95rem;
+    color: #1a202c;
+    font-weight: 500;
+}
+
+.tag-input-field::placeholder {
+    color: #a0aec0;
+}
+
+/* Animation for adding tags */
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }

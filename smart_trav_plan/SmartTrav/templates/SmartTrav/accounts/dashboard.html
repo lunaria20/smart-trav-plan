@@ -253,8 +253,23 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold">Tags</label>
-                            <input type="text" name="tags" class="form-control" placeholder="Enter tags (e.g. beach, family, food)" value="{{ tags_filter }}">
+                            <label class="form-label text-muted small fw-bold">Filter by Tags</label>
+
+                            <div class="tag-input-wrapper">
+                                <div class="tags-container" id="tagsContainer">
+                                    <input type="text" id="tagInput" class="tag-input-field" placeholder="Type tag & press enter" list="availableTagsList">
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="tags" id="hiddenTagsInput" value="{{ tags_filter }}">
+
+                            <datalist id="availableTagsList">
+                                {% for tag in available_tags %}
+                                <option value="{{ tag }}">
+                                {% endfor %}
+                            </datalist>
+
+                            <div class="form-text text-muted" style="font-size: 0.85rem; margin-top: 0.25rem;">Type a tag and press Enter. Click '×' to remove.</div>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Filter</button>
@@ -284,6 +299,18 @@
                             <div style="padding: 1rem;">
                                 <h5 style="font-weight: 600; margin-bottom: 0.5rem;">{{ destination.name }}</h5>
                                 <p style="color: #64748b; font-size: 0.9rem;">📍 {{ destination.location }}</p>
+
+                                {% if destination.get_tags_list %}
+                                <div style="display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                                    {% for tag in destination.get_tags_list|slice:":3" %}
+                                    <span style="font-size: 0.75rem; background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 12px;">{{ tag }}</span>
+                                    {% endfor %}
+                                    {% if destination.get_tags_list|length > 3 %}
+                                    <span style="font-size: 0.75rem; color: #64748b;">+{{ destination.get_tags_list|length|add:"-3" }}</span>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+
                                 <p style="color: #64748b; font-size: 0.9rem;">₱{{ destination.price_per_day|floatformat:2 }} / day</p>
 
                                 <div class="d-flex gap-2 mt-3">
