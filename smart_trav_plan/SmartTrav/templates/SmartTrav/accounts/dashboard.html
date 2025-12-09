@@ -233,61 +233,53 @@
                         <h3 class="card-title">Explore Destinations</h3>
                     </div>
 
-                    <form method="get" action="{% url 'dashboard' %}" class="filter-form mb-4" style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <form method="get" action="{% url 'dashboard' %}" id="searchForm" class="mb-4">
                         <input type="hidden" name="section" value="destinations">
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold">Search</label>
-                            <input type="text" name="search" class="form-control" placeholder="Search name, location..." value="{{ search_query }}">
-                        </div>
+                        <input type="hidden" name="tags" id="hiddenTagsInput" value="{{ tags_filter }}">
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold">Price Range</label>
-                            <select name="price" class="form-select">
-                                <option value="" {% if not price_filter %}selected{% endif %}>Any Price</option>
-                                <option value="budget" {% if price_filter == 'budget' %}selected{% endif %}>Budget (< ₱2,000)</option>
-                                <option value="moderate" {% if price_filter == 'moderate' %}selected{% endif %}>Moderate (₱2,000-₱3,000)</option>
-                                <option value="premium" {% if price_filter == 'premium' %}selected{% endif %}>Premium (₱3,000-₱4,000)</option>
-                                <option value="luxury" {% if price_filter == 'luxury' %}selected{% endif %}>Luxury (> ₱4,000)</option>
-                            </select>
-                        </div>
+                        <div class="tag-cart-wrapper">
+                            <div class="tag-cart-label">Filter Tags</div>
 
-                        <div class="mb-3">
-                            <label class="form-label text-muted small fw-bold">Filter by Tags</label>
-
-                            <div class="tag-input-wrapper">
-                                <div class="tags-container" id="tagsContainer">
-                                    <input type="text" id="tagInput" class="tag-input-field" placeholder="Type tag & press enter" list="availableTagsList">
-                                </div>
+                            <div class="tag-cart-input-area" id="tagsContainer" onclick="document.getElementById('tagInput').focus()">
+                                <input type="text" id="tagInput" class="tag-input-field" placeholder="Type tag & press Enter..." list="availableTagsList" autocomplete="off">
                             </div>
 
-                            <input type="hidden" name="tags" id="hiddenTagsInput" value="{{ tags_filter }}">
-
-                            <datalist id="availableTagsList">
-                                {% for tag in available_tags %}
-                                <option value="{{ tag }}">
-                                {% endfor %}
-                            </datalist>
-
-                            <div class="form-text text-muted" style="font-size: 0.85rem; margin-top: 0.25rem;">Type a tag and press Enter. Click '×' to remove.</div>
+                            <button type="submit" class="tag-search-btn">Search</button>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Filter</button>
-                    </form>
+                        <datalist id="availableTagsList">
+                            {% for tag in available_tags %}
+                            <option value="{{ tag }}">
+                            {% endfor %}
+                        </datalist>
 
-                    <div class="filter-controls mb-4">
-                        <a href="?category=&section=destinations&search={{ search_query }}" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
-                        <a href="?category=resort&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
-                        <a href="?category=restaurant&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
-                        <a href="?category=attraction&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
-                        <a href="?category=beach&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
-                        <a href="?category=historical&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
-                    </div>
+                        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                             <select name="price" class="form-select" style="max-width: 200px; height: 45px;">
+                                <option value="" {% if not price_filter %}selected{% endif %}>Any Price</option>
+                                <option value="budget" {% if price_filter == 'budget' %}selected{% endif %}>Budget (< ₱2,000)</option>
+                                <option value="moderate" {% if price_filter == 'moderate' %}selected{% endif %}>Moderate (₱2k-3k)</option>
+                                <option value="premium" {% if price_filter == 'premium' %}selected{% endif %}>Premium (₱3k-4k)</option>
+                                <option value="luxury" {% if price_filter == 'luxury' %}selected{% endif %}>Luxury (> ₱4,000)</option>
+                            </select>
+
+                            <input type="text" name="search" class="form-control" style="flex:1; min-width: 200px; height: 45px;" placeholder="Search by name or location..." value="{{ search_query }}">
+                        </div>
+
+                        <div class="filter-controls mt-4">
+                            <a href="?category=&section=destinations&search={{ search_query }}" class="filter-chip {% if not active_category %}active{% endif %}">All</a>
+                            <a href="?category=resort&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'resort' %}active{% endif %}">Resorts</a>
+                            <a href="?category=restaurant&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'restaurant' %}active{% endif %}">Restaurants</a>
+                            <a href="?category=attraction&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'attraction' %}active{% endif %}">Attractions</a>
+                            <a href="?category=beach&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'beach' %}active{% endif %}">Beaches</a>
+                            <a href="?category=historical&section=destinations&search={{ search_query }}" class="filter-chip {% if active_category == 'historical' %}active{% endif %}">Historical</a>
+                        </div>
+                    </form>
 
                     <div class="destination-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
                         {% for destination in destinations %}
                         <div class="destination-card"
-                             style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; transition: transform 0.2s; cursor: pointer; background: white;"
+                             style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: white; transition: transform 0.2s; cursor: pointer;"
                              onclick="openDestinationModal('{{ destination.id }}', '{{ destination.name|escapejs }}', '{{ destination.location|escapejs }}', '{{ destination.description|escapejs }}', '{{ destination.category|escapejs }}', '{{ destination.price_per_day }}', '{{ destination.image_url|escapejs }}')">
 
                             <div style="height: 180px; background: #cbd5e1; position: relative;">
@@ -301,9 +293,9 @@
                                 <p style="color: #64748b; font-size: 0.9rem;">📍 {{ destination.location }}</p>
 
                                 {% if destination.get_tags_list %}
-                                <div style="display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px;">
                                     {% for tag in destination.get_tags_list|slice:":3" %}
-                                    <span style="font-size: 0.75rem; background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 12px;">{{ tag }}</span>
+                                    <span style="font-size: 0.75rem; background: #e0e7ff; color: #4338ca; padding: 2px 8px; border-radius: 8px;">{{ tag }}</span>
                                     {% endfor %}
                                     {% if destination.get_tags_list|length > 3 %}
                                     <span style="font-size: 0.75rem; color: #64748b;">+{{ destination.get_tags_list|length|add:"-3" }}</span>
@@ -323,7 +315,7 @@
                             </div>
                         </div>
                         {% empty %}
-                        <p class="text-muted" style="grid-column: 1/-1; padding: 1rem;">No destinations found matching filters.</p>
+                        <p class="text-muted" style="grid-column: 1/-1; padding: 1rem;">No destinations found matching your filters.</p>
                         {% endfor %}
                     </div>
                 </div>
@@ -542,7 +534,7 @@
     <div id="tripModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h3 class="modal-title">Add to Trip</h3>
+                <h3 class="modal-title" id="modalDestinationName"></h3>
                 <button class="close-modal" onclick="closeTripModal()">&times;</button>
             </div>
             <p style="margin-bottom: 1rem;">Select a trip to add <strong id="destinationName"></strong>:</p>
@@ -578,6 +570,21 @@
             </div>
         </div>
     </div>
+
+    <div id="noTripModal" class="modal">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚀</div>
+        </div>
+        <h3 style="margin-bottom: 0.5rem; font-weight: 700; color: #1e3a8a;">Start Your Adventure</h3>
+        <p style="color: #64748b; margin-bottom: 2rem;">You need to create a trip before you can add destinations. Would you like to start one now?</p>
+
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button onclick="closeNoTripModal()" class="btn-secondary" style="flex: 1;">Cancel</button>
+            <button onclick="redirectToCreateTrip()" class="btn-primary" style="flex: 1;">Create New Trip</button>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'SmartTrav/css/js/dashboard_scripts.js' %}"></script>

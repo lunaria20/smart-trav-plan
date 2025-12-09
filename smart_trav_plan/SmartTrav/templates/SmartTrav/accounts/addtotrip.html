@@ -1365,7 +1365,6 @@
         </main>
     </div>
 
-    <!-- Add to Trip Modal -->
     <div id="tripModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1378,7 +1377,6 @@
                 <span id="destinationName" class="badge-text"></span>
             </div>
 
-            <!-- Search and Create Section -->
             <div class="modal-actions">
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
@@ -1389,7 +1387,6 @@
                 </button>
             </div>
 
-            <!-- Quick Create Trip Form -->
             <div id="quickCreateForm" class="quick-create-form" style="display: none;">
                 <form method="post" action="{% url 'create_itinerary' %}" id="quickTripForm" onsubmit="handleQuickCreate(event)">
                     {% csrf_token %}
@@ -1564,14 +1561,35 @@
             // you'll need to implement AJAX submission
         }
 
-        // Set minimum date to today for date inputs
+        // UPDATED: Date Validation Logic
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
-            const dateInputs = document.querySelectorAll('input[type="date"]');
-            dateInputs.forEach(input => {
+
+            // 1. Filter only Start Date inputs for Trips (exclude expense dates)
+            const startDateInputs = document.querySelectorAll('input[name="start_date"]');
+
+            startDateInputs.forEach(input => {
+                // Set min to today if no value exists
                 if (!input.value) {
                     input.min = today;
                 }
+
+                // 2. Add listener to update End Date constraints
+                input.addEventListener('change', function() {
+                    const form = this.closest('form');
+                    // Find the corresponding end_date input in the same form
+                    const endDateInput = form.querySelector('input[name="end_date"]');
+
+                    if (endDateInput) {
+                        // The end date cannot be before the start date
+                        endDateInput.min = this.value;
+
+                        // If current end date is before the new start date, update it
+                        if (endDateInput.value && endDateInput.value < this.value) {
+                            endDateInput.value = this.value;
+                        }
+                    }
+                });
             });
         });
     </script>
