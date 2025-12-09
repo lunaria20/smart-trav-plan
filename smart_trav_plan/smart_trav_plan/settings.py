@@ -11,17 +11,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY", "k=c0cal@k_pz0!sfy#-bga)w82@#$c%4u8aoam&m^bv66#+p#c")
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-key-change-me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "True") == "True"
 
 # --- HOSTS CONFIGURATION ---
-if DEBUG:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-else:
-    # Use environment variables set in Render
-    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+# Allows Render URL and localhost
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost,.onrender.com").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -31,7 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'storages',
+    'storages',  # django-storages
 
     # custom apps
     'SmartTrav',
@@ -66,14 +63,9 @@ TEMPLATES = [
     },
 ]
 
-# --- SUPABASE STORAGE CONFIGURATION (New/Consolidated) ---
-SUPABASE_URL = os.environ.get('SUPABASE_URL')
-SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
-SUPABASE_BUCKET = 'destination-images'  # Use your actual bucket name
-
 WSGI_APPLICATION = 'smart_trav_plan.wsgi.application'
 
-# Database - Supabase Session Pooler
+# --- DATABASE CONFIGURATION ---
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get("DATABASE_URL"),
@@ -82,7 +74,13 @@ DATABASES = {
     )
 }
 
-# Password validation (No changes)
+# --- SUPABASE CONFIGURATION ---
+SUPABASE_URL = os.environ.get('SUPABASE_URL')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+# If you use a custom backend that needs a default bucket:
+SUPABASE_BUCKET = os.environ.get('SUPABASE_DESTINATION_BUCKET', 'destination-images')
+
+# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -90,25 +88,28 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization (No changes)
+# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Manila'
 USE_I18N = True
 USE_TZ = True
 
-# --- STATIC FILES CONFIGURATION ---
+# --- STATIC FILES ---
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "SmartTrav" / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# --- MEDIA FILES CONFIGURATION (Key changes) ---
+# Combined STATICFILES_DIRS (removed the duplicate)
+STATICFILES_DIRS = [
+    BASE_DIR / "SmartTrav" / "static",
+]
+
+# --- MEDIA FILES ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Use custom Supabase storage class for media files (uploaded images)
+# Use custom Supabase storage class for media files if implemented
 DEFAULT_FILE_STORAGE = 'smart_trav_plan.storage_backends.SupabaseStorage'
-
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -118,18 +119,14 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
 
-
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # For Gmail
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@gmail.com'  # Your email
-EMAIL_HOST_PASSWORD = 'your-app-password'  # Gmail App Password
-DEFAULT_FROM_EMAIL = 'SmartTrav <your-email@gmail.com>'
-
-# For development/testing, you can use console backend instead:
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = f'SmartTrav <{EMAIL_HOST_USER}>'
 
 # Message tags
 MESSAGE_TAGS = {

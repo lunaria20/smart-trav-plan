@@ -4,52 +4,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ itinerary.title }} Project Overview - SmartTrav</title>
+    <title>{{ itinerary.title }} - SmartTrav</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Base Professional Styling */
         body {
             font-family: 'Inter', sans-serif;
-            background: #f4f7fa; /* Light, clean background */
-            color: #333333; /* Darker, more serious text */
-            padding-top: 2.5rem;
+            background: #f4f7fa;
+            color: #333333;
+            padding-top: 2rem;
         }
-        .container { max-width: 1000px; }
+        .container { max-width: 1200px; }
 
-        /* Card - Structured containers with minimal shadow */
+        /* Budget Status Cards */
+        .budget-alert {
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 5px solid;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .budget-alert.good {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .budget-alert.at_risk {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .budget-alert.over {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .budget-icon {
+            font-size: 2.5rem;
+        }
+
+        .budget-details h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .budget-details p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* Budget Progress Bar */
+        .budget-progress {
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .budget-progress-bar {
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .budget-progress-bar.good { background: linear-gradient(90deg, #10b981, #059669); }
+        .budget-progress-bar.at_risk { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .budget-progress-bar.over { background: linear-gradient(90deg, #ef4444, #dc2626); }
+
+        /* Cards */
         .card {
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             padding: 2rem;
             border: 1px solid #dcdcdc;
             margin-bottom: 2rem;
             box-shadow: 0 4px 6px rgba(0,0,0,0.03);
         }
 
-        /* Header Section */
-        .header-section {
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e0e0e0; /* Stronger divider */
-            padding-bottom: 1.5rem;
-        }
-
-        /* Heading */
-        h1 {
+        .card-title {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #1e3a8a; /* Deep Navy Primary Color */
-            font-size: 2.25rem;
-            margin-bottom: 0.25rem;
-        }
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #333333;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid #f0f0f0;
+            color: #1e3a8a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
         }
 
-        /* Back Button - Professional & Clear */
+        /* Destination Timeline */
+        .destination-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .destination-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #3b82f6;
+            transition: all 0.2s;
+        }
+
+        .destination-item:hover {
+            background: #f1f5f9;
+            transform: translateX(3px);
+        }
+
+        .destination-date {
+            min-width: 140px;
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .destination-time {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .destination-info {
+            flex: 1;
+        }
+
+        .destination-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .destination-location {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .destination-cost {
+            color: #059669;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .destination-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Budget Summary Table */
+        .budget-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+        }
+
+        .budget-table tr {
+            background: white;
+        }
+
+        .budget-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .budget-table td:first-child {
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .budget-table td:last-child {
+            text-align: right;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .budget-table tr.total {
+            background: #f8fafc;
+        }
+
+        .budget-table tr.total td {
+            font-size: 1.25rem;
+            color: #1e3a8a;
+            border-bottom: none;
+        }
+
+        /* Buttons */
         .btn-back {
             background: transparent;
             color: #666666;
@@ -59,212 +213,329 @@
             padding: 0.6rem 1.2rem;
             text-decoration: none;
             transition: all 0.2s;
-            font-size: 0.9375rem;
+            display: inline-block;
         }
+
         .btn-back:hover {
             background: #e9ecef;
             color: #333333;
-            border-color: #bbbbbb;
         }
 
-        /* Detail Items */
-        .detail-item {
-            margin-bottom: 1.25rem;
-            border-left: 3px solid #1e3a8a; /* Accent bar for key data */
-            padding-left: 1rem;
-        }
-        .detail-item strong {
-            color: #1e3a8a; /* Deep Navy for labels */
-            display: block;
-            font-size: 0.8125rem;
-            font-weight: 700;
-            margin-bottom: 0.15rem;
-            text-transform: uppercase;
-        }
-        .detail-item p {
-            margin-bottom: 0;
-            color: #555555;
-            font-size: 1rem;
+        .btn-primary {
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        /* Destination List */
-        .destination-list {
-            display: grid;
-            gap: 0.75rem;
+        .btn-primary:hover {
+            background: #1e40af;
         }
-        .destination-item {
+
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+        }
+
+        /* Schedule Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.show {
             display: flex;
             align-items: center;
-            background: #ffffff; /* White background for list items */
-            padding: 1rem;
-            border-radius: 6px;
-            border: 1px solid #e9ecef; /* Very light border */
-            transition: background 0.2s;
+            justify-content: center;
         }
-        .destination-item:hover {
-            background: #f4f7fa; /* Slight hover effect */
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
         }
-        .destination-icon {
-            font-size: 1.25rem;
-            margin-right: 1.25rem;
-            color: #10b981; /* Professional Accent Green */
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
-        .destination-name {
+
+        .close-modal {
+            background: #f1f5f9;
+            border: none;
+            font-size: 1.5rem;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
             font-weight: 600;
-            color: #333333;
-        }
-        .destination-location {
-            font-size: 0.8125rem;
-            color: #777777;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: #1e293b;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: #777777;
-            background: #fcfcfc;
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
             border-radius: 6px;
-            border: 1px dashed #cccccc;
+            font-size: 0.95rem;
         }
 
-        /* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
+        .form-control:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
 
-.btn-export, .btn-print {
-    padding: 0.75rem 1.5rem;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 0.9375rem;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-}
+        .no-destinations {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
 
-.btn-export {
-    background: #1e3a8a;
-    color: white;
-}
-
-.btn-export:hover {
-    background: #1e40af;
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
-}
-
-.btn-print {
-    background: white;
-    color: #1e3a8a;
-    border: 2px solid #1e3a8a;
-}
-
-.btn-print:hover {
-    background: #f0f4ff;
-}
-
-/* Print Styles */
-@media print {
-    body {
-        background: white;
-        padding-top: 0;
-    }
-    .btn-back,
-    .action-buttons,
-    .no-print {
-        display: none !important;
-    }
-    .container {
-        max-width: 100%;
-    }
-    .card {
-        box-shadow: none;
-        border: 1px solid #dcdcdc;
-        page-break-inside: avoid;
-    }
-    .header-section {
-        border-bottom: 2px solid #1e3a8a;
-    }
-}
-
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header-section">
-            <a href="{% url 'dashboard' %}" class="btn-back">← Return to Project Dashboard</a>
-            <div class="d-flex justify-content-between align-items-center mt-4">
-                <h1>Project Overview: {{ itinerary.title }}</h1>
-            </div>
-            <span style="color: #777; font-size: 1rem;">Detailed Report for ID: **{{ itinerary.id }}**</span>
+        <div class="no-print" style="margin-bottom: 2rem;">
+            <a href="{% url 'dashboard' %}" class="btn-back">← Back to Dashboard</a>
         </div>
 
-        <!-- Export/Print Buttons (US-43, US-44, US-45) -->
-<div class="action-buttons no-print">
-    <a href="{% url 'export_itinerary_pdf' itinerary.id %}" class="btn-export">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-        </svg>
-        Export as PDF
-    </a>
-    <button onclick="window.print()" class="btn-print">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-            <rect x="6" y="14" width="12" height="8"></rect>
-        </svg>
-        Print
-    </button>
-</div>
+        <div class="card">
+            <h1 style="font-size: 2rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem;">
+                {{ itinerary.title }}
+            </h1>
+            <p style="color: #64748b; margin-bottom: 2rem;">
+                📅 {{ itinerary.start_date }} to {{ itinerary.end_date }} ({{ trip_days }} days)
+            </p>
 
-        <div class="row">
-            <div class="col-md-5">
-                <div class="card">
-                    <h2>Project Financials & Mandate</h2>
-                    <div class="detail-item mt-4">
-                        <strong>Project Timeline</strong>
-                        <p>{{ itinerary.start_date }} to {{ itinerary.end_date }}</p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Approved Budget</strong>
-                        <p style="font-weight: 600; color: #10b981;">₱{{ itinerary.budget }}</p>
-                    </div>
-                    <div class="detail-item">
-                        <strong>Mandate Notes</strong>
-                        <p>{{ itinerary.notes|default:"No formal mandate notes available." }}</p>
-                    </div>
+            <div class="budget-alert {{ budget_status }}">
+                <div class="budget-icon">
+                    {% if budget_status == 'good' %}✅
+                    {% elif budget_status == 'at_risk' %}⚠️
+                    {% else %}❌{% endif %}
+                </div>
+                <div class="budget-details">
+                    <h3>{{ budget_message }}</h3>
+                    <p>Budget: ₱{{ itinerary.budget|floatformat:2 }} | Spent: ₱{{ total_spent|floatformat:2 }}</p>
                 </div>
             </div>
 
-            <div class="col-md-7">
-                <div class="card">
-                    <h2>Operational Deployment Locations</h2>
-                    <div class="destination-list mt-4">
-                        {% for item in itinerary_destinations %}
-                        <div class="destination-item">
-                            <span class="destination-icon">🏢</span> <div>
-                                <div class="destination-name">{{ item.destination.name }}</div>
-                                <div class="destination-location">Location: {{ item.destination.location }}</div>
-                            </div>
+            <div class="budget-progress">
+                <div class="budget-progress-bar {{ budget_status }}"
+                     style="width: {% if budget_percentage > 100 %}100{% else %}{{ budget_percentage }}{% endif %}%">
+                    {{ budget_percentage|floatformat:0 }}%
+                </div>
+            </div>
+
+            <div class="no-print" style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <a href="{% url 'edit_itinerary' itinerary.id %}" class="btn-primary">
+                    ✏️ Edit Trip
+                </a>
+                <button onclick="window.print()" class="btn-primary">
+                    🖨️ Print
+                </button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="card">
+                <h2 class="card-title">Trip Timeline & Destinations</h2>
+
+                {% if itinerary_destinations %}
+                <div class="destination-timeline">
+                    {% for item in itinerary_destinations %}
+                    <div class="destination-item">
+                        <div class="destination-date">
+                            {% if item.visit_date %}
+                                📅 {{ item.visit_date }}
+                                {% if item.visit_time %}
+                                <div class="destination-time">🕐 {{ item.visit_time|time:"g:i A" }}</div>
+                                {% endif %}
+                            {% else %}
+                                📅 Not Scheduled
+                            {% endif %}
                         </div>
-                        {% empty %}
-                        <div class="empty-state">
-                            <p style="font-size: 1rem; font-weight: 600;">No Operational Locations Defined.</p>
-                            <p style="font-size: 0.875rem; margin-top: 0.5rem;">Please review the project scope and define deployment sites.</p>
+                        <div class="destination-info">
+                            <div class="destination-name">{{ item.destination.name }}</div>
+                            <div class="destination-location">📍 {{ item.destination.location }}</div>
+                            <div class="destination-cost">₱{{ item.calculated_price|floatformat:2 }}</div>
                         </div>
-                        {% endfor %}
+                        <div class="destination-actions no-print">
+                            <button class="btn-sm btn-edit"
+                                    onclick="openScheduleModal({{ item.id }}, '{{ item.destination.name }}', '{{ item.visit_date|default:'' }}', '{{ item.visit_time|default:'' }}')">
+                                📅 Schedule
+                            </button>
+                            <form method="post" action="{% url 'remove_destination_from_trip' item.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-sm btn-delete"
+                                        onclick="return confirm('Remove {{ item.destination.name }} from this trip?')">
+                                    🗑️ Remove
+                                </button>
+                            </form>
+                        </div>
                     </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-destinations">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🗺️</div>
+                    <p style="font-weight: 600; margin-bottom: 0.5rem;">No destinations added yet</p>
+                    <p>Add destinations from the Explore page</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <div class="card">
+                    <h2 class="card-title">Budget Summary</h2>
+                    <table class="budget-table">
+                        <tr>
+                            <td>Total Budget</td>
+                            <td>₱{{ itinerary.budget|floatformat:2 }}</td>
+                        </tr>
+                        <tr>
+                            <td>Destinations Cost</td>
+                            <td>₱{{ total_destination_cost|floatformat:2 }}</td>
+                        </tr>
+                        <tr>
+                            <td>Other Expenses</td>
+                            <td>₱{{ total_expenses|floatformat:2 }}</td>
+                        </tr>
+                        <tr style="border-top: 2px solid #cbd5e1;">
+                            <td>Total Spent</td>
+                            <td>₱{{ total_spent|floatformat:2 }}</td>
+                        </tr>
+                        <tr class="total">
+                            <td>Remaining</td>
+                            <td style="color: {% if budget_remaining < 0 %}#ef4444{% else %}#059669{% endif %}">
+                                ₱{{ budget_remaining|floatformat:2 }}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-weight: 600; margin-bottom: 1rem;">Trip Information</h3>
+                    <div style="color: #64748b; line-height: 1.8;">
+                        <p><strong>Duration:</strong> {{ trip_days }} days</p>
+                        <p><strong>Destinations:</strong> {{ itinerary_destinations|length }}</p>
+                        <p><strong>Daily Budget:</strong> ₱{{ daily_budget|floatformat:2 }}</p>
+                    </div>
+                    {% if itinerary.notes %}
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                        <strong>Notes:</strong>
+                        <p style="color: #64748b; margin-top: 0.5rem;">{{ itinerary.notes }}</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="margin: 0; font-weight: 700;">Schedule Visit</h3>
+                <button class="close-modal" onclick="closeScheduleModal()">&times;</button>
+            </div>
+            <form method="post" id="scheduleForm">
+                {% csrf_token %}
+                <p style="margin-bottom: 1.5rem; color: #64748b;">
+                    Set visit date for <strong id="destinationName"></strong>
+                </p>
+                <div class="form-group">
+                    <label class="form-label">Visit Date</label>
+                    <input type="date" name="visit_date" id="visitDate" class="form-control"
+                           min="{{ itinerary.start_date|date:'Y-m-d' }}"
+                           max="{{ itinerary.end_date|date:'Y-m-d' }}" required>
+                    <small style="color: #64748b; margin-top: 0.5rem; display: block;">
+                        Must be between {{ itinerary.start_date }} and {{ itinerary.end_date }}
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Visit Time (Optional)</label>
+                    <input type="time" name="visit_time" id="visitTime" class="form-control">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">
+                    💾 Save Schedule
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentDestinationId = null;
+
+        function openScheduleModal(id, name, date, time) {
+            currentDestinationId = id;
+            document.getElementById('destinationName').textContent = name;
+            document.getElementById('visitDate').value = date || '';
+            document.getElementById('visitTime').value = time || '';
+            document.getElementById('scheduleForm').action = `/destination/update-schedule/${id}/`;
+            document.getElementById('scheduleModal').classList.add('show');
+        }
+
+        function closeScheduleModal() {
+            document.getElementById('scheduleModal').classList.remove('show');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('scheduleModal');
+            if (event.target === modal) {
+                closeScheduleModal();
+            }
+        }
+    </script>
 </body>
 </html>
