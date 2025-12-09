@@ -108,7 +108,7 @@ body {
     box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
 }
 
-/* Logout Button (Distinct class to avoid JS conflict) */
+/* Logout Button */
 .logout-btn {
     display: flex;
     align-items: center;
@@ -386,7 +386,7 @@ body {
     cursor: pointer;
 }
 
-/* --- FILTER CHIPS (Restored) --- */
+/* --- FILTER CHIPS --- */
 .filter-controls {
     display: flex;
     gap: 0.75rem;
@@ -417,7 +417,7 @@ body {
     border-color: #4a90e2;
 }
 
-/* --- PROFILE UI (Restored) --- */
+/* --- PROFILE UI --- */
 .profile-picture-section {
     display: flex;
     flex-direction: column;
@@ -484,9 +484,9 @@ body {
     color: white;
 }
 
-/* --- MODALS (Crucial for cards to work) --- */
+/* --- MODALS --- */
 .modal {
-    display: none; /* Hidden by default */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -499,7 +499,7 @@ body {
 }
 
 .modal.show {
-    display: flex; /* Shown via JS adding 'show' class */
+    display: flex;
 }
 
 .modal-content {
@@ -543,23 +543,21 @@ body {
         transform: translateX(-100%);
         transition: transform 0.3s;
     }
-    
+
     .sidebar.mobile-open {
         transform: translateX(0);
     }
-    
+
     .main-wrapper {
         margin-left: 0;
     }
-    
+
     .stats-grid {
         grid-template-columns: 1fr;
     }
 }
 
-/* --- RESTORED 'ADD TO TRIP' CARD UI --- */
-
-/* The Container for the list */
+/* 'ADD TO TRIP' CARD UI */
 .trip-list {
     display: flex;
     flex-direction: column;
@@ -567,10 +565,9 @@ body {
     max-height: 350px;
     overflow-y: auto;
     margin-bottom: 1.5rem;
-    padding: 0.25rem; /* Prevent shadow clipping */
+    padding: 0.25rem;
 }
 
-/* The Card Look */
 .trip-option {
     display: flex;
     align-items: center;
@@ -583,7 +580,6 @@ body {
     position: relative;
 }
 
-/* Hover Effect */
 .trip-option:hover {
     border-color: #4361ee;
     background-color: #f8fafc;
@@ -591,7 +587,6 @@ body {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* Radio Button Styling */
 .trip-option input[type="radio"] {
     margin-right: 1rem;
     width: 1.25rem;
@@ -600,27 +595,23 @@ body {
     cursor: pointer;
 }
 
-/* Text Container */
 .trip-option div {
     display: flex;
     flex-direction: column;
 }
 
-/* Trip Title */
 .trip-option-title {
     font-weight: 600;
     color: #1e293b;
     font-size: 0.95rem;
 }
 
-/* Date Text */
 .trip-option-date {
     font-size: 0.8rem;
     color: #64748b;
     margin-top: 0.15rem;
 }
 
-/* The Big Blue 'Add' Button */
 #addToTripForm button[type="submit"] {
     width: 100%;
     background-color: #4361ee;
@@ -640,23 +631,18 @@ body {
     box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
 }
 
-
-/* Fix for destination card alignment in grid */
-
-/* Ensure all destination cards have equal height */
+/* Destination Card Alignment */
 .destination-card {
     display: flex;
     flex-direction: column;
-    height: 100%; /* Makes all cards stretch to fill grid cell */
+    height: 100%;
 }
 
-/* The image container should be fixed height */
 .destination-card > div:first-child {
     height: 180px;
     flex-shrink: 0;
 }
 
-/* The content area should flex to fill remaining space */
 .destination-card > div:last-child {
     display: flex;
     flex-direction: column;
@@ -664,9 +650,8 @@ body {
     padding: 1rem;
 }
 
-/* Title should have consistent height */
 .destination-card h5 {
-    min-height: 3rem; /* Accommodates up to 2 lines */
+    min-height: 3rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -674,17 +659,221 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Location and price info */
 .destination-card p {
     margin-bottom: 0.5rem;
 }
 
-/* Push buttons to bottom of card */
 .destination-card .d-flex.gap-2 {
-    margin-top: auto; /* Pushes buttons to bottom */
+    margin-top: auto;
 }
 
-/* Optional: Add smooth hover effect without movement */
 .destination-card:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* --- TAG CART STYLING (NEW) --- */
+.tag-cart-wrapper {
+    display: flex;
+    align-items: stretch;
+    height: 54px; /* Fixed height for that bar look */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    overflow: hidden; /* Ensures corners clip correctly */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Left Section: Label */
+.tag-cart-label {
+    background: linear-gradient(to bottom, #9acd32 0%, #76b900 100%); /* Green gradient */
+    color: #1a202c;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #6aa600;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+}
+
+/* Middle Section: Input Area */
+.tag-cart-input-area {
+    background: white;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    overflow-x: auto; /* Allow scrolling if many tags */
+    border-top: 1px solid #76b900;
+    border-bottom: 1px solid #76b900;
+}
+
+/* The Black Tag Pills */
+.tag-pill {
+    background-color: #2d3436; /* Dark grey/Black */
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-right: 6px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* The 'X' inside the pill */
+.tag-remove {
+    margin-left: 10px;
+    cursor: pointer;
+    color: #bbb;
+    font-weight: bold;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.tag-remove:hover {
+    color: white;
+}
+
+/* The Typing Field */
+.tag-input-field {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 0 10px;
+    min-width: 150px;
+    color: #4a5568;
+    background: transparent;
+    height: 100%;
+}
+
+/* Right Section: Search Button */
+.tag-search-btn {
+    background: linear-gradient(to bottom, #9acd32 0%, #76b900 100%); /* Green gradient */
+    border: none;
+    border-left: 1px solid #6aa600;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 0 2.5rem;
+    cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    transition: filter 0.2s ease;
+}
+
+.tag-search-btn:hover {
+    filter: brightness(1.05);
+}
+
+/* --- SMARTTRAV TAG CART FILTER --- */
+
+.tag-cart-wrapper {
+    display: flex;
+    align-items: stretch;
+    height: 50px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    margin-bottom: 2rem;
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+}
+
+.tag-cart-wrapper:focus-within {
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.25);
+    border-color: #667eea;
+}
+
+/* 1. Label Section (Left) */
+.tag-cart-label {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* 2. Input Area (Middle) */
+.tag-cart-input-area {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    overflow-x: auto; /* Horizontal scroll if many tags */
+    background: white;
+}
+
+/* The Tag Pills */
+.tag-pill {
+    background: #eff6ff; /* Light blue tint */
+    color: #4361ee;       /* Primary blue text */
+    border: 1px solid #bfdbfe;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* The X Button */
+.tag-remove {
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: #4361ee;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.tag-remove:hover {
+    opacity: 1;
+    color: #d00000;
+}
+
+/* The Typing Input */
+.tag-input-field {
+    border: none;
+    outline: none;
+    font-size: 0.95rem;
+    min-width: 120px;
+    color: #1e293b;
+    background: transparent;
+    height: 100%;
+    padding: 0 4px;
+}
+
+.tag-input-field::placeholder {
+    color: #94a3b8;
+}
+
+/* 3. Search Button (Right) */
+.tag-search-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0 2rem;
+    cursor: pointer;
+    transition: filter 0.2s;
+    white-space: nowrap;
+}
+
+.tag-search-btn:hover {
+    filter: brightness(1.1);
 }

@@ -148,6 +148,10 @@
             color: #047857; /* Dark green text */
             border-color: #10b981; /* Accent green border */
         }
+        .alert-warning {
+             /* Styles for the locked trip warning */
+            border-color: #f59e0b;
+        }
 
         /* Layout Grid */
         .date-grid {
@@ -219,5 +223,96 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the trip end date from the template
+            const tripEndDateStr = "{{ itinerary.end_date|date:'Y-m-d' }}";
+            const tripEndDate = new Date(tripEndDateStr);
+
+            // Get today's date and reset time to midnight for accurate comparison
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Check if the trip is in the past
+            if (tripEndDate < today) {
+                // 1. Select the form and disable all interactive elements
+                const form = document.querySelector('form');
+                const elements = form.querySelectorAll('input, textarea, select, button[type="submit"]');
+
+                elements.forEach(el => {
+                    el.disabled = true;
+                    el.style.backgroundColor = "#e9ecef"; // Visual gray out
+                    el.style.cursor = "not-allowed";
+                });
+
+                // 2. Create and insert a warning banner
+                const alertDiv = document.createElement('div');
+
+                alertDiv.className = 'alert alert-warning';
+                alertDiv.style.borderLeft = '5px solid #f59e0b';
+                alertDiv.style.backgroundColor = '#fff3cd';
+                alertDiv.style.color = '#856404';
+                alertDiv.innerHTML = `
+                    <div style="display:flex; align-items:center; gap: 10px;">
+                        <span style="font-size: 1.5rem;">🔒</span>
+                        <div>
+                            <strong>Editing Locked</strong><br>
+                            This trip concluded on ${tripEndDateStr}. Past trips cannot be edited.
+                        </div>
+                    </div>
+                `;
+
+                // Insert the alert before the form
+                form.parentNode.insertBefore(alertDiv, form);
+            }
+        });
+    </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get dates
+        const tripEndDateStr = "{{ itinerary.end_date|date:'Y-m-d' }}";
+        const tripEndDate = new Date(tripEndDateStr);
+
+        // Normalize today's date to midnight for fair comparison
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Check if trip is in the past
+        if (tripEndDate < today) {
+            // 1. Visual Warning
+            const card = document.querySelector('.card');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert';
+            alertDiv.style.backgroundColor = '#fff3cd'; // Light yellow
+            alertDiv.style.color = '#856404'; // Dark yellow/brown
+            alertDiv.style.borderLeft = '5px solid #ffc107';
+            alertDiv.style.marginBottom = '2rem';
+            alertDiv.innerHTML = `
+                <div style="display:flex; align-items:center; gap: 1rem;">
+                    <span style="font-size: 1.5rem;">🔒</span>
+                    <div>
+                        <strong>This trip has concluded.</strong><br>
+                        Editing is disabled for past itineraries to preserve historical data.
+                    </div>
+                </div>
+            `;
+
+            // Insert warning at top of card
+            card.insertBefore(alertDiv, card.querySelector('form'));
+
+            // 2. Disable Inputs
+            const form = document.querySelector('form');
+            const elements = form.querySelectorAll('input, textarea, select, button[type="submit"]');
+
+            elements.forEach(el => {
+                el.disabled = true;
+                el.style.backgroundColor = "#e9ecef";
+                el.style.cursor = "not-allowed";
+                el.title = "Editing disabled for past trips";
+            });
+        }
+    });
+</script>
 </body>
 </html>

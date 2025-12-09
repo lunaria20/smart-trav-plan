@@ -1,40 +1,44 @@
-// Destination Modal Functions
+// --- GLOBAL VARIABLES ---
 let currentDestinationId = null;
+let deleteForm = null;
 
+// --- DESTINATION MODAL FUNCTIONS ---
 function openDestinationModal(id, name, location, description, category, priceRange, imageUrl) {
     currentDestinationId = id;
 
-    // Safety checks for elements
+    // Populate Text Fields
     if(document.getElementById('modalDestinationName')) document.getElementById('modalDestinationName').textContent = name;
     if(document.getElementById('modalDestinationLocation')) document.getElementById('modalDestinationLocation').textContent = location;
     if(document.getElementById('modalDestinationDescription')) document.getElementById('modalDestinationDescription').textContent = description;
 
-    // SAFETY CHECK: This is what was crashing before!
+    // Category Label
     const catSpan = document.getElementById('modalDestinationCategory');
     if (catSpan) {
         catSpan.textContent = category;
     }
 
+    // Price
     if(document.getElementById('modalDestinationPrice')) document.getElementById('modalDestinationPrice').textContent = '₱' + priceRange;
 
-    // Update save form action
+    // Update Save Form Action
     const saveForm = document.getElementById('modalSaveForm');
     if (saveForm) {
         saveForm.action = `/destination/save/${id}/`;
     }
 
-    // Handle the Modal Image
+    // Handle Image Display
     const imageContainer = document.getElementById('modalDestinationImage');
     if (imageContainer) {
         if (imageUrl && imageUrl !== 'None' && imageUrl !== '') {
             imageContainer.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
         } else {
             imageContainer.innerHTML = '';
+            // Default SmartTrav Gradient if no image
             imageContainer.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
     }
 
-    // Set operating hours
+    // Set Operating Hours Logic
     const operatingHours = {
         'restaurant': '10:00 AM - 10:00 PM',
         'resort': '24 Hours (Check-in: 2PM)',
@@ -45,7 +49,7 @@ function openDestinationModal(id, name, location, description, category, priceRa
     const hours = operatingHours[String(category).toLowerCase()] || '8:00 AM - 6:00 PM';
     if(document.getElementById('modalOperatingHours')) document.getElementById('modalOperatingHours').textContent = hours;
 
-    // Set amenities
+    // Set Amenities Logic
     const amenitiesMap = {
         'resort': ['🏊 Swimming Pool', '🍽 Restaurant', '📶 Free WiFi', '🅿 Parking', '🏖 Beach Access', '💆 Spa Services'],
         'beach': ['🏖 Beach Access', '🚿 Shower Facilities', '🏪 Nearby Stores', '🅿 Parking', '🏐 Beach Volleyball', '🏊 Lifeguard'],
@@ -67,6 +71,7 @@ function openDestinationModal(id, name, location, description, category, priceRa
         document.getElementById('modalAmenitiesTitle').textContent = key === 'restaurant' ? 'Features' : 'Amenities';
     }
 
+    // Show Modal
     const modal = document.getElementById('destinationModal');
     if(modal) modal.classList.add('show');
 }
@@ -85,9 +90,7 @@ function addToTripFromModal() {
     }
 }
 
-// Delete Modal Functions
-let deleteForm = null;
-
+// --- DELETE MODAL FUNCTIONS ---
 function openDeleteModal(tripName, formElement) {
     if(document.getElementById('deleteItemName')) document.getElementById('deleteItemName').textContent = tripName;
     deleteForm = formElement;
@@ -108,7 +111,7 @@ function confirmDelete() {
     closeDeleteModal();
 }
 
-// Preview uploaded image
+// --- PROFILE PICTURE PREVIEW ---
 function previewImage(event) {
     const file = event.target.files[0];
     if (file) {
@@ -138,7 +141,7 @@ function previewImage(event) {
     }
 }
 
-// Close modals when clicking outside
+// --- CLOSE MODALS ON OUTSIDE CLICK ---
 window.onclick = function(event) {
     const destModal = document.getElementById('destinationModal');
     const tripModal = document.getElementById('tripModal');
@@ -149,8 +152,10 @@ window.onclick = function(event) {
     if (event.target === deleteModal) closeDeleteModal();
 }
 
-// Navigation Logic
+// --- MAIN INITIALIZATION & LOGIC ---
 document.addEventListener('DOMContentLoaded', function() {
+
+    // 1. Navigation Switching Logic
     document.querySelectorAll('.menu-link').forEach(link => {
         link.addEventListener('click', function(e) {
             // Only handle section switching if data-section exists
@@ -162,90 +167,100 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Handle URL parameters for direct section access
     const urlParams = new URLSearchParams(window.location.search);
     const sectionParam = urlParams.get('section');
     if (sectionParam) {
         showSection(sectionParam);
     }
 
-    // --- BUBBLE TAG INPUT LOGIC ---
+    // ============================================================
+    // 2. TAG CART LOGIC (Type -> Enter -> Add Tag -> Click Search)
+    // ============================================================
     const tagInput = document.getElementById('tagInput');
     const tagsContainer = document.getElementById('tagsContainer');
     const hiddenInput = document.getElementById('hiddenTagsInput');
 
-    // Arrays to store tags
+    // Array to store current tags
     let tags = [];
 
-    // 1. Initialize from existing hidden input (if page reloaded/searched)
+    // A. Initialize from existing hidden input (if page reloaded after search)
     if (hiddenInput && hiddenInput.value) {
         const existing = hiddenInput.value.split(',').map(t => t.trim()).filter(t => t);
-        existing.forEach(tag => addTag(tag));
+        existing.forEach(tag => {
+            if(tag) tags.push(tag.toLowerCase());
+        });
+        renderTags();
     }
 
-    // 2. Add tag on Enter or Comma
+    // B. Keydown Listener: Handle Enter Key
     if(tagInput) {
         tagInput.addEventListener('keydown', function(e) {
+            // If user presses ENTER or COMMA
             if (e.key === 'Enter' || e.key === ',') {
-                e.preventDefault();
-                const tag = tagInput.value.trim().replace(',', '');
-                if (tag.length > 0) {
-                    addTag(tag);
-                    tagInput.value = '';
+                e.preventDefault(); // <--- CRITICAL: Prevents form from submitting!
+
+                const val = tagInput.value.trim().replace(',', '');
+                if (val.length > 0) {
+                    addTag(val);
+                    tagInput.value = ''; // Clear input field
                 }
-            } else if (e.key === 'Backspace' && tagInput.value === '' && tags.length > 0) {
-                // Remove last tag on backspace if input empty
+            }
+            // Handle Backspace (delete last tag if input is empty)
+            else if (e.key === 'Backspace' && tagInput.value === '' && tags.length > 0) {
                 removeTag(tags.length - 1);
             }
         });
-
-        // Add tag when clicking an option from the datalist (if supported browser event)
-        tagInput.addEventListener('input', function(e) {
-            // Simple check if value is in datalist options logic could be added here
-            // For now, we rely on Enter key
-        });
     }
 
+    // Helper: Add Tag to Array
     function addTag(text) {
         // Prevent duplicates
         if (tags.includes(text.toLowerCase())) return;
-
         tags.push(text.toLowerCase());
-        updateHiddenInput();
         renderTags();
+        updateHiddenInput();
     }
 
+    // Helper: Remove Tag from Array
     function removeTag(index) {
         tags.splice(index, 1);
-        updateHiddenInput();
         renderTags();
+        updateHiddenInput();
     }
 
+    // Helper: Render the Visual Pills
     function renderTags() {
-        // Clear current tags visually (except input)
-        // We select all .tag-bubble elements and remove them
-        const bubbles = tagsContainer.querySelectorAll('.tag-bubble');
-        bubbles.forEach(b => b.remove());
+        // Clear existing visual pills (but keep the input field logic safe)
+        const existingPills = tagsContainer.querySelectorAll('.tag-pill');
+        existingPills.forEach(p => p.remove());
 
-        // Re-render
+        // Create new pills based on tags array
         tags.forEach((tag, index) => {
-            const bubble = document.createElement('div');
-            bubble.className = 'tag-bubble';
-            bubble.innerHTML = `${tag} <span class="remove-tag" data-index="${index}">×</span>`;
+            const pill = document.createElement('div');
+            pill.className = 'tag-pill';
 
-            // Insert before the input
-            tagsContainer.insertBefore(bubble, tagInput);
+            // Text + X button
+            pill.innerHTML = `${tag} <span class="tag-remove">&times;</span>`;
 
-            // Add click listener to the X
-            bubble.querySelector('.remove-tag').addEventListener('click', function() {
+            // Click listener for the X button
+            pill.querySelector('.tag-remove').addEventListener('click', function(e) {
+                e.stopPropagation(); // Stop click from bubbling up
                 removeTag(index);
             });
+
+            // Insert pill BEFORE the text input
+            tagsContainer.insertBefore(pill, tagInput);
         });
     }
 
+    // Helper: Update Hidden Input (Sent to Backend)
     function updateHiddenInput() {
         hiddenInput.value = tags.join(',');
     }
 });
+
+// --- HELPER FUNCTIONS ---
 
 function showSection(sectionId) {
     document.querySelectorAll('.content-section').forEach(section => {
@@ -273,7 +288,45 @@ function toggleForm(formId) {
     }
 }
 
+// --- NEW HELPER FUNCTIONS FOR NO TRIP MODAL ---
+function closeNoTripModal() {
+    const modal = document.getElementById('noTripModal');
+    if (modal) modal.classList.remove('show');
+}
+
+function redirectToCreateTrip() {
+    closeNoTripModal();
+    // Switch to My Trips tab
+    showSection('itineraries');
+    // Scroll to top
+    window.scrollTo(0, 0);
+    // Open the creation form
+    const form = document.getElementById('itinerary-form');
+    if (form && (form.style.display === 'none' || form.style.display === '')) {
+        toggleForm('itinerary-form');
+    }
+}
+
+// --- UPDATED OPEN TRIP MODAL FUNCTION ---
 function openTripModal(destinationId, destinationName) {
+    // 1. Check if there are any trip radio buttons in the modal
+    const tripOptions = document.querySelectorAll('#tripModal input[name="itinerary_id"]');
+
+    if (tripOptions.length === 0) {
+        // 2. TRIGGER THE CUSTOM MODAL instead of confirm()
+        const noTripModal = document.getElementById('noTripModal');
+        if (noTripModal) {
+            noTripModal.classList.add('show');
+
+            // Allow closing by clicking outside
+            noTripModal.onclick = function(e) {
+                if (e.target === noTripModal) closeNoTripModal();
+            }
+        }
+        return;
+    }
+
+    // 3. Normal behavior if trips exist
     document.getElementById('destinationId').value = destinationId;
     document.getElementById('destinationName').textContent = destinationName;
     const modal = document.getElementById('tripModal');
@@ -284,3 +337,33 @@ function closeTripModal() {
     const modal = document.getElementById('tripModal');
     if(modal) modal.classList.remove('show');
 }
+
+// --- DATE VALIDATION FOR TRIP CREATION ---
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+
+    // 1. Target only 'start_date' inputs to avoid blocking expense dates
+    const startDateInputs = document.querySelectorAll('input[name="start_date"]');
+
+    startDateInputs.forEach(input => {
+        // Set minimum date to today
+        input.min = today;
+
+        // 2. Add listener to update 'End Date' constraint automatically
+        input.addEventListener('change', function() {
+            const form = this.closest('form');
+            if (form) {
+                const endDateInput = form.querySelector('input[name="end_date"]');
+                if (endDateInput) {
+                    // End date cannot be before start date
+                    endDateInput.min = this.value;
+
+                    // If current end date is invalid, clear it
+                    if (endDateInput.value && endDateInput.value < this.value) {
+                        endDateInput.value = this.value;
+                    }
+                }
+            }
+        });
+    });
+});
